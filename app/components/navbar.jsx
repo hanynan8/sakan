@@ -636,6 +636,14 @@ function NavbarContent() {
    DEFAULT EXPORT — wrapped in Suspense because
    NavbarContent uses useSearchParams()
 ═══════════════════════════════════════════════ */
+
+
+
+
+
+
+
+
 export default function Navbar() {
   return (
     <Suspense fallback={null}>
