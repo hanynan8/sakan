@@ -1,83 +1,11 @@
+// path: app/components/navbar.jsx
 'use client';
 
 import { useState, useEffect, useRef, Suspense } from 'react';
+import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-
-/* ─────────────────────────────────────────────
-   Small reusable input with optional show/hide
-───────────────────────────────────────────── */
-function Field({ label, type = 'text', value, onChange, placeholder, required, autoComplete }) {
-  const [show, setShow] = useState(false);
-  const isPassword = type === 'password';
-  return (
-    <div>
-      <label className="block text-xs font-semibold text-gray-600 mb-1.5">{label}</label>
-      <div className="relative">
-        <input
-          type={isPassword ? (show ? 'text' : 'password') : type}
-          required={required}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          autoComplete={autoComplete}
-          className="w-full px-3 py-2 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
-        />
-        {isPassword && (
-          <button
-            type="button"
-            onClick={() => setShow(!show)}
-            className="absolute inset-y-0 right-2.5 flex items-center text-gray-400 hover:text-gray-700 transition-colors"
-          >
-            {show ? (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            )}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ErrorBanner({ message }) {
-  if (!message) return null;
-  return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
-      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      {message}
-    </div>
-  );
-}
-
-function SubmitBtn({ loading, label, loadingLabel }) {
-  return (
-    <button
-      type="submit"
-      disabled={loading}
-      className="w-full py-2.5 bg-black text-white text-sm font-semibold hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed transition-all rounded flex items-center justify-center gap-2"
-    >
-      {loading ? (
-        <>
-          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-          {loadingLabel}
-        </>
-      ) : label}
-    </button>
-  );
-}
 
 /* ═══════════════════════════════════════════════
    STATIC NAVBAR DATA (كانت جايه من /api/data?collection=Navbar)
@@ -85,146 +13,56 @@ function SubmitBtn({ loading, label, loadingLabel }) {
 const NAVBAR_DATA = {
   brand: {
     logo: '',
-    ar: {
-      name: 'سكني'
-    },
-    en: {
-      name: 'Sakani'
-    }
+    ar: { name: 'سكني' },
+    en: { name: 'Sakani' },
   },
   search: {
-    ar: {
-      placeholder: 'ابحث عن سكن، جامعة، منطقة...'
-    },
-    en: {
-      placeholder: 'Search for housing, university, area...'
-    }
+    ar: { placeholder: 'ابحث عن سكن، جامعة، منطقة...' },
+    en: { placeholder: 'Search for housing, university, area...' },
   },
   support: {
-    ar: {
-      label: 'الدعم',
-      supportNowLabel: 'تواصل معنا الآن',
-      quickLinksLabel: 'روابط سريعة'
-    },
-    en: {
-      label: 'Support',
-      supportNowLabel: 'Contact us now',
-      quickLinksLabel: 'Quick Links'
-    },
+    ar: { label: 'الدعم', supportNowLabel: 'تواصل معنا الآن', quickLinksLabel: 'روابط سريعة' },
+    en: { label: 'Support', supportNowLabel: 'Contact us now', quickLinksLabel: 'Quick Links' },
     phone: '+20 100 000 0000',
     supportNow: [
-      {
-        type: 'whatsapp',
-        url: 'https://wa.me/201000000000',
-        badge: 'online',
-        ar: {
-          label: 'واتساب'
-        },
-        en: {
-          label: 'WhatsApp'
-        }
-      },
-      {
-        type: 'messenger',
-        url: 'https://m.me/sakanipage',
-        badge: '',
-        ar: {
-          label: 'ماسنجر'
-        },
-        en: {
-          label: 'Messenger'
-        }
-      },
-      {
-        type: 'email',
-        url: 'mailto:support@sakani.com',
-        badge: '',
-        ar: {
-          label: 'البريد الإلكتروني'
-        },
-        en: {
-          label: 'Email Us'
-        }
-      },
-      {
-        type: 'chat',
-        url: '#chat',
-        badge: 'online',
-        ar: {
-          label: 'دردشة مباشرة'
-        },
-        en: {
-          label: 'Live Chat'
-        }
-      }
+      { type: 'whatsapp', url: 'https://wa.me/201000000000', badge: 'online', ar: { label: 'واتساب' }, en: { label: 'WhatsApp' } },
+      { type: 'messenger', url: 'https://m.me/sakanipage', badge: '', ar: { label: 'ماسنجر' }, en: { label: 'Messenger' } },
+      { type: 'email', url: 'mailto:support@sakani.com', badge: '', ar: { label: 'البريد الإلكتروني' }, en: { label: 'Email Us' } },
+      { type: 'chat', url: '#chat', badge: 'online', ar: { label: 'دردشة مباشرة' }, en: { label: 'Live Chat' } },
     ],
     quickLinks: [
-      {
-        url: '/help/how-it-works',
-        ar: {
-          label: 'كيف يعمل الموقع؟'
-        },
-        en: {
-          label: 'How it works?'
-        }
-      },
-      {
-        url: '/help',
-        ar: {
-          label: 'مركز المساعدة'
-        },
-        en: {
-          label: 'Help Center'
-        }
-      },
-      {
-        url: '/submit-request',
-        ar: {
-          label: 'إرسال طلب دعم'
-        },
-        en: {
-          label: 'Submit a Request'
-        }
-      }
-    ]
-  }
+      { url: '/help/how-it-works', ar: { label: 'كيف يعمل الموقع؟' }, en: { label: 'How it works?' } },
+      { url: '/help', ar: { label: 'مركز المساعدة' }, en: { label: 'Help Center' } },
+      { url: '/submit-request', ar: { label: 'إرسال طلب دعم' }, en: { label: 'Submit a Request' } },
+    ],
+  },
 };
 
 /* ═══════════════════════════════════════════════
    MAIN NAVBAR
+   ملاحظة: صفحات تسجيل الدخول/حساب جديد بقت مستقلة على
+   /signin و /signup، مبقى فيش مودال جوه النافبار.
 ═══════════════════════════════════════════════ */
 function NavbarContent() {
   const data = NAVBAR_DATA;
   const { language, toggleLanguage } = useLanguage();
 
-  const [supportOpen, setSupportOpen]       = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery]       = useState('');
-  const [scrolled, setScrolled]             = useState(false);
-  const [userMenuOpen, setUserMenuOpen]     = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  const [modal, setModal] = useState(null);
-
-  const [siForm, setSiForm]       = useState({ identifier: '', password: '' });
-  const [siError, setSiError]     = useState('');
-  const [siLoading, setSiLoading] = useState(false);
-
-  const [suForm, setSuForm] = useState({
-    firstName: '', lastName: '', identifier: '', password: '', referralCode: ''
-  });
-  const [suError, setSuError]     = useState('');
-  const [suLoading, setSuLoading] = useState(false);
-
-  const supportRef  = useRef(null);
+  const supportRef = useRef(null);
   const userMenuRef = useRef(null);
 
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
 
   const ar = language === 'ar';
-  const t  = (section) => ar ? section?.ar : section?.en;
+  const t = (section) => (ar ? section?.ar : section?.en);
 
-  // ── احفظ كود الدعوة من الـ URL في localStorage ──
+  // ── احفظ كود الدعوة من الـ URL في localStorage (يستخدمه /signup) ──
   useEffect(() => {
     const ref = searchParams.get('ref');
     if (ref) {
@@ -233,31 +71,11 @@ function NavbarContent() {
     }
   }, [searchParams]);
 
-  const closeModal = () => {
-    setModal(null);
-    setSiError(''); setSiForm({ identifier: '', password: '' });
-    setSuError(''); setSuForm({ firstName: '', lastName: '', identifier: '', password: '', referralCode: '' });
-  };
-
-  // ── فتح Sign Up مع تملية الكود تلقائياً ──
-  const openSignUp = () => {
-    const savedCode   = localStorage.getItem('referralCode');
-    const savedExpiry = localStorage.getItem('referralExpiry');
-    const isValid     = savedExpiry && Date.now() < parseInt(savedExpiry);
-    setSuForm({
-      firstName: '', lastName: '', identifier: '', password: '',
-      referralCode: (savedCode && isValid) ? savedCode : ''
-    });
-    setModal('signup');
-  };
-
-  const isEmail = (val) => /\S+@\S+\.\S+/.test(val);
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll);
     const onClickOutside = (e) => {
-      if (supportRef.current  && !supportRef.current.contains(e.target))  setSupportOpen(false);
+      if (supportRef.current && !supportRef.current.contains(e.target)) setSupportOpen(false);
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false);
     };
     document.addEventListener('mousedown', onClickOutside);
@@ -266,94 +84,6 @@ function NavbarContent() {
       document.removeEventListener('mousedown', onClickOutside);
     };
   }, []);
-
-  /* ── SIGN IN ── */
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setSiError('');
-    setSiLoading(true);
-    try {
-      const result = await signIn('credentials', {
-        redirect:   false,
-        identifier: siForm.identifier,
-        password:   siForm.password,
-      });
-      if (!result || result.error) {
-        setSiError(ar ? 'البريد/الرقم أو كلمة المرور غير صحيحة' : 'Incorrect email/phone or password');
-      } else {
-        closeModal();
-      }
-    } catch {
-      setSiError(ar ? 'حدث خطأ، حاول مرة أخرى' : 'An error occurred, try again');
-    } finally {
-      setSiLoading(false);
-    }
-  };
-
-  /* ── SIGN UP ── */
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    setSuError('');
-
-    if (suForm.password.length < 8) {
-      setSuError(ar ? 'كلمة المرور لازم تكون 8 أحرف على الأقل' : 'Password must be at least 8 characters');
-      return;
-    }
-    if (!/[A-Z]/.test(suForm.password)) {
-      setSuError(ar ? 'لازم تحتوي على حرف كبير واحد على الأقل' : 'Must contain at least one uppercase letter');
-      return;
-    }
-    if (!/[0-9]/.test(suForm.password)) {
-      setSuError(ar ? 'لازم تحتوي على رقم واحد على الأقل' : 'Must contain at least one number');
-      return;
-    }
-
-    setSuLoading(true);
-    try {
-      const payload = {
-        firstName:    suForm.firstName.trim(),
-        lastName:     suForm.lastName.trim(),
-        password:     suForm.password,
-        referralCode: suForm.referralCode.trim() || undefined,
-        ...(isEmail(suForm.identifier)
-          ? { email: suForm.identifier.trim() }
-          : { phone: suForm.identifier.trim() }),
-      };
-
-      const res = await fetch('/api/auth/register', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        setSuError(body.message || (ar ? 'فشل إنشاء الحساب' : 'Failed to create account'));
-        return;
-      }
-
-      const signInResult = await signIn('credentials', {
-        redirect:   false,
-        identifier: suForm.identifier,
-        password:   suForm.password,
-      });
-
-      if (signInResult?.error) {
-        setModal('signin');
-        setSiForm({ identifier: suForm.identifier, password: '' });
-        setSuForm({ firstName: '', lastName: '', identifier: '', password: '', referralCode: '' });
-      } else {
-        // امسح الكود بعد استخدامه
-        localStorage.removeItem('referralCode');
-        localStorage.removeItem('referralExpiry');
-        closeModal();
-      }
-    } catch {
-      setSuError(ar ? 'حدث خطأ، حاول مرة أخرى' : 'An error occurred, try again');
-    } finally {
-      setSuLoading(false);
-    }
-  };
 
   const userMenuItems = [
     {
@@ -366,14 +96,13 @@ function NavbarContent() {
       href: '/profile',
     },
     {
-      label: { ar: 'الإعدادات', en: 'Settings' },
+      label: { ar: 'السكنات', en: 'Properties' },
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
       ),
-      href: '/settings',
+      href: '/properties',
     },
     {
       label: { ar: 'حجوزاتي', en: 'My Bookings' },
@@ -382,7 +111,7 @@ function NavbarContent() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
       ),
-      href: '/my-bookings',
+      href: '/profile/booking',
     },
   ];
 
@@ -394,15 +123,21 @@ function NavbarContent() {
         dir={ar ? 'rtl' : 'ltr'}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-14 gap-3">
+          <div className="flex items-center h-12 gap-3">
 
             {/* Logo */}
-            <a href="/" className="flex-shrink-0 flex items-center gap-2">
-              {data.brand?.logo
-                ? <img src={data.brand.logo} alt={t(data.brand)?.name} className="h-7 w-auto" />
-                : <span className="text-xl font-black text-black tracking-tight">{t(data.brand)?.name}</span>
-              }
-            </a>
+            <Link href="/" className="flex-shrink-0 flex items-center gap-2">
+              {data.brand?.logo ? (
+                <img src={data.brand.logo} alt={t(data.brand)?.name} className="h-6 w-auto" />
+              ) : (
+                <span className="text-lg font-black text-black tracking-tight">{t(data.brand)?.name}</span>
+              )}
+            </Link>
+
+            {/* Properties link */}
+            <Link href="/properties" className="hidden md:inline text-sm font-medium text-gray-600 hover:text-black transition-colors">
+              {ar ? 'السكنات' : 'Properties'}
+            </Link>
 
             {/* Search */}
             <div className="flex-1 max-w-lg mx-3 hidden md:block">
@@ -414,11 +149,14 @@ function NavbarContent() {
                   placeholder={t(data.search)?.placeholder}
                   className={`w-full px-3 py-1.5 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-500 focus:bg-white transition-all ${ar ? 'rounded-r text-right' : 'rounded-l'}`}
                 />
-                <button className={`px-3 bg-black text-white hover:bg-gray-800 transition-all flex-shrink-0 ${ar ? 'rounded-l' : 'rounded-r'}`}>
+                <Link
+                  href={`/properties${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`}
+                  className={`px-3 flex items-center bg-black text-white hover:bg-gray-800 transition-all flex-shrink-0 ${ar ? 'rounded-l' : 'rounded-r'}`}
+                >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                </button>
+                </Link>
               </div>
             </div>
 
@@ -525,10 +263,10 @@ function NavbarContent() {
                       </div>
                       <div className="py-1">
                         {userMenuItems.map((item, i) => (
-                          <a key={i} href={item.href} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors group">
+                          <Link key={i} href={item.href} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors group">
                             <span className="text-gray-400 group-hover:text-gray-700 transition-colors">{item.icon}</span>
                             <span>{ar ? item.label.ar : item.label.en}</span>
-                          </a>
+                          </Link>
                         ))}
                       </div>
                       <div className="border-t border-gray-100 py-1">
@@ -542,18 +280,18 @@ function NavbarContent() {
                 </div>
               ) : (
                 <div className="hidden md:flex items-center gap-1.5">
-                  <button
-                    onClick={() => setModal('signin')}
+                  <Link
+                    href="/signin"
                     className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-black border border-gray-200 hover:border-gray-400 transition-all rounded"
                   >
                     {ar ? 'تسجيل الدخول' : 'Sign In'}
-                  </button>
-                  <button
-                    onClick={openSignUp}
+                  </Link>
+                  <Link
+                    href="/signup"
                     className="px-3 py-1.5 text-sm font-semibold bg-black text-white hover:bg-gray-800 transition-all rounded"
                   >
                     {ar ? 'إنشاء حساب' : 'Sign Up'}
-                  </button>
+                  </Link>
                 </div>
               )}
 
@@ -577,12 +315,13 @@ function NavbarContent() {
             <div className="px-4 py-3 border-b border-gray-100">
               <div className="relative flex">
                 <input type="text" placeholder={t(data.search)?.placeholder} className={`w-full px-3 py-2 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-500 ${ar ? 'rounded-r' : 'rounded-l'}`} />
-                <button className={`px-3 bg-black text-white flex-shrink-0 ${ar ? 'rounded-l' : 'rounded-r'}`}>
+                <Link href="/properties" className={`px-3 flex items-center bg-black text-white flex-shrink-0 ${ar ? 'rounded-l' : 'rounded-r'}`}>
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                </button>
+                </Link>
               </div>
             </div>
             <div className="px-4 py-2 border-b border-gray-100">
+              <Link href="/properties" className="block py-2 text-sm font-semibold text-gray-800">{ar ? 'السكنات' : 'Properties'}</Link>
               {data.support?.supportNow?.map((item, i) => (
                 <a key={i} href={item.url} className="flex items-center gap-2 py-2 text-sm text-gray-700">{t(item)?.label}</a>
               ))}
@@ -599,130 +338,24 @@ function NavbarContent() {
                 </div>
               ) : (
                 <div className="flex gap-2">
-                  <button onClick={() => { setMobileMenuOpen(false); setModal('signin'); }} className="text-sm font-medium text-gray-700 border border-gray-300 px-3 py-1.5 rounded">{ar ? 'دخول' : 'Sign In'}</button>
-                  <button onClick={() => { setMobileMenuOpen(false); openSignUp(); }} className="text-sm font-semibold bg-black text-white px-3 py-1.5 rounded">{ar ? 'حساب جديد' : 'Sign Up'}</button>
+                  <Link href="/signin" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-gray-700 border border-gray-300 px-3 py-1.5 rounded">{ar ? 'دخول' : 'Sign In'}</Link>
+                  <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold bg-black text-white px-3 py-1.5 rounded">{ar ? 'حساب جديد' : 'Sign Up'}</Link>
                 </div>
               )}
             </div>
             {session && (
               <div className="px-4 pb-3 border-t border-gray-100">
                 {userMenuItems.map((item, i) => (
-                  <a key={i} href={item.href} className="flex items-center gap-2 py-2 text-sm text-gray-700">
+                  <Link key={i} href={item.href} className="flex items-center gap-2 py-2 text-sm text-gray-700">
                     {item.icon}
                     <span>{ar ? item.label.ar : item.label.en}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}
           </div>
         )}
       </nav>
-
-      {/* ══════════════ AUTH MODAL ══════════════ */}
-      {modal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" dir={ar ? 'rtl' : 'ltr'}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeModal} />
-          <div className="relative bg-white w-full max-w-sm shadow-2xl rounded overflow-hidden">
-            <div className="flex border-b border-gray-200">
-              {['signin', 'signup'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => { setModal(tab); setSiError(''); setSuError(''); }}
-                  className={`flex-1 py-3 text-sm font-semibold transition-colors ${modal === tab ? 'text-black border-b-2 border-black bg-white' : 'text-gray-400 hover:text-gray-600 bg-gray-50'}`}
-                >
-                  {tab === 'signin' ? (ar ? 'تسجيل الدخول' : 'Sign In') : (ar ? 'إنشاء حساب' : 'Sign Up')}
-                </button>
-              ))}
-              <button onClick={closeModal} className="px-3 text-gray-400 hover:text-black transition-colors bg-gray-50 border-b border-gray-200">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* ── SIGN IN ── */}
-            {modal === 'signin' && (
-              <form onSubmit={handleSignIn} className="px-6 py-5 space-y-4">
-                <Field
-                  label={ar ? 'البريد الإلكتروني أو رقم الهاتف' : 'Email or Phone Number'}
-                  value={siForm.identifier}
-                  onChange={(e) => setSiForm({ ...siForm, identifier: e.target.value })}
-                  placeholder={ar ? 'example@mail.com أو 010xxxxxxxx' : 'example@mail.com or 010xxxxxxxx'}
-                  autoComplete="username"
-                  required
-                />
-                <Field
-                  label={ar ? 'كلمة المرور' : 'Password'}
-                  type="password"
-                  value={siForm.password}
-                  onChange={(e) => setSiForm({ ...siForm, password: e.target.value })}
-                  placeholder={ar ? 'أدخل كلمة المرور' : 'Enter your password'}
-                  autoComplete="current-password"
-                  required
-                />
-                <ErrorBanner message={siError} />
-                <SubmitBtn loading={siLoading} label={ar ? 'تسجيل الدخول' : 'Sign In'} loadingLabel={ar ? 'جارٍ الدخول...' : 'Signing in...'} />
-                <p className="text-center text-xs text-gray-500">
-                  {ar ? 'ليس لديك حساب؟' : "Don't have an account?"}{' '}
-                  <button type="button" onClick={() => { openSignUp(); setSiError(''); }} className="font-semibold text-black underline underline-offset-2">
-                    {ar ? 'إنشاء حساب' : 'Sign Up'}
-                  </button>
-                </p>
-              </form>
-            )}
-
-            {/* ── SIGN UP ── */}
-            {modal === 'signup' && (
-              <form onSubmit={handleSignUp} className="px-6 py-5 space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <Field
-                    label={ar ? 'الاسم الأول *' : 'First Name *'}
-                    value={suForm.firstName}
-                    onChange={(e) => setSuForm({ ...suForm, firstName: e.target.value })}
-                    placeholder={ar ? 'محمد' : 'John'}
-                    autoComplete="given-name"
-                    required
-                  />
-                  <Field
-                    label={ar ? 'الاسم الأخير *' : 'Last Name *'}
-                    value={suForm.lastName}
-                    onChange={(e) => setSuForm({ ...suForm, lastName: e.target.value })}
-                    placeholder={ar ? 'أحمد' : 'Doe'}
-                    autoComplete="family-name"
-                    required
-                  />
-                </div>
-                <Field
-                  label={ar ? 'البريد الإلكتروني أو رقم الهاتف *' : 'Email or Phone Number *'}
-                  value={suForm.identifier}
-                  onChange={(e) => setSuForm({ ...suForm, identifier: e.target.value })}
-                  placeholder={ar ? 'example@mail.com أو 010xxxxxxxx' : 'example@mail.com or 010xxxxxxxx'}
-                  autoComplete="username"
-                  required
-                />
-                <Field
-                  label={ar ? 'كلمة المرور *' : 'Password *'}
-                  type="password"
-                  value={suForm.password}
-                  onChange={(e) => setSuForm({ ...suForm, password: e.target.value })}
-                  placeholder={ar ? '8 أحرف، حرف كبير، ورقم' : '8+ chars, uppercase & number'}
-                  autoComplete="new-password"
-                  required
-                />
-                {/* referralCode بيتبعت في الـ payload من localStorage بس — مش field ظاهر */}
-                <ErrorBanner message={suError} />
-                <SubmitBtn loading={suLoading} label={ar ? 'إنشاء الحساب' : 'Create Account'} loadingLabel={ar ? 'جارٍ الإنشاء...' : 'Creating...'} />
-                <p className="text-center text-xs text-gray-500">
-                  {ar ? 'لديك حساب بالفعل؟' : 'Already have an account?'}{' '}
-                  <button type="button" onClick={() => { setModal('signin'); setSuError(''); }} className="font-semibold text-black underline underline-offset-2">
-                    {ar ? 'تسجيل الدخول' : 'Sign In'}
-                  </button>
-                </p>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 }
