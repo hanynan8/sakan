@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
@@ -82,7 +82,7 @@ function SubmitBtn({ loading, label, loadingLabel }) {
 /* ═══════════════════════════════════════════════
    MAIN NAVBAR
 ═══════════════════════════════════════════════ */
-export default function Navbar() {
+function NavbarContent() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const { language, toggleLanguage } = useLanguage();
@@ -629,5 +629,17 @@ export default function Navbar() {
         </div>
       )}
     </>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   DEFAULT EXPORT — wrapped in Suspense because
+   NavbarContent uses useSearchParams()
+═══════════════════════════════════════════════ */
+export default function Navbar() {
+  return (
+    <Suspense fallback={null}>
+      <NavbarContent />
+    </Suspense>
   );
 }
