@@ -3,19 +3,548 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+/* ═══════════════════════════════════════════════
+   STATIC DATA (كانت جايه من /api/data?collection=Home)
+═══════════════════════════════════════════════ */
+const HOME_DATA = {
+  hero: {
+    backgroundImage: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069',
+    ar: {
+      mainHeading: 'ابحث عن سكنك المثالي\nبالقرب من جامعتك',
+      subHeading: 'آلاف الوحدات السكنية المُتحقق منها في أفضل المناطق',
+      searchPlaceholder: 'ابحث بالجامعة، المنطقة، أو نوع السكن...',
+      ctaButton: 'ابحث الآن',
+      popularSearchesLabel: 'عمليات بحث شائعة:',
+      popularSearches: [
+        'القاهرة الجديدة',
+        'مدينة نصر',
+        'المهندسين',
+        'الدقي',
+        '6 أكتوبر'
+      ]
+    },
+    en: {
+      mainHeading: 'Find Your Perfect Home\nNear Your University',
+      subHeading: 'Thousands of verified accommodations in the best areas',
+      searchPlaceholder: 'Search by university, area, or accommodation type...',
+      ctaButton: 'Search Now',
+      popularSearchesLabel: 'Popular searches:',
+      popularSearches: [
+        'New Cairo',
+        'Nasr City',
+        'Mohandessin',
+        'Dokki',
+        '6th October'
+      ]
+    }
+  },
+  trendingColleges: {
+    ar: {
+      sectionTitle: 'الجامعات الأكثر طلباً',
+      sectionSubtitle: 'اكتشف أفضل السكنات بالقرب من جامعتك',
+      viewAllText: 'عرض جميع الجامعات'
+    },
+    en: {
+      sectionTitle: 'Trending Universities',
+      sectionSubtitle: 'Discover the best accommodations near your university',
+      viewAllText: 'View All Universities'
+    },
+    colleges: [
+      {
+        id: 'col1',
+        image: 'https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=900',
+        availableProperties: 320,
+        averagePrice: {
+          min: 2500,
+          currency: 'EGP'
+        },
+        popularAreas: [
+          'مدينة نصر',
+          'الرحاب',
+          'مصر الجديدة'
+        ],
+        ar: {
+          name: 'جامعة القاهرة',
+          location: 'الجيزة، مصر',
+          description: 'أعرق الجامعات المصرية تأسست عام 1908'
+        },
+        en: {
+          name: 'Cairo University',
+          location: 'Giza, Egypt',
+          description: "Egypt's oldest university established in 1908"
+        }
+      },
+      {
+        id: 'col2',
+        image: 'https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?q=80&w=900',
+        availableProperties: 280,
+        averagePrice: {
+          min: 3000,
+          currency: 'EGP'
+        },
+        popularAreas: [
+          'القاهرة الجديدة',
+          'التجمع الخامس',
+          'مدينتي'
+        ],
+        ar: {
+          name: 'الجامعة الأمريكية بالقاهرة',
+          location: 'التجمع الخامس، القاهرة',
+          description: 'جامعة دولية رائدة في قلب القاهرة الجديدة'
+        },
+        en: {
+          name: 'American University in Cairo',
+          location: 'New Cairo, Egypt',
+          description: 'A leading international university in the heart of New Cairo'
+        }
+      },
+      {
+        id: 'col3',
+        image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=900',
+        availableProperties: 410,
+        averagePrice: {
+          min: 2000,
+          currency: 'EGP'
+        },
+        popularAreas: [
+          'المهندسين',
+          'الدقي',
+          'أكتوبر'
+        ],
+        ar: {
+          name: 'جامعة عين شمس',
+          location: 'القاهرة، مصر',
+          description: 'جامعة حكومية كبرى تضم أكثر من 150,000 طالب'
+        },
+        en: {
+          name: 'Ain Shams University',
+          location: 'Cairo, Egypt',
+          description: 'A major public university with over 150,000 students'
+        }
+      },
+      {
+        id: 'col4',
+        image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=900',
+        availableProperties: 195,
+        averagePrice: {
+          min: 2800,
+          currency: 'EGP'
+        },
+        popularAreas: [
+          '6 أكتوبر',
+          'الشيخ زايد',
+          'حدائق الأهرام'
+        ],
+        ar: {
+          name: 'جامعة الزقازيق',
+          location: 'الزقازيق، مصر',
+          description: 'جامعة إقليمية متميزة في قلب الدلتا'
+        },
+        en: {
+          name: 'Zagazig University',
+          location: 'Zagazig, Egypt',
+          description: 'A distinguished regional university in the heart of the Delta'
+        }
+      },
+      {
+        id: 'col5',
+        image: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?q=80&w=900',
+        availableProperties: 230,
+        averagePrice: {
+          min: 3500,
+          currency: 'EGP'
+        },
+        popularAreas: [
+          'الشروق',
+          'بدر',
+          'العبور'
+        ],
+        ar: {
+          name: 'جامعة المنصورة',
+          location: 'المنصورة، مصر',
+          description: 'جامعة حكومية عريقة على ضفاف نهر النيل'
+        },
+        en: {
+          name: 'Mansoura University',
+          location: 'Mansoura, Egypt',
+          description: 'A prestigious public university on the banks of the Nile'
+        }
+      }
+    ]
+  },
+  featuredProperties: {
+    ar: {
+      sectionTitle: 'عقارات مميزة',
+      sectionSubtitle: 'اكتشف أفضل الوحدات السكنية المختارة بعناية',
+      viewAllText: 'عرض جميع العقارات'
+    },
+    en: {
+      sectionTitle: 'Featured Properties',
+      sectionSubtitle: 'Discover the best hand-picked accommodations',
+      viewAllText: 'View All Properties'
+    },
+    properties: [
+      {
+        id: 'prop1',
+        images: [
+          'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=900'
+        ],
+        verified: true,
+        price: {
+          amount: 3500,
+          currency: 'EGP',
+          period: 'شهر'
+        },
+        rating: 4.8,
+        reviewsCount: 42,
+        distance: '5 دقائق من الجامعة',
+        propertyType: 'شقة',
+        roomType: 'غرفة مفردة',
+        capacity: 1,
+        features: [
+          'واي فاي',
+          'مكيف هواء',
+          'أمن 24 ساعة'
+        ],
+        ar: {
+          name: 'شقة فاخرة في مدينة نصر',
+          location: 'مدينة نصر، القاهرة'
+        },
+        en: {
+          name: 'Luxury Apartment in Nasr City',
+          location: 'Nasr City, Cairo'
+        }
+      },
+      {
+        id: 'prop2',
+        images: [
+          'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=900'
+        ],
+        verified: true,
+        price: {
+          amount: 2800,
+          currency: 'EGP',
+          period: 'شهر'
+        },
+        rating: 4.6,
+        reviewsCount: 28,
+        distance: '10 دقائق من الجامعة',
+        propertyType: 'استوديو',
+        roomType: 'استوديو كامل',
+        capacity: 1,
+        features: [
+          'مطبخ مجهز',
+          'غسالة',
+          'حارس'
+        ],
+        ar: {
+          name: 'استوديو مجهز في الدقي',
+          location: 'الدقي، الجيزة'
+        },
+        en: {
+          name: 'Furnished Studio in Dokki',
+          location: 'Dokki, Giza'
+        }
+      },
+      {
+        id: 'prop3',
+        images: [
+          'https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=900'
+        ],
+        verified: false,
+        price: {
+          amount: 1800,
+          currency: 'EGP',
+          period: 'شهر'
+        },
+        rating: 4.3,
+        reviewsCount: 15,
+        distance: '15 دقائق من الجامعة',
+        propertyType: 'غرفة في شقة مشتركة',
+        roomType: 'غرفة مشتركة',
+        capacity: 2,
+        features: [
+          'موقف سيارات',
+          'إنترنت'
+        ],
+        ar: {
+          name: 'غرفة في شقة طلابية بالمهندسين',
+          location: 'المهندسين، الجيزة'
+        },
+        en: {
+          name: 'Room in Student Apartment in Mohandessin',
+          location: 'Mohandessin, Giza'
+        }
+      },
+      {
+        id: 'prop4',
+        images: [
+          'https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=900'
+        ],
+        verified: true,
+        price: {
+          amount: 4200,
+          currency: 'EGP',
+          period: 'شهر'
+        },
+        rating: 4.9,
+        reviewsCount: 60,
+        distance: '3 دقائق من الجامعة',
+        propertyType: 'شقة',
+        roomType: 'غرفة مزدوجة',
+        capacity: 2,
+        features: [
+          'بركة سباحة',
+          'نادي رياضي',
+          'أمن 24 ساعة',
+          'واي فاي'
+        ],
+        ar: {
+          name: 'شقة فاخرة في التجمع الخامس',
+          location: 'التجمع الخامس، القاهرة الجديدة'
+        },
+        en: {
+          name: 'Luxury Apartment in 5th Settlement',
+          location: '5th Settlement, New Cairo'
+        }
+      },
+      {
+        id: 'prop5',
+        images: [
+          'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=900'
+        ],
+        verified: true,
+        price: {
+          amount: 2200,
+          currency: 'EGP',
+          period: 'شهر'
+        },
+        rating: 4.5,
+        reviewsCount: 33,
+        distance: '8 دقائق من الجامعة',
+        propertyType: 'شقة',
+        roomType: 'غرفة مفردة',
+        capacity: 1,
+        features: [
+          'مصعد',
+          'أمن',
+          'إنترنت'
+        ],
+        ar: {
+          name: 'شقة هادئة في مصر الجديدة',
+          location: 'مصر الجديدة، القاهرة'
+        },
+        en: {
+          name: 'Quiet Apartment in Heliopolis',
+          location: 'Heliopolis, Cairo'
+        }
+      }
+    ]
+  },
+  popularAreas: {
+    ar: {
+      sectionTitle: 'المناطق الأكثر طلباً',
+      sectionSubtitle: 'اكتشف المناطق الأفضل للعيش بالقرب من جامعتك'
+    },
+    en: {
+      sectionTitle: 'Popular Areas',
+      sectionSubtitle: 'Discover the best areas to live near your university'
+    },
+    areas: [
+      {
+        id: 'area1',
+        image: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=900',
+        propertiesCount: 450,
+        averagePrice: 2800,
+        ar: {
+          name: 'مدينة نصر',
+          description: 'منطقة حيوية في قلب القاهرة قريبة من عدة جامعات كبرى'
+        },
+        en: {
+          name: 'Nasr City',
+          description: 'A vibrant area in the heart of Cairo close to several major universities'
+        }
+      },
+      {
+        id: 'area2',
+        image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=900',
+        propertiesCount: 320,
+        averagePrice: 3500,
+        ar: {
+          name: 'القاهرة الجديدة',
+          description: 'منطقة عصرية هادئة مثالية للطلاب الباحثين عن بيئة دراسية ممتازة'
+        },
+        en: {
+          name: 'New Cairo',
+          description: 'A modern, quiet area ideal for students seeking an excellent study environment'
+        }
+      },
+      {
+        id: 'area3',
+        image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4?q=80&w=900',
+        propertiesCount: 280,
+        averagePrice: 2500,
+        ar: {
+          name: 'المهندسين والدقي',
+          description: 'قلب الجيزة الثقافي مع سهولة الوصول لجامعة القاهرة وغيرها'
+        },
+        en: {
+          name: 'Mohandessin & Dokki',
+          description: 'The cultural heart of Giza with easy access to Cairo University and others'
+        }
+      }
+    ]
+  },
+  testimonials: {
+    ar: {
+      sectionTitle: 'ماذا يقول طلابنا؟',
+      sectionSubtitle: 'آراء حقيقية من طلاب وجدوا سكنهم المثالي معنا'
+    },
+    en: {
+      sectionTitle: 'What Our Students Say',
+      sectionSubtitle: 'Real reviews from students who found their perfect home with us'
+    },
+    reviews: [
+      {
+        id: 'rev1',
+        avatar: 'https://i.pravatar.cc/100?img=1',
+        ar: {
+          name: 'أحمد محمد',
+          university: 'جامعة القاهرة',
+          review: 'وجدت سكن ممتاز في أقل من أسبوع! المنصة سهلة الاستخدام والدعم كان رائع.',
+          rating: 5
+        },
+        en: {
+          name: 'Ahmed Mohamed',
+          university: 'Cairo University',
+          review: 'Found an excellent accommodation in less than a week! The platform is easy to use and the support was great.',
+          rating: 5
+        }
+      },
+      {
+        id: 'rev2',
+        avatar: 'https://i.pravatar.cc/100?img=5',
+        ar: {
+          name: 'سارة علي',
+          university: 'الجامعة الأمريكية',
+          review: 'أفضل منصة لإيجاد السكن الطلابي. الأسعار معقولة والعقارات موثقة ومضمونة.',
+          rating: 5
+        },
+        en: {
+          name: 'Sara Ali',
+          university: 'American University',
+          review: 'Best platform for finding student housing. Prices are reasonable and properties are verified and guaranteed.',
+          rating: 5
+        }
+      },
+      {
+        id: 'rev3',
+        avatar: 'https://i.pravatar.cc/100?img=8',
+        ar: {
+          name: 'محمد حسن',
+          university: 'جامعة عين شمس',
+          review: 'تجربة رائعة من البداية للنهاية. وفرت عليّ وقتاً وجهداً كبيراً في إيجاد السكن المناسب.',
+          rating: 4
+        },
+        en: {
+          name: 'Mohamed Hassan',
+          university: 'Ain Shams University',
+          review: 'Wonderful experience from start to finish. Saved me a lot of time and effort in finding the right accommodation.',
+          rating: 4
+        }
+      },
+      {
+        id: 'rev4',
+        avatar: 'https://i.pravatar.cc/100?img=12',
+        ar: {
+          name: 'نور إبراهيم',
+          university: 'جامعة المنصورة',
+          review: 'سكن نظيف وآمن بسعر مناسب. شكراً لفريق سكني على المساعدة!',
+          rating: 5
+        },
+        en: {
+          name: 'Nour Ibrahim',
+          university: 'Mansoura University',
+          review: 'Clean and safe accommodation at a reasonable price. Thank you Sakani team for your help!',
+          rating: 5
+        }
+      }
+    ]
+  },
+  howItWorks: {
+    ar: {
+      sectionTitle: 'كيف يعمل سكني؟',
+      sectionSubtitle: '3 خطوات بسيطة للعثور على سكنك المثالي'
+    },
+    en: {
+      sectionTitle: 'How Sakani Works',
+      sectionSubtitle: '3 simple steps to find your perfect home'
+    },
+    steps: [
+      {
+        id: 'step1',
+        stepNumber: '1',
+        ar: {
+          title: 'ابحث',
+          description: 'استخدم محرك البحث للعثور على السكن المناسب بالقرب من جامعتك'
+        },
+        en: {
+          title: 'Search',
+          description: 'Use our search engine to find suitable accommodation near your university'
+        }
+      },
+      {
+        id: 'step2',
+        stepNumber: '2',
+        ar: {
+          title: 'قارن واختار',
+          description: 'قارن بين الخيارات المتاحة من حيث السعر والموقع والمميزات'
+        },
+        en: {
+          title: 'Compare & Choose',
+          description: 'Compare available options by price, location, and features'
+        }
+      },
+      {
+        id: 'step3',
+        stepNumber: '3',
+        ar: {
+          title: 'احجز بأمان',
+          description: 'احجز وحدتك السكنية بأمان عبر منصتنا الموثوقة'
+        },
+        en: {
+          title: 'Book Safely',
+          description: 'Book your accommodation safely through our trusted platform'
+        }
+      }
+    ]
+  },
+  callToAction: {
+    ar: {
+      title: 'هل أنت مستعد للانطلاق؟',
+      subtitle: 'انضم إلى آلاف الطلاب الذين وجدوا سكنهم المثالي معنا',
+      description: 'سواء كنت طالباً تبحث عن سكن أو مالك عقار تريد تأجيره، سكني هنا لمساعدتك.',
+      studentCTA: 'ابحث عن سكن',
+      ownerCTA: 'أضف عقارك'
+    },
+    en: {
+      title: 'Ready to Get Started?',
+      subtitle: 'Join thousands of students who found their perfect home with us',
+      description: "Whether you're a student looking for accommodation or a property owner wanting to rent, Sakani is here to help.",
+      studentCTA: 'Find Accommodation',
+      ownerCTA: 'List Your Property'
+    }
+  }
+};
+
 export default function HomePage() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const data = HOME_DATA;
   const { language, toggleLanguage, isRTL } = useLanguage();
   const [collegeSlideIndex, setCollegeSlideIndex] = useState(0);
   const [propertySlideIndex, setPropertySlideIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const sliderRef = useState(null);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   // Get slides per view based on screen size (with more partial cards visible)
   const getSlidesPerView = () => {
@@ -133,37 +662,6 @@ export default function HomePage() {
     setTouchStart(0);
     setTouchEnd(0);
   };
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch('/api/data?collection=Home');
-      const result = await response.json();
-      setData(result[0]);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-black text-lg">جاري التحميل...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-black text-xl">لا توجد بيانات</p>
-      </div>
-    );
-  }
 
   const t = (section) => language === 'ar' ? section?.ar : section?.en;
 

@@ -80,11 +80,121 @@ function SubmitBtn({ loading, label, loadingLabel }) {
 }
 
 /* ═══════════════════════════════════════════════
+   STATIC NAVBAR DATA (كانت جايه من /api/data?collection=Navbar)
+═══════════════════════════════════════════════ */
+const NAVBAR_DATA = {
+  brand: {
+    logo: '',
+    ar: {
+      name: 'سكني'
+    },
+    en: {
+      name: 'Sakani'
+    }
+  },
+  search: {
+    ar: {
+      placeholder: 'ابحث عن سكن، جامعة، منطقة...'
+    },
+    en: {
+      placeholder: 'Search for housing, university, area...'
+    }
+  },
+  support: {
+    ar: {
+      label: 'الدعم',
+      supportNowLabel: 'تواصل معنا الآن',
+      quickLinksLabel: 'روابط سريعة'
+    },
+    en: {
+      label: 'Support',
+      supportNowLabel: 'Contact us now',
+      quickLinksLabel: 'Quick Links'
+    },
+    phone: '+20 100 000 0000',
+    supportNow: [
+      {
+        type: 'whatsapp',
+        url: 'https://wa.me/201000000000',
+        badge: 'online',
+        ar: {
+          label: 'واتساب'
+        },
+        en: {
+          label: 'WhatsApp'
+        }
+      },
+      {
+        type: 'messenger',
+        url: 'https://m.me/sakanipage',
+        badge: '',
+        ar: {
+          label: 'ماسنجر'
+        },
+        en: {
+          label: 'Messenger'
+        }
+      },
+      {
+        type: 'email',
+        url: 'mailto:support@sakani.com',
+        badge: '',
+        ar: {
+          label: 'البريد الإلكتروني'
+        },
+        en: {
+          label: 'Email Us'
+        }
+      },
+      {
+        type: 'chat',
+        url: '#chat',
+        badge: 'online',
+        ar: {
+          label: 'دردشة مباشرة'
+        },
+        en: {
+          label: 'Live Chat'
+        }
+      }
+    ],
+    quickLinks: [
+      {
+        url: '/help/how-it-works',
+        ar: {
+          label: 'كيف يعمل الموقع؟'
+        },
+        en: {
+          label: 'How it works?'
+        }
+      },
+      {
+        url: '/help',
+        ar: {
+          label: 'مركز المساعدة'
+        },
+        en: {
+          label: 'Help Center'
+        }
+      },
+      {
+        url: '/submit-request',
+        ar: {
+          label: 'إرسال طلب دعم'
+        },
+        en: {
+          label: 'Submit a Request'
+        }
+      }
+    ]
+  }
+};
+
+/* ═══════════════════════════════════════════════
    MAIN NAVBAR
 ═══════════════════════════════════════════════ */
 function NavbarContent() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const data = NAVBAR_DATA;
   const { language, toggleLanguage } = useLanguage();
 
   const [supportOpen, setSupportOpen]       = useState(false);
@@ -144,7 +254,6 @@ function NavbarContent() {
   const isEmail = (val) => /\S+@\S+\.\S+/.test(val);
 
   useEffect(() => {
-    fetchData();
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll);
     const onClickOutside = (e) => {
@@ -157,18 +266,6 @@ function NavbarContent() {
       document.removeEventListener('mousedown', onClickOutside);
     };
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const res    = await fetch('/api/data?collection=Navbar');
-      const result = await res.json();
-      setData(result[0]);
-    } catch (err) {
-      console.error('Navbar fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   /* ── SIGN IN ── */
   const handleSignIn = async (e) => {
@@ -288,8 +385,6 @@ function NavbarContent() {
       href: '/my-bookings',
     },
   ];
-
-  if (loading || !data) return <nav className="h-14 bg-white border-b border-gray-200 sticky top-0 z-50" />;
 
   return (
     <>
@@ -643,4 +738,3 @@ export default function Navbar() {
     </Suspense>
   );
 }
-

@@ -1,32 +1,260 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+/* ═══════════════════════════════════════════════
+   STATIC FOOTER DATA (كانت جايه من /api/data?collection=footer)
+═══════════════════════════════════════════════ */
+const FOOTER_DATA = {
+  newsletter: {
+    ar: {
+      title: 'اشترك في نشرتنا البريدية',
+      subtitle: 'احصل على أحدث العروض والأخبار مباشرة في بريدك',
+      placeholder: 'بريدك الإلكتروني...',
+      buttonText: 'اشترك'
+    },
+    en: {
+      title: 'Subscribe to our newsletter',
+      subtitle: 'Get the latest offers and news directly to your inbox',
+      placeholder: 'Your email address...',
+      buttonText: 'Subscribe'
+    }
+  },
+  brand: {
+    logo: '',
+    ar: {
+      name: 'سكني',
+      description: 'المنصة الأولى لإيجاد السكن الطلابي المثالي بالقرب من جامعتك بأفضل الأسعار.'
+    },
+    en: {
+      name: 'Sakani',
+      description: 'The leading platform for finding the perfect student accommodation near your university at the best prices.'
+    },
+    socialLinks: [
+      {
+        platform: 'facebook',
+        url: 'https://facebook.com/sakani'
+      },
+      {
+        platform: 'instagram',
+        url: 'https://instagram.com/sakani'
+      },
+      {
+        platform: 'twitter',
+        url: 'https://twitter.com/sakani'
+      },
+      {
+        platform: 'whatsapp',
+        url: 'https://wa.me/201000000000'
+      },
+      {
+        platform: 'youtube',
+        url: 'https://youtube.com/@sakani'
+      }
+    ]
+  },
+  linkGroups: [
+    {
+      ar: {
+        title: 'الموقع'
+      },
+      en: {
+        title: 'Site'
+      },
+      links: [
+        {
+          url: '/',
+          ar: {
+            label: 'الرئيسية'
+          },
+          en: {
+            label: 'Home'
+          }
+        },
+        {
+          url: '/properties',
+          ar: {
+            label: 'العقارات'
+          },
+          en: {
+            label: 'Properties'
+          }
+        },
+        {
+          url: '/help/how-it-works',
+          ar: {
+            label: 'كيف يعمل'
+          },
+          en: {
+            label: 'How It Works'
+          },
+          badge: 'NEW'
+        },
+        {
+          url: '/help/blog',
+          ar: {
+            label: 'المدونة'
+          },
+          en: {
+            label: 'Blog'
+          }
+        }
+      ]
+    },
+    {
+      ar: {
+        title: 'الدعم'
+      },
+      en: {
+        title: 'Support'
+      },
+      links: [
+        {
+          url: '/help',
+          ar: {
+            label: 'مركز المساعدة'
+          },
+          en: {
+            label: 'Help Center'
+          }
+        },
+        {
+          url: '/submit-request',
+          ar: {
+            label: 'إرسال طلب'
+          },
+          en: {
+            label: 'Submit Request'
+          }
+        },
+        {
+          url: '/refer',
+          ar: {
+            label: 'أحل صديقاً'
+          },
+          en: {
+            label: 'Refer a Friend'
+          }
+        }
+      ]
+    },
+    {
+      ar: {
+        title: 'قانوني'
+      },
+      en: {
+        title: 'Legal'
+      },
+      links: [
+        {
+          url: '/privacy',
+          ar: {
+            label: 'سياسة الخصوصية'
+          },
+          en: {
+            label: 'Privacy Policy'
+          }
+        },
+        {
+          url: '/terms',
+          ar: {
+            label: 'الشروط والأحكام'
+          },
+          en: {
+            label: 'Terms & Conditions'
+          }
+        },
+        {
+          url: '/cookies',
+          ar: {
+            label: 'سياسة الكوكيز'
+          },
+          en: {
+            label: 'Cookie Policy'
+          }
+        }
+      ]
+    }
+  ],
+  contactInfo: [
+    {
+      type: 'phone',
+      ar: {
+        label: 'الهاتف',
+        value: '+20 100 000 0000'
+      },
+      en: {
+        label: 'Phone',
+        value: '+20 100 000 0000'
+      }
+    },
+    {
+      type: 'email',
+      ar: {
+        label: 'البريد الإلكتروني',
+        value: 'support@sakani.com'
+      },
+      en: {
+        label: 'Email',
+        value: 'support@sakani.com'
+      }
+    },
+    {
+      type: 'location',
+      ar: {
+        label: 'الموقع',
+        value: 'القاهرة، مصر'
+      },
+      en: {
+        label: 'Location',
+        value: 'Cairo, Egypt'
+      }
+    }
+  ],
+  bottomBar: {
+    ar: {
+      copyright: '© {year} سكني. جميع الحقوق محفوظة.'
+    },
+    en: {
+      copyright: '© {year} Sakani. All rights reserved.'
+    },
+    legalLinks: [
+      {
+        url: '/privacy',
+        ar: {
+          label: 'الخصوصية'
+        },
+        en: {
+          label: 'Privacy'
+        }
+      },
+      {
+        url: '/terms',
+        ar: {
+          label: 'الشروط'
+        },
+        en: {
+          label: 'Terms'
+        }
+      },
+      {
+        url: '/sitemap',
+        ar: {
+          label: 'خريطة الموقع'
+        },
+        en: {
+          label: 'Sitemap'
+        }
+      }
+    ]
+  }
+};
+
 export default function Footer() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const data = FOOTER_DATA;
   const { language } = useLanguage();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch('/api/data?collection=footer');
-      const result = await response.json();
-      setData(result[0]);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching footer data:', error);
-      setLoading(false);
-    }
-  };
-
   const t = (section) => language === 'ar' ? section?.ar : section?.en;
-
-  if (loading || !data) return null;
 
   return (
     <footer className={`bg-gray-800 text-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>

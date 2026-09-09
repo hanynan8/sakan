@@ -1,34 +1,256 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+/* ═══════════════════════════════════════════════
+   STATIC DATA (كانت جايه من /api/data?collection=help)
+═══════════════════════════════════════════════ */
+const HELP_DATA = {
+  navbar: {
+    brand: {
+      logo: '',
+      ar: {
+        name: 'سكني'
+      },
+      en: {
+        name: 'Sakani'
+      }
+    },
+    ar: {
+      helpLabel: 'مركز المساعدة'
+    },
+    en: {
+      helpLabel: 'Help Center'
+    },
+    links: [
+      {
+        url: '/help/request',
+        ar: {
+          label: 'إرسال طلب'
+        },
+        en: {
+          label: 'Submit a Request'
+        }
+      },
+      {
+        url: '/',
+        ar: {
+          label: 'العودة للموقع'
+        },
+        en: {
+          label: 'Back to Site'
+        }
+      }
+    ]
+  },
+  hero: {
+    bgColor: '#e8445a',
+    ar: {
+      heading: 'مرحباً، كيف يمكننا مساعدتك؟',
+      searchPlaceholder: 'ابحث عن مقالات المساعدة...'
+    },
+    en: {
+      heading: 'Hello, how can we help you?',
+      searchPlaceholder: 'Search for help articles...'
+    }
+  },
+  categories: [
+    {
+      id: 'cat1',
+      icon: 'info',
+      url: '/help/getting-started',
+      ar: {
+        title: 'البدء مع سكني',
+        description: 'تعلم كيفية إنشاء حسابك والبحث عن السكن المناسب خطوة بخطوة.'
+      },
+      en: {
+        title: 'Getting Started',
+        description: 'Learn how to create your account and find suitable accommodation step by step.'
+      }
+    },
+    {
+      id: 'cat2',
+      icon: 'booking',
+      url: '/help/bookings',
+      ar: {
+        title: 'الحجوزات',
+        description: 'كل ما يتعلق بعملية الحجز، التأكيد، والتواصل مع أصحاب العقارات.'
+      },
+      en: {
+        title: 'Bookings',
+        description: 'Everything related to the booking process, confirmation, and communication with property owners.'
+      }
+    },
+    {
+      id: 'cat3',
+      icon: 'offers',
+      url: '/help/offers',
+      ar: {
+        title: 'العروض والخصومات',
+        description: 'اكتشف أحدث العروض والكوبونات والخصومات المتاحة على المنصة.'
+      },
+      en: {
+        title: 'Offers & Discounts',
+        description: 'Discover the latest offers, coupons and discounts available on the platform.'
+      }
+    },
+    {
+      id: 'cat4',
+      icon: 'cancel',
+      url: '/help/cancellations',
+      ar: {
+        title: 'الإلغاء والاسترداد',
+        description: 'فهم سياسة الإلغاء وكيفية استرداد المبالغ المدفوعة.'
+      },
+      en: {
+        title: 'Cancellations & Refunds',
+        description: 'Understand the cancellation policy and how to get refunds.'
+      }
+    },
+    {
+      id: 'cat5',
+      icon: 'contact',
+      url: '/help/contact',
+      ar: {
+        title: 'التواصل مع الدعم',
+        description: 'تواصل مع فريق الدعم عبر الدردشة المباشرة، البريد الإلكتروني، أو الهاتف.'
+      },
+      en: {
+        title: 'Contact Support',
+        description: 'Contact the support team via live chat, email, or phone.'
+      }
+    },
+    {
+      id: 'cat6',
+      icon: 'checklist',
+      url: '/help/account',
+      ar: {
+        title: 'إدارة الحساب',
+        description: 'إدارة معلوماتك الشخصية، كلمة المرور، وإعدادات الحساب.'
+      },
+      en: {
+        title: 'Account Management',
+        description: 'Manage your personal information, password, and account settings.'
+      }
+    }
+  ],
+  promotedArticles: [
+    {
+      url: '/help/how-to-book',
+      ar: {
+        title: 'كيفية إتمام عملية الحجز بنجاح'
+      },
+      en: {
+        title: 'How to complete a booking successfully'
+      }
+    },
+    {
+      url: '/help/payment-methods',
+      ar: {
+        title: 'طرق الدفع المتاحة على سكني'
+      },
+      en: {
+        title: 'Available payment methods on Sakani'
+      }
+    },
+    {
+      url: '/help/verified-properties',
+      ar: {
+        title: 'ما معنى العقار الموثق؟'
+      },
+      en: {
+        title: 'What does a verified property mean?'
+      }
+    },
+    {
+      url: '/help/referral-program',
+      ar: {
+        title: 'برنامج الإحالة وكيفية الاستفادة منه'
+      },
+      en: {
+        title: 'Referral program and how to benefit from it'
+      }
+    },
+    {
+      url: '/help/student-discounts',
+      ar: {
+        title: 'خصومات الطلاب المتاحة'
+      },
+      en: {
+        title: 'Available student discounts'
+      }
+    },
+    {
+      url: '/help/safety-tips',
+      ar: {
+        title: 'نصائح الأمان عند الحجز'
+      },
+      en: {
+        title: 'Safety tips when booking'
+      }
+    }
+  ],
+  footer: {
+    brand: {
+      logo: '',
+      ar: {
+        name: 'سكني'
+      },
+      en: {
+        name: 'Sakani'
+      }
+    },
+    ar: {
+      copyright: '© {year} سكني. جميع الحقوق محفوظة.'
+    },
+    en: {
+      copyright: '© {year} Sakani. All rights reserved.'
+    },
+    links: [
+      {
+        url: '/privacy',
+        ar: {
+          label: 'الخصوصية'
+        },
+        en: {
+          label: 'Privacy'
+        }
+      },
+      {
+        url: '/terms',
+        ar: {
+          label: 'الشروط'
+        },
+        en: {
+          label: 'Terms'
+        }
+      },
+      {
+        url: '/',
+        ar: {
+          label: 'الرئيسية'
+        },
+        en: {
+          label: 'Home'
+        }
+      }
+    ]
+  }
+};
+
 export default function HelpCenterPage() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const data = HELP_DATA;
   const { language, toggleLanguage } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    fetchData();
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch('/api/data?collection=help');
-      const result = await response.json();
-      setData(result[0]);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching help data:', error);
-      setLoading(false);
-    }
-  };
 
   const t = (section) => (language === 'ar' ? section?.ar : section?.en);
 
@@ -40,22 +262,6 @@ export default function HelpCenterPage() {
       t(cat)?.description?.toLowerCase().includes(q)
     );
   });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-10 h-10 border-4 border-red-400 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-500 text-lg">لا توجد بيانات</p>
-      </div>
-    );
-  }
 
   return (
     <div className={`min-h-screen bg-white font-sans flex flex-col ${language === 'ar' ? 'rtl' : 'ltr'}`}>

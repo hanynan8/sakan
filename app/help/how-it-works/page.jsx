@@ -1,48 +1,331 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+/* ═══════════════════════════════════════════════
+   STATIC DATA (كانت جايه من /api/data?collection=howItWorks)
+═══════════════════════════════════════════════ */
+const HOW_IT_WORKS_DATA = {
+  hero: {
+    primaryCtaUrl: '/properties',
+    secondaryCtaUrl: '/list-property',
+    ar: {
+      badge: 'دليلك الكامل',
+      title: 'كيف يعمل سكني؟',
+      subtitle: 'كل ما تحتاج معرفته للبدء في إيجاد سكنك أو تأجير عقارك',
+      primaryCta: 'ابحث عن سكن',
+      secondaryCta: 'أضف عقارك'
+    },
+    en: {
+      badge: 'Your Complete Guide',
+      title: 'How Does Sakani Work?',
+      subtitle: 'Everything you need to know to start finding accommodation or renting your property',
+      primaryCta: 'Find Accommodation',
+      secondaryCta: 'List Your Property'
+    }
+  },
+  tabs: {
+    studentCtaUrl: '/properties',
+    ownerCtaUrl: '/list-property',
+    ar: {
+      studentLabel: 'للطلاب',
+      ownerLabel: 'لأصحاب العقارات',
+      studentCta: 'ابدأ البحث الآن',
+      ownerCta: 'أضف عقارك الآن'
+    },
+    en: {
+      studentLabel: 'For Students',
+      ownerLabel: 'For Property Owners',
+      studentCta: 'Start Searching Now',
+      ownerCta: 'List Your Property Now'
+    }
+  },
+  studentSteps: [
+    {
+      id: 'ss1',
+      stepNumber: '1',
+      ar: {
+        title: 'سجّل حساب مجاني',
+        description: 'أنشئ حسابك في دقيقة واحدة باستخدام بريدك الإلكتروني أو رقم هاتفك'
+      },
+      en: {
+        title: 'Create a Free Account',
+        description: 'Create your account in one minute using your email or phone number'
+      }
+    },
+    {
+      id: 'ss2',
+      stepNumber: '2',
+      ar: {
+        title: 'ابحث وفلتر',
+        description: 'ابحث عن السكن حسب الجامعة، المنطقة، السعر، والمميزات التي تناسبك'
+      },
+      en: {
+        title: 'Search & Filter',
+        description: 'Search for accommodation by university, area, price, and features that suit you'
+      }
+    },
+    {
+      id: 'ss3',
+      stepNumber: '3',
+      ar: {
+        title: 'احجز وانتقل',
+        description: 'احجز وحدتك بأمان وانتقل إلى سكنك الجديد'
+      },
+      en: {
+        title: 'Book & Move In',
+        description: 'Book your unit safely and move into your new home'
+      }
+    }
+  ],
+  ownerSteps: [
+    {
+      id: 'os1',
+      stepNumber: '1',
+      ar: {
+        title: 'سجّل كمالك عقار',
+        description: 'أنشئ حسابك وأضف معلومات عقارك بسهولة'
+      },
+      en: {
+        title: 'Register as Property Owner',
+        description: 'Create your account and add your property information easily'
+      }
+    },
+    {
+      id: 'os2',
+      stepNumber: '2',
+      ar: {
+        title: 'أضف عقارك',
+        description: 'أضف صور وتفاصيل عقارك وحدد السعر والمميزات المتاحة'
+      },
+      en: {
+        title: 'List Your Property',
+        description: 'Add photos and details of your property and set the price and available features'
+      }
+    },
+    {
+      id: 'os3',
+      stepNumber: '3',
+      ar: {
+        title: 'استقبل الطلاب',
+        description: 'استقبل طلبات الحجز من الطلاب وأدر عقارك بسهولة'
+      },
+      en: {
+        title: 'Receive Students',
+        description: 'Receive booking requests from students and manage your property easily'
+      }
+    }
+  ],
+  features: {
+    ar: {
+      sectionTitle: 'لماذا تختار سكني؟',
+      sectionSubtitle: 'مميزات تجعلنا الخيار الأول للطلاب وأصحاب العقارات'
+    },
+    en: {
+      sectionTitle: 'Why Choose Sakani?',
+      sectionSubtitle: 'Features that make us the first choice for students and property owners'
+    },
+    items: [
+      {
+        id: 'f1',
+        icon: 'shield',
+        ar: {
+          title: 'عقارات موثقة',
+          description: 'كل عقار على منصتنا يمر بعملية تحقق صارمة لضمان جودته وأمانه'
+        },
+        en: {
+          title: 'Verified Properties',
+          description: 'Every property on our platform goes through a strict verification process to ensure quality and safety'
+        }
+      },
+      {
+        id: 'f2',
+        icon: 'search',
+        ar: {
+          title: 'بحث متقدم',
+          description: 'ابحث بدقة باستخدام فلاتر متعددة للعثور على السكن المثالي'
+        },
+        en: {
+          title: 'Advanced Search',
+          description: 'Search precisely using multiple filters to find the perfect accommodation'
+        }
+      },
+      {
+        id: 'f3',
+        icon: 'chat',
+        ar: {
+          title: 'دعم 24/7',
+          description: 'فريق دعمنا متاح على مدار الساعة للإجابة على استفساراتك'
+        },
+        en: {
+          title: '24/7 Support',
+          description: 'Our support team is available around the clock to answer your queries'
+        }
+      },
+      {
+        id: 'f4',
+        icon: 'map',
+        ar: {
+          title: 'خريطة تفاعلية',
+          description: 'استكشف العقارات على الخريطة وشاهد المسافة من جامعتك'
+        },
+        en: {
+          title: 'Interactive Map',
+          description: 'Explore properties on the map and see the distance from your university'
+        }
+      },
+      {
+        id: 'f5',
+        icon: 'star',
+        ar: {
+          title: 'تقييمات حقيقية',
+          description: 'آراء وتقييمات حقيقية من طلاب سكنوا في هذه الوحدات مسبقاً'
+        },
+        en: {
+          title: 'Real Reviews',
+          description: 'Genuine opinions and ratings from students who previously lived in these units'
+        }
+      },
+      {
+        id: 'f6',
+        icon: 'money',
+        ar: {
+          title: 'أفضل الأسعار',
+          description: 'نضمن لك أفضل الأسعار مع إمكانية المقارنة بين الوحدات المختلفة'
+        },
+        en: {
+          title: 'Best Prices',
+          description: 'We guarantee the best prices with the ability to compare between different units'
+        }
+      }
+    ]
+  },
+  stats: [
+    {
+      number: '5,000+',
+      ar: {
+        label: 'وحدة سكنية'
+      },
+      en: {
+        label: 'Properties'
+      }
+    },
+    {
+      number: '50+',
+      ar: {
+        label: 'جامعة شريكة'
+      },
+      en: {
+        label: 'Partner Universities'
+      }
+    },
+    {
+      number: '10,000+',
+      ar: {
+        label: 'طالب مسجل'
+      },
+      en: {
+        label: 'Registered Students'
+      }
+    },
+    {
+      number: '98%',
+      ar: {
+        label: 'نسبة الرضا'
+      },
+      en: {
+        label: 'Satisfaction Rate'
+      }
+    }
+  ],
+  faq: {
+    ar: {
+      sectionTitle: 'الأسئلة الشائعة',
+      sectionSubtitle: 'إجابات على أكثر الأسئلة شيوعاً'
+    },
+    en: {
+      sectionTitle: 'Frequently Asked Questions',
+      sectionSubtitle: 'Answers to the most common questions'
+    },
+    items: [
+      {
+        ar: {
+          question: 'كيف أبدأ البحث عن سكن؟',
+          answer: 'يمكنك البدء بإنشاء حساب مجاني ثم استخدام محرك البحث للعثور على السكن المناسب حسب جامعتك أو منطقتك المفضلة.'
+        },
+        en: {
+          question: 'How do I start searching for accommodation?',
+          answer: 'You can start by creating a free account then use the search engine to find suitable accommodation by your university or preferred area.'
+        }
+      },
+      {
+        ar: {
+          question: 'هل العقارات على المنصة موثوقة؟',
+          answer: 'نعم، كل العقارات المدرجة على منصتنا تمر بعملية تحقق صارمة من قبل فريقنا لضمان الجودة والأمان.'
+        },
+        en: {
+          question: 'Are the properties on the platform reliable?',
+          answer: 'Yes, all properties listed on our platform go through a strict verification process by our team to ensure quality and safety.'
+        }
+      },
+      {
+        ar: {
+          question: 'ما هي طرق الدفع المتاحة؟',
+          answer: 'نقبل الدفع عبر البطاقات الائتمانية، التحويل البنكي، والمحافظ الإلكترونية.'
+        },
+        en: {
+          question: 'What payment methods are available?',
+          answer: 'We accept payment via credit cards, bank transfer, and digital wallets.'
+        }
+      },
+      {
+        ar: {
+          question: 'كيف يمكنني إضافة عقاري؟',
+          answer: 'يمكنك إضافة عقارك عبر التسجيل كمالك عقار ثم إتباع خطوات إضافة العقار البسيطة.'
+        },
+        en: {
+          question: 'How can I add my property?',
+          answer: 'You can add your property by registering as a property owner then following the simple property addition steps.'
+        }
+      },
+      {
+        ar: {
+          question: 'هل يمكنني إلغاء الحجز؟',
+          answer: 'نعم، يمكن إلغاء الحجز وفقاً لسياسة الإلغاء الخاصة بكل عقار والمدرجة في صفحة العقار.'
+        },
+        en: {
+          question: 'Can I cancel my booking?',
+          answer: 'Yes, you can cancel your booking according to the cancellation policy specific to each property as listed on the property page.'
+        }
+      }
+    ]
+  },
+  cta: {
+    studentUrl: '/properties',
+    ownerUrl: '/list-property',
+    ar: {
+      title: 'هل أنت مستعد للبدء؟',
+      subtitle: 'انضم إلى آلاف الطلاب وأصحاب العقارات على منصة سكني',
+      studentBtn: 'ابدأ كطالب',
+      ownerBtn: 'ابدأ كمالك'
+    },
+    en: {
+      title: 'Ready to Get Started?',
+      subtitle: 'Join thousands of students and property owners on the Sakani platform',
+      studentBtn: 'Start as Student',
+      ownerBtn: 'Start as Owner'
+    }
+  }
+};
+
 export default function HowItWorksPage() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const data = HOW_IT_WORKS_DATA;
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState('student');
   const [openFaq, setOpenFaq] = useState(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch('/api/data?collection=howItWorks');
-      const result = await response.json();
-      setData(result[0]);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setLoading(false);
-    }
-  };
-
   const t = (section) => language === 'ar' ? section?.ar : section?.en;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#e8445a', borderTopColor: 'transparent' }} />
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-500">لا توجد بيانات</p>
-      </div>
-    );
-  }
 
   return (
     <div className={`min-h-screen bg-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>

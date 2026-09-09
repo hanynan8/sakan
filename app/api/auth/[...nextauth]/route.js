@@ -1,132 +1,14 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import mongoose from 'mongoose';
+import { handlers, connectToMongo, UserModel, getUniqueReferralCode } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 
-// ── DB Connection ──
-const MONGO_URI = process.env.MONGO_URI;
-
-async function connectToMongo() {
-  if (mongoose.connection.readyState >= 1) return;
-  await mongoose.connect(MONGO_URI);
-}
-
-const schema = new mongoose.Schema({}, { strict: false });
-const User = mongoose.models.Model_users || mongoose.model('Model_users', schema, 'users');
-
-// ── Generate unique referral code ──
-function generateReferralCode(firstName) {
-  const prefix = firstName.slice(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `${prefix}-${random}`; // e.g. HAN-X7K2
-}
-
-async function getUniqueReferralCode(firstName) {
-  let code, exists;
-  do {
-    code = generateReferralCode(firstName);
-    exists = await User.findOne({ referralCode: code });
-  } while (exists);
-  return code;
-}
-
-// ── Auth Options ──
-const authOptions = {
-  providers: [
-    CredentialsProvider({
-      name: 'credentials',
-      credentials: {
-        identifier: { label: 'Email or Phone', type: 'text' },
-        password:   { label: 'Password', type: 'password' },
-      },
-
-      async authorize(credentials) {
-        if (!credentials?.identifier || !credentials?.password) return null;
-
-        try {
-          await connectToMongo();
-
-          const isEmail = /\S+@\S+\.\S+/.test(credentials.identifier);
-          const query   = isEmail
-            ? { email: credentials.identifier.toLowerCase().trim() }
-            : { phone: credentials.identifier.trim() };
-
-          const user = await User.findOne(query).lean();
-          if (!user) return null;
-
-          // bcrypt أو plain text fallback
-          let valid = false;
-          if (user.password?.startsWith('$2')) {
-            valid = await bcrypt.compare(credentials.password, user.password);
-          } else {
-            valid = credentials.password === user.password;
-            if (valid) {
-              const hashed = await bcrypt.hash(credentials.password, 10);
-              await User.updateOne({ _id: user._id }, { password: hashed });
-            }
-          }
-
-          if (!valid) return null;
-
-          return {
-            id:               user._id.toString(),
-            name:             `${user.firstName} ${user.lastName}`,
-            email:            user.email || '',
-            phone:            user.phone || '',
-            referralCode:     user.referralCode     || '',
-            referralCount:    user.referralCount    || 0,
-            referralEarnings: user.referralEarnings || 0,
-          };
-        } catch (err) {
-          console.error('authorize error:', err);
-          return null;
-        }
-      },
-    }),
-  ],
-
-  session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 7 },
-  secret: process.env.NEXTAUTH_SECRET,
-
-  pages: {
-    signIn: '/',
-    error:  '/',
-  },
-
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id               = user.id;
-        token.name             = user.name;
-        token.email            = user.email;
-        token.phone            = user.phone;
-        token.referralCode     = user.referralCode;
-        token.referralCount    = user.referralCount;
-        token.referralEarnings = user.referralEarnings;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id               = token.id;
-        session.user.name             = token.name;
-        session.user.email            = token.email;
-        session.user.phone            = token.phone;
-        session.user.referralCode     = token.referralCode;
-        session.user.referralCount    = token.referralCount;
-        session.user.referralEarnings = token.referralEarnings;
-      }
-      return session;
-    },
-  },
-};
+const VALID_SIGNUP_ROLES = ['student', 'owner'];
 
 // ── Register Handler ──
 async function handleRegister(request) {
   try {
     await connectToMongo();
     const body = await request.json();
-    const { firstName, lastName, password, email, phone, referralCode: usedCode } = body;
+    const { firstName, lastName, password, email, phone, referralCode: usedCode, role } = body;
 
     if (!firstName || !lastName || !password || (!email && !phone)) {
       return Response.json({ message: 'Missing required fields' }, { status: 400 });
@@ -143,8 +25,11 @@ async function handleRegister(request) {
       return Response.json({ message: 'Password must contain at least one number' }, { status: 400 });
     }
 
+    // Role: طالب أو مالك بس مسموح من فورم التسجيل (الأدمن بيتحدد يدوي في الداتابيز)
+    const finalRole = VALID_SIGNUP_ROLES.includes(role) ? role : 'student';
+
     // Check duplicate
-    const existing = await User.findOne(email ? { email } : { phone });
+    const existing = await UserModel.findOne(email ? { email } : { phone });
     if (existing) {
       return Response.json(
         { message: email ? 'Email already registered' : 'Phone already registered' },
@@ -155,11 +40,11 @@ async function handleRegister(request) {
     // Handle referral code
     let referredBy = null;
     if (usedCode) {
-      const referrer = await User.findOne({ referralCode: usedCode.trim().toUpperCase() });
+      const referrer = await UserModel.findOne({ referralCode: usedCode.trim().toUpperCase() });
       if (referrer) {
         referredBy = usedCode.trim().toUpperCase();
         // زوّد عداد الـ referrer
-        await User.updateOne(
+        await UserModel.updateOne(
           { referralCode: referredBy },
           { $inc: { referralCount: 1, referralEarnings: 50 } }
         );
@@ -170,14 +55,15 @@ async function handleRegister(request) {
     const newReferralCode = await getUniqueReferralCode(firstName);
 
     const hashed = await bcrypt.hash(password, 10);
-    const user   = await User.create({
+    const user = await UserModel.create({
       firstName,
       lastName,
       password: hashed,
       ...(email ? { email } : { phone }),
-      referralCode:     newReferralCode,
-      referredBy:       referredBy,
-      referralCount:    0,
+      role: finalRole,
+      referralCode: newReferralCode,
+      referredBy: referredBy,
+      referralCount: 0,
       referralEarnings: 0,
     });
 
@@ -189,8 +75,6 @@ async function handleRegister(request) {
 }
 
 // ── NextAuth Handlers ──
-const { handlers } = NextAuth(authOptions);
-
 export async function GET(request) {
   return handlers.GET(request);
 }
