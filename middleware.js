@@ -6,33 +6,21 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
   const { pathname } = req.nextUrl;
 
-  if (token && (pathname === "/api/auth/signin" || pathname === "/api/auth/AuthButtons/signin")) {
-    return NextResponse.redirect(new URL("/profile", req.url));
-  }
-
+  // حماية /profile: أي حد مش مسجل دخول بيتحول لصفحة /signin (مع callbackUrl يرجعه هنا تاني بعد الدخول)
   if (!token && pathname.startsWith("/profile")) {
-    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+    const signInUrl = new URL("/signin", req.url);
+    signInUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(signInUrl);
   }
 
-  if (!token && pathname.startsWith("/profile")) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  if (token && pathname.startsWith("/login")) {
+  // لو مسجل دخول بالفعل ومحاول يدخل /signin أو /signup تاني، رجّعه لبروفايله
+  if (token && (pathname === "/signin" || pathname === "/signup")) {
     return NextResponse.redirect(new URL("/profile", req.url));
-  }
-
-  if (token && pathname.startsWith("/register")) {
-    return NextResponse.redirect(new URL("/profile", req.url));
-  }
-  
-  if (!token && pathname.startsWith("/pay")) {
-    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/api/auth/signin", "/api/auth/AuthButtons/signin", '/profile', '/register', '/login', '/pay'],
+  matcher: ["/profile/:path*", "/signin", "/signup"],
 };

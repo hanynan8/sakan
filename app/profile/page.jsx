@@ -8,6 +8,17 @@ const menuItems = [
   {
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    ),
+    label: { en: 'My Properties', ar: 'سكناتي وإضافة سكن' },
+    desc: { en: 'Add a new property, or manage the ones you already listed.', ar: 'أضف سكن جديد، أو تحكم في السكنات اللي ضفتها قبل كده.' },
+    href: '/profile/properties',
+    roles: ['owner', 'admin'],
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
       </svg>
     ),
@@ -45,6 +56,10 @@ export default function ProfilePage() {
   const name  = session?.user?.name  || '—';
   const email = session?.user?.email || session?.user?.phone || '—';
   const initial = name.charAt(0).toUpperCase();
+  const role = session?.user?.role;
+
+  // اعرض العناصر اللي مالهاش roles لأي حد، وعناصر الـ owner/admin لأصحابها بس
+  const visibleItems = menuItems.filter((item) => !item.roles || item.roles.includes(role));
 
   return (
     <div className="bg-gray-50 pb-12" dir={ar ? 'rtl' : 'ltr'}>
@@ -89,13 +104,13 @@ export default function ProfilePage() {
 
           {/* Menu grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x-0">
-            {menuItems.map((item, i) => (
+            {visibleItems.map((item, i) => (
               <Link
                 key={i}
                 href={item.href}
                 className={`flex items-center justify-between px-8 py-7 hover:bg-gray-50 transition-colors group
-                  ${i < menuItems.length - 2 ? 'border-b border-gray-100' : ''}
-                  ${i % 2 === 0 && i + 1 < menuItems.length ? 'sm:border-r sm:border-gray-100' : ''}
+                  ${i < visibleItems.length - 2 ? 'border-b border-gray-100' : ''}
+                  ${i % 2 === 0 && i + 1 < visibleItems.length ? 'sm:border-r sm:border-gray-100' : ''}
                 `}
               >
                 <div className="flex items-start gap-4">
