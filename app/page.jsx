@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 /* ═══════════════════════════════════════════════
@@ -375,29 +376,60 @@ export default function HomePage() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Refs to measure real rendered widths (translateX % is relative to the
+  // track's OWN width, not the visible container, so we need real pixels)
+  const collegeTrackRef = useRef(null);
+  const areaTrackRef = useRef(null);
+  const [collegeMetrics, setCollegeMetrics] = useState({ trackWidth: 0, containerWidth: 0 });
+  const [areaMetrics, setAreaMetrics] = useState({ trackWidth: 0, containerWidth: 0 });
+
+  useEffect(() => {
+    const measure = () => {
+      if (collegeTrackRef.current?.parentElement) {
+        const track = collegeTrackRef.current;
+        setCollegeMetrics({ trackWidth: track.scrollWidth, containerWidth: track.parentElement.clientWidth });
+      }
+      if (areaTrackRef.current?.parentElement) {
+        const track = areaTrackRef.current;
+        setAreaMetrics({ trackWidth: track.scrollWidth, containerWidth: track.parentElement.clientWidth });
+      }
+    };
+    measure();
+    const raf = requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', measure);
+    };
+  }, [slidesPerView, language]);
+
+  const collegesCount = data?.trendingColleges?.colleges?.length || 0;
+  const collegeCardStep = collegesCount > 0 ? collegeMetrics.trackWidth / collegesCount : 0;
+  const collegeMaxScrollPx = Math.max(0, collegeMetrics.trackWidth - collegeMetrics.containerWidth);
+  const collegeMaxIndex = collegeCardStep > 0 ? Math.ceil(collegeMaxScrollPx / collegeCardStep) : 0;
+  const collegeTranslatePx = Math.min(collegeSlideIndex * collegeCardStep, collegeMaxScrollPx);
+
+  const areasCount = data?.topAreas?.areas?.length || 0;
+  const areaCardStep = areasCount > 0 ? areaMetrics.trackWidth / areasCount : 0;
+  const areaMaxScrollPx = Math.max(0, areaMetrics.trackWidth - areaMetrics.containerWidth);
+  const areaMaxIndex = areaCardStep > 0 ? Math.ceil(areaMaxScrollPx / areaCardStep) : 0;
+  const areaTranslatePx = Math.min(areaSlideIndex * areaCardStep, areaMaxScrollPx);
+
   const nextCollegeSlide = () => {
-    if (!data?.trendingColleges?.colleges) return;
-    const maxIndex = Math.max(0, data.trendingColleges.colleges.length - slidesPerView);
-    setCollegeSlideIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    setCollegeSlideIndex((prev) => Math.min(prev + 1, collegeMaxIndex));
   };
 
   const prevCollegeSlide = () => {
-    if (!data?.trendingColleges?.colleges) return;
-    const maxIndex = Math.max(0, data.trendingColleges.colleges.length - slidesPerView);
-    setCollegeSlideIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    setCollegeSlideIndex((prev) => Math.max(prev - 1, 0));
   };
 
   // Area Slider Navigation
   const nextAreaSlide = () => {
-    if (!data?.topAreas?.areas) return;
-    const maxIndex = Math.max(0, data.topAreas.areas.length - slidesPerView);
-    setAreaSlideIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    setAreaSlideIndex((prev) => Math.min(prev + 1, areaMaxIndex));
   };
 
   const prevAreaSlide = () => {
-    if (!data?.topAreas?.areas) return;
-    const maxIndex = Math.max(0, data.topAreas.areas.length - slidesPerView);
-    setAreaSlideIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    setAreaSlideIndex((prev) => Math.max(prev - 1, 0));
   };
 
   // Touch handlers for College Slider
@@ -415,21 +447,13 @@ export default function HomePage() {
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
-    
+
     if (language === 'ar') {
-      if (isLeftSwipe) {
-        prevCollegeSlide();
-      }
-      if (isRightSwipe) {
-        nextCollegeSlide();
-      }
+      if (isLeftSwipe) prevCollegeSlide();
+      if (isRightSwipe) nextCollegeSlide();
     } else {
-      if (isLeftSwipe) {
-        nextCollegeSlide();
-      }
-      if (isRightSwipe) {
-        prevCollegeSlide();
-      }
+      if (isLeftSwipe) nextCollegeSlide();
+      if (isRightSwipe) prevCollegeSlide();
     }
     
     setTouchStart(0);
@@ -451,21 +475,13 @@ export default function HomePage() {
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
-    
+
     if (language === 'ar') {
-      if (isLeftSwipe) {
-        prevAreaSlide();
-      }
-      if (isRightSwipe) {
-        nextAreaSlide();
-      }
+      if (isLeftSwipe) prevAreaSlide();
+      if (isRightSwipe) nextAreaSlide();
     } else {
-      if (isLeftSwipe) {
-        nextAreaSlide();
-      }
-      if (isRightSwipe) {
-        prevAreaSlide();
-      }
+      if (isLeftSwipe) nextAreaSlide();
+      if (isRightSwipe) prevAreaSlide();
     }
     
     setTouchStart(0);
@@ -568,11 +584,12 @@ export default function HomePage() {
               onTouchEnd={handleCollegeTouchEnd}
             >
               <div 
+                ref={collegeTrackRef}
                 className="flex transition-transform duration-500 ease-out gap-4 md:gap-5 lg:gap-6 xl:gap-8 px-1 md:px-2"
                 style={{
-                  transform: `translateX(${language === 'ar' 
-                    ? collegeSlideIndex * (100 / slidesPerView) 
-                    : -collegeSlideIndex * (100 / slidesPerView)}%)`
+                  transform: `translateX(${language === 'ar'
+                    ? collegeTranslatePx
+                    : -collegeTranslatePx}px)`
                 }}
               >
                 {data.trendingColleges?.colleges?.map((college) => (
@@ -587,7 +604,10 @@ export default function HomePage() {
                       })`
                     }}
                   >
-                    <div className="group cursor-pointer border-2 border-gray-300 hover:border-black transition-all duration-300 h-full rounded-xl overflow-hidden">
+                    <Link
+                      href={`/properties?college=${college.id}`}
+                      className="group cursor-pointer border-2 border-gray-300 hover:border-black transition-all duration-300 h-full rounded-xl overflow-hidden block"
+                    >
                       <div className="relative h-48 md:h-56 lg:h-64 bg-gray-100">
                         <img
                           src={college.image}
@@ -628,7 +648,7 @@ export default function HomePage() {
                           ))}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -637,20 +657,22 @@ export default function HomePage() {
             {/* Navigation Arrows - Hidden on Mobile */}
             <button
               onClick={prevCollegeSlide}
-              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              disabled={collegeSlideIndex <= 0}
+              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Previous colleges"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
               </svg>
             </button>
             <button
               onClick={nextCollegeSlide}
-              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              disabled={collegeSlideIndex >= collegeMaxIndex}
+              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Next colleges"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
               </svg>
             </button>
 
@@ -672,9 +694,12 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <button className="px-10 py-3 border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all rounded-lg">
+            <Link
+              href="/properties"
+              className="inline-block px-10 py-3 border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all rounded-lg"
+            >
               {t(data.trendingColleges)?.viewAllText}
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -700,11 +725,12 @@ export default function HomePage() {
               onTouchEnd={handleAreaTouchEnd}
             >
               <div 
+                ref={areaTrackRef}
                 className="flex transition-transform duration-500 ease-out gap-4 md:gap-5 lg:gap-6 xl:gap-8 px-1 md:px-2"
                 style={{
-                  transform: `translateX(${language === 'ar' 
-                    ? areaSlideIndex * (100 / slidesPerView) 
-                    : -areaSlideIndex * (100 / slidesPerView)}%)`
+                  transform: `translateX(${language === 'ar'
+                    ? areaTranslatePx
+                    : -areaTranslatePx}px)`
                 }}
               >
                 {data.topAreas?.areas?.map((area) => (
@@ -719,22 +745,41 @@ export default function HomePage() {
                       })`
                     }}
                   >
-                    <div className="group relative h-72 md:h-80 overflow-hidden cursor-pointer border-2 border-gray-300 hover:border-black transition-all duration-300 rounded-xl">
-                      <img
-                        src={area.image}
-                        alt={t(area)?.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-                      <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 text-white">
-                        <h4 className="text-xl md:text-2xl font-black mb-2 line-clamp-1">{t(area)?.name}</h4>
-                        <p className="text-xs md:text-sm mb-3 text-gray-200 font-medium line-clamp-2">{t(area)?.description}</p>
-                        <div className="flex justify-between items-center text-xs md:text-sm font-medium">
-                          <span>{area.propertiesCount} {language === 'ar' ? 'سكن' : 'listings'}</span>
-                          <span>{language === 'ar' ? `من ${area.averagePrice} ج.م` : `From ${area.averagePrice} EGP`}</span>
+                    <Link
+                      href={`/properties?area=${area.id}`}
+                      className="group cursor-pointer border-2 border-gray-300 hover:border-black transition-all duration-300 h-full rounded-xl overflow-hidden block"
+                    >
+                      <div className="relative h-48 md:h-56 lg:h-64 bg-gray-100">
+                        <img
+                          src={area.image}
+                          alt={t(area)?.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      </div>
+                      <div className="p-4 md:p-6 bg-white">
+                        <h4 className="text-lg md:text-xl font-bold text-black mb-2 line-clamp-1">
+                          {t(area)?.name}
+                        </h4>
+                        <p className="text-xs md:text-sm text-gray-500 mb-4 line-clamp-2">{t(area)?.description}</p>
+
+                        <div className="flex justify-between items-center pt-3 md:pt-4 border-t-2 border-gray-200">
+                          <div>
+                            <span className="text-xl md:text-2xl font-black text-black">
+                              {area.propertiesCount}
+                            </span>
+                            <span className="text-xs md:text-sm text-gray-600 mr-1 md:mr-2 font-medium">
+                              {language === 'ar' ? 'سكن متاح' : 'listings'}
+                            </span>
+                          </div>
+                          <div className="text-left">
+                            <div className="text-xs text-gray-600 font-medium">{language === 'ar' ? 'من' : 'From'}</div>
+                            <div className="text-sm md:text-lg font-bold text-black">
+                              {area.averagePrice} {language === 'ar' ? 'ج.م' : 'EGP'}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -743,20 +788,22 @@ export default function HomePage() {
             {/* Navigation Arrows - Hidden on Mobile */}
             <button
               onClick={prevAreaSlide}
-              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              disabled={areaSlideIndex <= 0}
+              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Previous areas"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
               </svg>
             </button>
             <button
               onClick={nextAreaSlide}
-              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              disabled={areaSlideIndex >= areaMaxIndex}
+              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Next areas"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
               </svg>
             </button>
 
@@ -778,9 +825,12 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <button className="px-10 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-all rounded-lg">
+            <Link
+              href="/properties"
+              className="inline-block px-10 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-all rounded-lg"
+            >
               {t(data.topAreas)?.viewAllText}
-            </button>
+            </Link>
           </div>
         </div>
       </section>
