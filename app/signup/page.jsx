@@ -1,18 +1,19 @@
 // path: app/signup/page.jsx
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { safeCallbackUrl } from '@/lib/safe-redirect';
 
 function SignUpForm() {
   const { language } = useLanguage();
   const ar = language === 'ar';
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/profile';
+  const callbackUrl = safeCallbackUrl(searchParams.get('callbackUrl'));
 
   const [form, setForm] = useState({
     firstName: '',
@@ -23,24 +24,10 @@ function SignUpForm() {
     password: '',
     confirmPassword: '',
     role: 'student', // 'student' | 'owner'
-    referralCode: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw] = useState(false);
-
-  // ── هات كود الإحالة المحفوظ من النافبار (لو المستخدم دخل بلينك ?ref=) ──
-  useEffect(() => {
-    try {
-      const savedRef = localStorage.getItem('referralCode');
-      const expiry = Number(localStorage.getItem('referralExpiry') || 0);
-      if (savedRef && Date.now() < expiry) {
-        setForm((f) => ({ ...f, referralCode: savedRef }));
-      }
-    } catch {
-      // localStorage غير متاح
-    }
-  }, []);
 
   const update = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
@@ -81,7 +68,6 @@ function SignUpForm() {
           password: form.password,
           ...(form.contactType === 'email' ? { email: contactValue.toLowerCase() } : { phone: contactValue }),
           role: form.role,
-          referralCode: form.referralCode.trim() || undefined,
         }),
       });
       const data = await res.json();
@@ -98,13 +84,6 @@ function SignUpForm() {
         identifier: contactValue,
         password: form.password,
       });
-
-      try {
-        localStorage.removeItem('referralCode');
-        localStorage.removeItem('referralExpiry');
-      } catch {
-        // ignore
-      }
 
       if (result?.error) {
         router.push('/signin');
@@ -292,20 +271,6 @@ function SignUpForm() {
                   {ar ? '🏠 مالك عندي سكن أعرضه' : '🏠 Owner listing a property'}
                 </button>
               </div>
-            </div>
-
-            {/* كود الإحالة (اختياري) */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                {ar ? 'كود الإحالة (اختياري)' : 'Referral code (optional)'}
-              </label>
-              <input
-                type="text"
-                value={form.referralCode}
-                onChange={update('referralCode')}
-                placeholder={ar ? 'مثال: MOHAMEDX4F2' : 'e.g. MOHAMEDX4F2'}
-                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded uppercase"
-              />
             </div>
 
             {error && (

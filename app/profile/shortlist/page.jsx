@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
+import { AREAS, COLLEGES } from '@/lib/taxonomy';
 
 // ── Empty State Illustration (SVG house like the screenshot) ──
 function EmptyIllustration() {
@@ -63,12 +65,16 @@ function EmptyIllustration() {
 
 // ── Property Card ──
 function PropertyCard({ item, onRemove, ar }) {
+  const area = AREAS.find((a) => a.id === item.area);
+  const college = COLLEGES.find((c) => c.id === item.college);
+  const cover = item.images?.[0];
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
       {/* Image */}
       <div className="relative h-44 bg-gray-100 overflow-hidden">
-        {item.image ? (
-          <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={cover} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-100">
             <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,10 +82,16 @@ function PropertyCard({ item, onRemove, ar }) {
             </svg>
           </div>
         )}
+        {item.status === 'rented' && (
+          <span className="absolute bottom-2 left-2 bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded">
+            {ar ? 'مؤجر' : 'Rented'}
+          </span>
+        )}
         {/* Remove button */}
         <button
           onClick={() => onRemove(item._id)}
-          className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-gray-400 hover:text-brand-dark transition-colors"
+          aria-label={ar ? 'إزالة من المفضلة' : 'Remove from shortlist'}
+          className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-red-500 hover:text-red-600 transition-colors"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
@@ -88,15 +100,18 @@ function PropertyCard({ item, onRemove, ar }) {
       </div>
       {/* Info */}
       <div className="p-4">
-        <h3 className="font-semibold text-navy text-sm mb-0.5 truncate">{item.name || '—'}</h3>
-        <p className="text-xs text-gray-500 mb-2 truncate">{item.location || item.city || '—'}</p>
-        {item.price && (
+        <h3 className="font-semibold text-navy text-sm mb-0.5 truncate">{item.title || '—'}</h3>
+        <p className="text-xs text-gray-500 mb-2 truncate">
+          {ar ? area?.ar : area?.en}
+          {college ? ` · ${ar ? college.ar : college.en}` : ''}
+        </p>
+        {item.price != null && (
           <p className="text-sm font-bold text-navy">
-            {item.price} <span className="text-xs font-normal text-gray-400">/ {ar ? 'أسبوع' : 'week'}</span>
+            {item.price} <span className="text-xs font-normal text-gray-400">{ar ? 'ج.م / شهر' : 'EGP / month'}</span>
           </p>
         )}
         <Link
-          href={item.href || `/properties/${item._id}`}
+          href={`/properties/${item._id}`}
           className="mt-3 block text-center text-xs font-semibold text-brand-dark border border-brand/40 rounded-lg py-1.5 hover:bg-brand-50 transition-colors"
         >
           {ar ? 'عرض العقار' : 'View Property'}
@@ -108,42 +123,38 @@ function PropertyCard({ item, onRemove, ar }) {
 
 // ── Main Page ──
 export default function ShortlistPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { language } = useLanguage();
+  const { toggle } = useFavorites();
   const ar = language === 'ar';
 
-  const [items, setItems]     = useState([]);
-  const [loading, setLoading] = useState(false); // false → empty state يظهر فوراً
-  const [error, setError]     = useState('');
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // TODO: لما تبعتلي بنية الـ API فك التعليق ده
-  // useEffect(() => {
-  //   if (status === 'loading') return;
-  //   fetchShortlist();
-  // }, [status]);
+  const fetchShortlist = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/favorites', { cache: 'no-store' });
+      if (!res.ok) throw new Error('fetch failed');
+      const data = await res.json();
+      setItems(Array.isArray(data) ? data : []);
+    } catch {
+      setError(ar ? 'حدث خطأ في تحميل البيانات' : 'Failed to load shortlist');
+    } finally {
+      setLoading(false);
+    }
+  }, [ar]);
 
-  // const fetchShortlist = async () => {
-  //   setLoading(true);
-  //   setError('');
-  //   try {
-  //     const res = await fetch('/api/data?collection=love');
-  //     if (!res.ok) throw new Error('fetch failed');
-  //     const data = await res.json();
-  //     const userId = session?.user?.id;
-  //     const filtered = userId
-  //       ? data.filter(d => d.userId === userId || d.user === userId)
-  //       : data;
-  //     setItems(Array.isArray(filtered) ? filtered : []);
-  //   } catch (err) {
-  //     setError(ar ? 'حدث خطأ في تحميل البيانات' : 'Failed to load shortlist');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  useEffect(() => {
+    if (status === 'authenticated') fetchShortlist();
+    else if (status === 'unauthenticated') setLoading(false);
+  }, [status, fetchShortlist]);
 
   const handleRemove = async (id) => {
-    // TODO: لما تكمل الـ API ممكن تعمل DELETE هنا
-    setItems(prev => prev.filter(i => i._id !== id));
+    const result = await toggle(id); // بيشيلها من الداتابيز ومن حالة القلوب في باقي الصفحات
+    if (result.ok) setItems((prev) => prev.filter((i) => i._id !== id));
   };
 
   return (
@@ -182,8 +193,9 @@ export default function ShortlistPage() {
 
           {/* Error */}
           {!loading && error && (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex flex-col items-center justify-center gap-3">
               <p className="text-sm text-red-500">{error}</p>
+              <button onClick={fetchShortlist} className="text-sm underline text-navy">{ar ? 'إعادة المحاولة' : 'Retry'}</button>
             </div>
           )}
 
@@ -195,7 +207,7 @@ export default function ShortlistPage() {
                 {ar ? 'لا توجد عقارات في المفضلة' : 'No property shortlisted'}
               </p>
               <Link
-                href="/"
+                href="/properties"
                 className="px-6 py-2.5 bg-brand hover:bg-brand-dark text-white text-sm font-semibold rounded-full transition-colors"
               >
                 {ar ? 'استكشف العقارات' : 'Explore properties'}

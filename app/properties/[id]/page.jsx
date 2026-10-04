@@ -5,6 +5,7 @@ import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AREAS, COLLEGES, CAMPUSES } from '@/lib/taxonomy';
+import FavoriteButton from '@/app/components/FavoriteButton';
 
 // رقم واتساب سكني الموحّد لكل الاستفسارات (مفيش أي بيانات عن المالك بتتعرض)
 const WHATSAPP_NUMBER = '201213819102';
@@ -88,7 +89,8 @@ export default function PropertyDetailsPage({ params }) {
         </nav>
 
         {/* Gallery */}
-        <div className="rounded-xl overflow-hidden bg-gray-100 h-64 sm:h-96 mb-2 flex items-center justify-center">
+        <div className="relative rounded-xl overflow-hidden bg-gray-100 h-64 sm:h-96 mb-2 flex items-center justify-center">
+          <FavoriteButton propertyId={property._id} size="lg" className="absolute top-3 left-3 z-10" />
           {images.length ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={images[activeImage]} alt={property.title} className="w-full h-full object-cover" />
@@ -119,6 +121,11 @@ export default function PropertyDetailsPage({ params }) {
             <span className="inline-block bg-navy-dark text-white text-xs font-bold px-2.5 py-1 rounded mb-2">
               {ar ? typeLabel.ar : typeLabel.en}
             </span>
+            {property.status === 'rented' && (
+              <span className="inline-block bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded mb-2 ms-2">
+                {ar ? 'مؤجر حاليًا' : 'Currently rented'}
+              </span>
+            )}
             <h1 className="text-2xl font-black text-navy">{property.title}</h1>
             <p className="text-gray-500 mt-1">
               {property.address ? `${property.address} · ` : ''}
@@ -159,7 +166,7 @@ export default function PropertyDetailsPage({ params }) {
                 {property.price} <span className="text-sm font-medium text-gray-500">{ar ? 'ج.م / شهر' : 'EGP / month'}</span>
               </p>
               <p className="text-sm text-gray-500 mt-1 mb-4">
-                {ar ? 'للاستفسار أو الحجز، تواصل معنا مباشرة على واتساب.' : 'For inquiries or booking, contact us directly on WhatsApp.'}
+                {ar ? 'للاستفسار عن السكن، تواصل معنا مباشرة على واتساب.' : 'For inquiries about this property, contact us directly on WhatsApp.'}
               </p>
               <a
                 href={waLink}

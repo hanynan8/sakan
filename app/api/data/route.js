@@ -9,13 +9,14 @@
 
 import mongoose from "mongoose";
 import { auth } from "@/lib/auth";
+import { sameOriginOk } from "@/lib/api";
 
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
   console.warn("Warning: MONGO_URI not defined in environment");
 }
 
-if (!globalThis._mongo) globalThis._mongo = { conn: null, promise: null };
+if (!globalThis._contentMongo) globalThis._contentMongo = { conn: null, promise: null };
 if (!globalThis._mongoModels) globalThis._mongoModels = {};
 if (!globalThis._dataRateLimit) globalThis._dataRateLimit = new Map();
 
@@ -47,26 +48,37 @@ function jsonResponse(data, status = 200) {
   });
 }
 
+// اتصال مستقل (createConnection) بقاعدة المحتوى MONGO_URI.
+// ماينفعش نستخدم mongoose.connect هنا لأن lib/mongodb.js بيستخدمه بالفعل لقاعدة Next-Auth،
+// واستدعاؤه تاني بـ URI مختلف بيرمي خطأ "active connection with different connection strings".
 async function connectToMongo() {
-  if (globalThis._mongo.conn) return globalThis._mongo.conn;
+  const cache = globalThis._contentMongo;
+  if (cache.conn) return cache.conn;
   if (!MONGO_URI) throw new Error("Please set MONGO_URI environment variable");
 
-  if (!globalThis._mongo.promise) {
-    globalThis._mongo.promise = mongoose.connect(MONGO_URI).then((m) => m);
+  if (!cache.promise) {
+    cache.promise = mongoose
+      .createConnection(MONGO_URI, { maxPoolSize: 5, serverSelectionTimeoutMS: 10000 })
+      .asPromise()
+      .catch((err) => {
+        cache.promise = null;
+        throw err;
+      });
   }
-
-  globalThis._mongo.conn = await globalThis._mongo.promise;
-  return globalThis._mongo.conn;
+  cache.conn = await cache.promise;
+  return cache.conn;
 }
 
 const schema = new mongoose.Schema({}, { strict: false });
 
 function getModelForCollection(collectionName) {
+  const conn = globalThis._contentMongo.conn;
+  if (!conn) throw new Error("Content DB not connected");
   const name = String(collectionName);
   if (globalThis._mongoModels[name]) return globalThis._mongoModels[name];
 
   const modelName = `Model_${name.replace(/[^a-zA-Z0-9]/g, "_")}`;
-  const Model = mongoose.models[modelName] || mongoose.model(modelName, schema, name);
+  const Model = conn.models[modelName] || conn.model(modelName, schema, name);
   globalThis._mongoModels[name] = Model;
   return Model;
 }
@@ -79,8 +91,8 @@ function isValidCollectionName(name) {
 }
 
 async function listCollections() {
-  await connectToMongo();
-  const cols = await mongoose.connection.db.listCollections().toArray();
+  const conn = await connectToMongo();
+  const cols = await conn.db.listCollections().toArray();
   return cols.map((c) => c.name).filter((n) => isValidCollectionName(n));
 }
 
@@ -200,7 +212,7 @@ export async function GET(request) {
       const gate = await requireAdmin();
       if (gate.error) return gate.error;
 
-      const colNames = await listCollections();
+      const colNames = await listCollections(); // بيفتح الاتصال
       const results = await Promise.all(
         colNames.map((name) => getModelForCollection(name).find({}))
       );
@@ -237,7 +249,7 @@ export async function GET(request) {
       return jsonResponse(doc, 200);
     }
 
-    const docs = await Model.find({});
+    const docs = await Model.find({}).limit(1000);
     return jsonResponse(docs, 200);
   } catch (err) {
     return serverError(err);
@@ -248,6 +260,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    if (!sameOriginOk(request)) return jsonResponse({ error: "Forbidden origin" }, 403);
     const { collection } = getSearchParams(request);
     if (!collection) return jsonResponse({ error: "Collection is required" }, 400);
 
@@ -263,7 +276,10 @@ export async function POST(request) {
         return jsonResponse({ error: "Too many requests. Please try again later." }, 429);
       }
 
-      const body = await parseBody(request);
+      const raw = await request.text().catch(() => "");
+      if (raw.length > MAX_PUBLIC_BODY_BYTES) return jsonResponse({ error: "Payload too large" }, 413);
+      let body = null;
+      try { body = JSON.parse(raw); } catch { body = null; }
       const { data, error } = validateSupportRequest(body);
       if (error) return jsonResponse({ error }, 400);
 
@@ -300,6 +316,7 @@ export async function POST(request) {
 
 export async function PUT(request) {
   try {
+    if (!sameOriginOk(request)) return jsonResponse({ error: "Forbidden origin" }, 403);
     const gate = await requireAdmin();
     if (gate.error) return gate.error;
 
@@ -333,6 +350,7 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
   try {
+    if (!sameOriginOk(request)) return jsonResponse({ error: "Forbidden origin" }, 403);
     const gate = await requireAdmin();
     if (gate.error) return gate.error;
 

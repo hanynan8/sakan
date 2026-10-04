@@ -3,14 +3,14 @@ import mongoose, { Schema, models } from "mongoose";
 
 const userSchema = new Schema(
   {
-    firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
+    firstName: { type: String, required: true, trim: true, maxlength: 50 },
+    lastName: { type: String, required: true, trim: true, maxlength: 50 },
 
     // إيميل أو تليفون (واحد منهم لازم يكون موجود)
-    email: { type: String, trim: true, lowercase: true, sparse: true, unique: true },
-    phone: { type: String, trim: true, sparse: true, unique: true },
+    email: { type: String, trim: true, lowercase: true, sparse: true, unique: true, maxlength: 254 },
+    phone: { type: String, trim: true, sparse: true, unique: true, maxlength: 20 },
 
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
 
     // student = طالب بيدور على سكن | owner = مالك بيعرض سكن | admin = مسؤول النظام
     role: {
@@ -18,21 +18,30 @@ const userSchema = new Schema(
       enum: ["student", "owner", "admin"],
       default: "student",
     },
-
-    // نظام الإحالة (Refer & Earn)
-    referralCode: { type: String, unique: true, sparse: true },
-    referredBy: { type: String, default: null },
-    referralCount: { type: Number, default: 0 },
-    referralEarnings: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
+
+// لازم يكون فيه إيميل أو تليفون
+userSchema.pre("validate", function (next) {
+  if (!this.email && !this.phone) {
+    return next(new Error("Email or phone is required"));
+  }
+  next();
+});
 
 // اسم كامل جاهز للاستخدام في الجلسة (session.user.name)
 userSchema.virtual("name").get(function () {
   return `${this.firstName} ${this.lastName}`.trim();
 });
-userSchema.set("toJSON", { virtuals: true });
+userSchema.set("toJSON", {
+  virtuals: true,
+  transform: (_doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  },
+});
 userSchema.set("toObject", { virtuals: true });
 
 const User = models.User || mongoose.model("User", userSchema);

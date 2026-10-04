@@ -59,7 +59,7 @@ const HELP_DATA = {
     {
       id: 'cat1',
       icon: 'info',
-      url: '/help/getting-started',
+      url: '/help/how-it-works',
       ar: {
         title: 'البدء مع سكني',
         description: 'تعلم كيفية إنشاء حسابك والبحث عن السكن المناسب خطوة بخطوة.'
@@ -70,48 +70,9 @@ const HELP_DATA = {
       }
     },
     {
-      id: 'cat2',
-      icon: 'booking',
-      url: '/help/bookings',
-      ar: {
-        title: 'الحجوزات',
-        description: 'كل ما يتعلق بعملية الحجز، التأكيد، والتواصل مع أصحاب العقارات.'
-      },
-      en: {
-        title: 'Bookings',
-        description: 'Everything related to the booking process, confirmation, and communication with property owners.'
-      }
-    },
-    {
-      id: 'cat3',
-      icon: 'offers',
-      url: '/help/offers',
-      ar: {
-        title: 'العروض والخصومات',
-        description: 'اكتشف أحدث العروض والكوبونات والخصومات المتاحة على المنصة.'
-      },
-      en: {
-        title: 'Offers & Discounts',
-        description: 'Discover the latest offers, coupons and discounts available on the platform.'
-      }
-    },
-    {
-      id: 'cat4',
-      icon: 'cancel',
-      url: '/help/cancellations',
-      ar: {
-        title: 'الإلغاء والاسترداد',
-        description: 'فهم سياسة الإلغاء وكيفية استرداد المبالغ المدفوعة.'
-      },
-      en: {
-        title: 'Cancellations & Refunds',
-        description: 'Understand the cancellation policy and how to get refunds.'
-      }
-    },
-    {
       id: 'cat5',
       icon: 'contact',
-      url: '/help/contact',
+      url: '/help/request',
       ar: {
         title: 'التواصل مع الدعم',
         description: 'تواصل مع فريق الدعم عبر الدردشة المباشرة، البريد الإلكتروني، أو الهاتف.'
@@ -124,7 +85,7 @@ const HELP_DATA = {
     {
       id: 'cat6',
       icon: 'checklist',
-      url: '/help/account',
+      url: '/profile/settings',
       ar: {
         title: 'إدارة الحساب',
         description: 'إدارة معلوماتك الشخصية، كلمة المرور، وإعدادات الحساب.'
@@ -136,60 +97,6 @@ const HELP_DATA = {
     }
   ],
   promotedArticles: [
-    {
-      url: '/help/how-to-book',
-      ar: {
-        title: 'كيفية إتمام عملية الحجز بنجاح'
-      },
-      en: {
-        title: 'How to complete a booking successfully'
-      }
-    },
-    {
-      url: '/help/payment-methods',
-      ar: {
-        title: 'طرق الدفع المتاحة على سكني'
-      },
-      en: {
-        title: 'Available payment methods on Sakani'
-      }
-    },
-    {
-      url: '/help/verified-properties',
-      ar: {
-        title: 'ما معنى العقار الموثق؟'
-      },
-      en: {
-        title: 'What does a verified property mean?'
-      }
-    },
-    {
-      url: '/help/referral-program',
-      ar: {
-        title: 'برنامج الإحالة وكيفية الاستفادة منه'
-      },
-      en: {
-        title: 'Referral program and how to benefit from it'
-      }
-    },
-    {
-      url: '/help/student-discounts',
-      ar: {
-        title: 'خصومات الطلاب المتاحة'
-      },
-      en: {
-        title: 'Available student discounts'
-      }
-    },
-    {
-      url: '/help/safety-tips',
-      ar: {
-        title: 'نصائح الأمان عند الحجز'
-      },
-      en: {
-        title: 'Safety tips when booking'
-      }
-    }
   ],
   footer: {
     brand: {

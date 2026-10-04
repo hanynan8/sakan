@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import FavoriteButton from '@/app/components/FavoriteButton';
 import { CAMPUSES, COLLEGES, AREAS, collegesByCampus } from '@/lib/taxonomy';
 
 /* ═══════════════════════════════════════════════
@@ -29,7 +30,7 @@ const QUICK_COLLEGES = ['medicine', 'engineering', 'commerce', 'science', 'arts'
 const TEXT = {
   ar: {
     heading: 'دور على سكنك في أسوان',
-    subheading: 'ابحث، فلتر، واحجز سكن قريب من كليتك في ثواني',
+    subheading: 'ابحث، فلتر، وتواصل مع سكن قريب من كليتك في ثواني',
     searchPlaceholder: 'ابحث بالاسم، العنوان، أو المنطقة...',
     search: 'بحث',
     quickAreasLabel: 'مناطق شائعة:',
@@ -370,6 +371,7 @@ function PropertyCard({ property, ar, t }) {
         <span className="absolute top-2 right-2 bg-navy text-white text-xs font-bold px-2 py-1 rounded">
           {property.price} {t.perMonth}
         </span>
+        <FavoriteButton propertyId={property._id} className="absolute top-2 left-2" />
       </div>
       <div className="p-4">
         <h3 className="font-bold text-navy truncate">{property.title}</h3>

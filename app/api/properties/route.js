@@ -1,88 +1,137 @@
 // path: app/api/properties/route.js
 import { auth, connectToMongo } from "@/lib/auth";
 import Property from "@/models/property";
+import { AREAS, COLLEGES, CAMPUSES } from "@/lib/taxonomy";
+import { json, requireRole, sameOriginOk, forbiddenOrigin } from "@/lib/api";
+import { rateLimit } from "@/lib/rate-limit";
+import { escapeRegex, readJson } from "@/lib/validators";
+import { validateProperty, PROPERTY_TYPES } from "@/lib/property-validation";
 
-function jsonResponse(data, status = 200) {
-  return Response.json(data, { status });
-}
+const areaIds = new Set(AREAS.map((a) => a.id));
+const collegeIds = new Set(COLLEGES.map((c) => c.id));
+const campusIds = new Set(CAMPUSES.map((c) => c.id));
 
-// GET /api/properties?area=sail&college=engineering&campus=abu-elrish&type=apartment&minPrice=&maxPrice=
+const MAX_LIMIT = 100;
+const DEFAULT_LIMIT = 60;
+const MAX_PER_OWNER = 50;
+
+const SORTS = {
+  newest: { createdAt: -1 },
+  price_asc: { price: 1, createdAt: -1 },
+  price_desc: { price: -1, createdAt: -1 },
+};
+
+const num = (v) => {
+  if (v === null || v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+};
+
+// GET /api/properties?area=&college=&campus=&type=&minPrice=&maxPrice=&q=&sort=&page=&limit=&mine=1
+// بيرجع Array (متوافق مع الواجهات الحالية) والعدد الكلي في الهيدر X-Total-Count
 export async function GET(request) {
   try {
     await connectToMongo();
-    const url = new URL(request.url);
-    const area = url.searchParams.get("area");
-    const college = url.searchParams.get("college");
-    const campus = url.searchParams.get("campus");
-    const type = url.searchParams.get("type");
-    const minPrice = url.searchParams.get("minPrice");
-    const maxPrice = url.searchParams.get("maxPrice");
-    const mine = url.searchParams.get("mine"); // "1" => سكنات المستخدم الحالي بس
+    const sp = new URL(request.url).searchParams;
 
-    const filter = { status: "active" };
-    if (area) filter.area = area;
-    if (college) filter.college = college;
-    if (campus) filter.campus = campus;
-    if (type) filter.type = type;
-    if (minPrice || maxPrice) {
+    // القيم لازم تكون من التصنيفات المعروفة (بيمنع أي قيم غريبة توصل للاستعلام)
+    const area = sp.get("area");
+    const college = sp.get("college");
+    const campus = sp.get("campus");
+    const type = sp.get("type");
+    const minPrice = num(sp.get("minPrice"));
+    const maxPrice = num(sp.get("maxPrice"));
+    const q = (sp.get("q") || "").trim().slice(0, 80);
+    const sort = SORTS[sp.get("sort")] || SORTS.newest;
+    const page = Math.max(1, parseInt(sp.get("page") || "1", 10) || 1);
+    const limit = Math.min(MAX_LIMIT, Math.max(1, parseInt(sp.get("limit") || String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT));
+
+    const filter = {};
+    if (area && areaIds.has(area)) filter.area = area;
+    if (college && collegeIds.has(college)) filter.college = college;
+    if (campus && campusIds.has(campus)) filter.campus = campus;
+    if (type && PROPERTY_TYPES.includes(type)) filter.type = type;
+    if (minPrice !== null || maxPrice !== null) {
       filter.price = {};
-      if (minPrice) filter.price.$gte = Number(minPrice);
-      if (maxPrice) filter.price.$lte = Number(maxPrice);
+      if (minPrice !== null) filter.price.$gte = minPrice;
+      if (maxPrice !== null) filter.price.$lte = maxPrice;
+    }
+    if (q) {
+      const rx = new RegExp(escapeRegex(q), "i");
+      filter.$or = [{ title: rx }, { address: rx }, { description: rx }];
     }
 
-    if (mine === "1") {
+    let projection = "-owner -__v";
+    if (sp.get("mine") === "1") {
+      // سكنات المستخدم الحالي بس (بكل الحالات)
       const session = await auth();
-      if (!session?.user) return jsonResponse({ message: "Unauthorized" }, 401);
-      delete filter.status;
+      if (!session?.user?.id) return json({ message: "Unauthorized" }, 401);
       filter.owner = session.user.id;
+      projection = "-__v";
+    } else {
+      filter.status = "active"; // الزوار يشوفوا المتاح بس
     }
 
-    const properties = await Property.find(filter).sort({ createdAt: -1 }).lean();
-    return jsonResponse(properties, 200);
+    const [properties, total] = await Promise.all([
+      Property.find(filter)
+        .select(projection)
+        .sort(sort)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      Property.countDocuments(filter),
+    ]);
+
+    return json(properties, 200, {
+      "X-Total-Count": String(total),
+      "X-Page": String(page),
+      "X-Limit": String(limit),
+      "Access-Control-Expose-Headers": "X-Total-Count, X-Page, X-Limit",
+    });
   } catch (err) {
     console.error("GET /api/properties error:", err);
-    return jsonResponse({ message: "Server error" }, 500);
+    return json({ message: "Server error" }, 500);
   }
 }
 
 // POST /api/properties — owner أو admin بس
 export async function POST(request) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return jsonResponse({ message: "لازم تسجل دخول الأول" }, 401);
+    if (!sameOriginOk(request)) return forbiddenOrigin();
+
+    const gate = await requireRole(["owner", "admin"]);
+    if (gate.error) return gate.error;
+    const { session } = gate;
+
+    const rl = rateLimit(`property-create:${session.user.id}`, 20, 60 * 60 * 1000);
+    if (rl.limited) {
+      return json({ message: "محاولات كتير، حاول بعد شوية" }, 429, { "Retry-After": String(rl.retryAfter) });
     }
-    if (!["owner", "admin"].includes(session.user.role)) {
-      return jsonResponse({ message: "لازم يكون حسابك مالك سكن عشان تضيف عقار" }, 403);
-    }
+
+    const { data: body, tooLarge } = await readJson(request);
+    if (tooLarge) return json({ message: "Payload too large" }, 413);
+
+    const { data, error } = validateProperty(body, { partial: false });
+    if (error) return json({ message: error }, 400);
 
     await connectToMongo();
-    const body = await request.json();
-    const { title, price, area, college, campus, type, bedrooms, capacity, address, description, images, amenities } = body;
 
-    if (!title || !price || !area) {
-      return jsonResponse({ message: "العنوان، السعر، والمنطقة مطلوبين" }, 400);
+    const count = await Property.countDocuments({ owner: session.user.id });
+    if (count >= MAX_PER_OWNER) {
+      return json({ message: `وصلت للحد الأقصى من السكنات (${MAX_PER_OWNER})` }, 403);
     }
 
     const property = await Property.create({
-      title,
-      description: description || "",
-      price,
-      type: type || "apartment",
-      bedrooms: bedrooms || 1,
-      capacity: capacity || 1,
-      area,
-      college: college || null,
-      campus: campus || null,
-      address: address || "",
-      images: Array.isArray(images) ? images : [],
-      amenities: Array.isArray(amenities) ? amenities : [],
+      ...data,
+      images: data.images || [],
+      amenities: data.amenities || [],
       owner: session.user.id,
+      status: "active",
     });
 
-    return jsonResponse(property, 201);
+    return json(property, 201);
   } catch (err) {
     console.error("POST /api/properties error:", err);
-    return jsonResponse({ message: "Server error" }, 500);
+    return json({ message: "Server error" }, 500);
   }
 }

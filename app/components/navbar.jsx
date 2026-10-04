@@ -5,7 +5,6 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSession, signOut } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
 
 /* ═══════════════════════════════════════════════
    STATIC NAVBAR DATA (كانت جايه من /api/data?collection=Navbar)
@@ -57,19 +56,9 @@ function NavbarContent() {
   const userMenuRef = useRef(null);
 
   const { data: session, status } = useSession();
-  const searchParams = useSearchParams();
 
   const ar = language === 'ar';
   const t = (section) => (ar ? section?.ar : section?.en);
-
-  // ── احفظ كود الدعوة من الـ URL في localStorage (يستخدمه /signup) ──
-  useEffect(() => {
-    const ref = searchParams.get('ref');
-    if (ref) {
-      localStorage.setItem('referralCode', ref.toUpperCase());
-      localStorage.setItem('referralExpiry', Date.now() + 30 * 24 * 60 * 60 * 1000);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -105,13 +94,13 @@ function NavbarContent() {
       href: '/properties',
     },
     {
-      label: { ar: 'حجوزاتي', en: 'My Bookings' },
+      label: { ar: 'المفضلة', en: 'Shortlist' },
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       ),
-      href: '/profile/booking',
+      href: '/profile/shortlist',
     },
   ];
 

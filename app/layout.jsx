@@ -4,6 +4,7 @@ import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import ClientLayout from './clientLayout';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { FavoritesProvider } from '@/contexts/FavoritesContext';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import ConditionalShell from './components/ConditionalShell';
@@ -34,13 +35,15 @@ export default function RootLayout({ children }) {
       <body className="font-sans antialiased">
         <LanguageProvider>
           <SessionProvider>
-            <ConditionalShell
-              navbar={<Navbar />}
-              footer={<Footer />}
-              hiddenOn={['/help']}
-            >
-              <ClientLayout>{children}</ClientLayout>
-            </ConditionalShell>
+            <FavoritesProvider>
+              <ConditionalShell
+                navbar={<Navbar />}
+                footer={<Footer />}
+                hiddenOn={['/help']}
+              >
+                <ClientLayout>{children}</ClientLayout>
+              </ConditionalShell>
+            </FavoritesProvider>
           </SessionProvider>
         </LanguageProvider>
       </body>

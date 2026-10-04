@@ -290,12 +290,12 @@ const SECTIONS_DATA = {
         id: 'step3',
         stepNumber: '3',
         ar: {
-          title: 'احجز بأمان',
-          description: 'احجز وحدتك السكنية بأمان عبر منصتنا الموثوقة'
+          title: 'تواصل بأمان',
+          description: 'تواصل معنا مباشرة على واتساب لإتمام اتفاقك بأمان'
         },
         en: {
-          title: 'Book Safely',
-          description: 'Book your accommodation safely through our trusted platform'
+          title: 'Connect Safely',
+          description: 'Reach us directly on WhatsApp to finalize your arrangement safely'
         }
       }
     ]

@@ -119,21 +119,12 @@ const FOOTER_DATA = {
           }
         },
         {
-          url: '/submit-request',
+          url: '/help/request',
           ar: {
             label: 'إرسال طلب'
           },
           en: {
             label: 'Submit Request'
-          }
-        },
-        {
-          url: '/refer',
-          ar: {
-            label: 'أحل صديقاً'
-          },
-          en: {
-            label: 'Refer a Friend'
           }
         }
       ]
@@ -162,15 +153,6 @@ const FOOTER_DATA = {
           },
           en: {
             label: 'Terms & Conditions'
-          }
-        },
-        {
-          url: '/cookies',
-          ar: {
-            label: 'سياسة الكوكيز'
-          },
-          en: {
-            label: 'Cookie Policy'
           }
         }
       ]
@@ -235,15 +217,6 @@ const FOOTER_DATA = {
         },
         en: {
           label: 'Terms'
-        }
-      },
-      {
-        url: '/sitemap',
-        ar: {
-          label: 'خريطة الموقع'
-        },
-        en: {
-          label: 'Sitemap'
         }
       }
     ]

@@ -6,13 +6,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { safeCallbackUrl } from '@/lib/safe-redirect';
 
 function SignInForm() {
   const { language } = useLanguage();
   const ar = language === 'ar';
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/profile';
+  const callbackUrl = safeCallbackUrl(searchParams.get('callbackUrl'));
 
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');

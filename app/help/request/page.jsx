@@ -7,8 +7,8 @@ const QUERY_OPTIONS = [
   { value: '', label: { en: '— Select your query —', ar: '— اختر نوع استفسارك —' } },
   { value: 'general', label: { en: 'General Enquiry', ar: 'استفسار عام' } },
   { value: 'housing', label: { en: 'Housing & Accommodation', ar: 'السكن والإقامة' } },
-  { value: 'booking', label: { en: 'Booking Issue', ar: 'مشكلة في الحجز' } },
-  { value: 'payment', label: { en: 'Payment & Billing', ar: 'الدفع والفواتير' } },
+  { value: 'listing', label: { en: 'Listing a Property', ar: 'عرض سكن على المنصة' } },
+  { value: 'account', label: { en: 'Account Issue', ar: 'مشكلة في الحساب' } },
   { value: 'technical', label: { en: 'Technical Support', ar: 'الدعم الفني' } },
   { value: 'other', label: { en: 'Other', ar: 'أخرى' } },
 ];

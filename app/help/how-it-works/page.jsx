@@ -70,12 +70,12 @@ const HOW_IT_WORKS_DATA = {
       id: 'ss3',
       stepNumber: '3',
       ar: {
-        title: 'احجز وانتقل',
-        description: 'احجز وحدتك بأمان وانتقل إلى سكنك الجديد'
+        title: 'تواصل وانتقل',
+        description: 'تواصل معنا على واتساب وانتقل إلى سكنك الجديد'
       },
       en: {
-        title: 'Book & Move In',
-        description: 'Book your unit safely and move into your new home'
+        title: 'Connect & Move In',
+        description: 'Contact us on WhatsApp and move into your new home'
       }
     }
   ],
@@ -109,11 +109,11 @@ const HOW_IT_WORKS_DATA = {
       stepNumber: '3',
       ar: {
         title: 'استقبل الطلاب',
-        description: 'استقبل طلبات الحجز من الطلاب وأدر عقارك بسهولة'
+        description: 'استقبل استفسارات الطلاب وأدر عقارك بسهولة'
       },
       en: {
         title: 'Receive Students',
-        description: 'Receive booking requests from students and manage your property easily'
+        description: 'Receive inquiries from students and manage your property easily'
       }
     }
   ],
@@ -262,21 +262,11 @@ const HOW_IT_WORKS_DATA = {
       {
         ar: {
           question: 'هل العقارات على المنصة موثوقة؟',
-          answer: 'نعم، كل العقارات المدرجة على منصتنا تمر بعملية تحقق صارمة من قبل فريقنا لضمان الجودة والأمان.'
+          answer: 'نحرص على مراجعة السكنات المعروضة، ننصحك دائماً بمعاينة السكن بنفسك قبل الاتفاق النهائي.'
         },
         en: {
           question: 'Are the properties on the platform reliable?',
-          answer: 'Yes, all properties listed on our platform go through a strict verification process by our team to ensure quality and safety.'
-        }
-      },
-      {
-        ar: {
-          question: 'ما هي طرق الدفع المتاحة؟',
-          answer: 'نقبل الدفع عبر البطاقات الائتمانية، التحويل البنكي، والمحافظ الإلكترونية.'
-        },
-        en: {
-          question: 'What payment methods are available?',
-          answer: 'We accept payment via credit cards, bank transfer, and digital wallets.'
+          answer: 'We review the listings on the platform, but we always recommend visiting the property yourself before finalizing any agreement.'
         }
       },
       {
@@ -291,19 +281,19 @@ const HOW_IT_WORKS_DATA = {
       },
       {
         ar: {
-          question: 'هل يمكنني إلغاء الحجز؟',
-          answer: 'نعم، يمكن إلغاء الحجز وفقاً لسياسة الإلغاء الخاصة بكل عقار والمدرجة في صفحة العقار.'
+          question: 'كيف أتواصل بخصوص سكن معين؟',
+          answer: 'من صفحة السكن اضغط على زر واتساب وهيتم التواصل معاك مباشرة بخصوص السكن.'
         },
         en: {
-          question: 'Can I cancel my booking?',
-          answer: 'Yes, you can cancel your booking according to the cancellation policy specific to each property as listed on the property page.'
+          question: 'How do I inquire about a specific property?',
+          answer: 'Open the property page and tap the WhatsApp button — our team will get back to you directly.'
         }
       }
     ]
   },
   cta: {
     studentUrl: '/properties',
-    ownerUrl: '/list-property',
+    ownerUrl: '/signup',
     ar: {
       title: 'هل أنت مستعد للبدء؟',
       subtitle: 'انضم إلى آلاف الطلاب وأصحاب العقارات على منصة سكني',

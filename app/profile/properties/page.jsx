@@ -42,6 +42,7 @@ export default function MyPropertiesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
   const [formOpen, setFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null); // null = إضافة جديدة
 
   const canManage = session?.user?.role === 'owner' || session?.user?.role === 'admin';
 
@@ -81,6 +82,34 @@ export default function MyPropertiesPage() {
 
   const availableColleges = form.campus ? collegesByCampus(form.campus) : COLLEGES;
 
+  const closeForm = () => {
+    setForm(emptyForm);
+    setEditingId(null);
+    setFormError('');
+    setFormOpen(false);
+  };
+
+  const startEdit = (p) => {
+    setForm({
+      title: p.title || '',
+      description: p.description || '',
+      price: String(p.price ?? ''),
+      type: p.type || 'apartment',
+      bedrooms: p.bedrooms ?? 1,
+      capacity: p.capacity ?? 1,
+      campus: p.campus || '',
+      college: p.college || '',
+      area: p.area || '',
+      address: p.address || '',
+      images: (p.images || []).join('\n'),
+      amenities: (p.amenities || []).join(', '),
+    });
+    setEditingId(p._id);
+    setFormError('');
+    setFormOpen(true);
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
@@ -92,8 +121,8 @@ export default function MyPropertiesPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/properties', {
-        method: 'POST',
+      const res = await fetch(editingId ? `/api/properties/${editingId}` : '/api/properties', {
+        method: editingId ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: form.title.trim(),
@@ -115,8 +144,7 @@ export default function MyPropertiesPage() {
         setFormError(data.message || (ar ? 'حدث خطأ' : 'Something went wrong'));
         return;
       }
-      setForm(emptyForm);
-      setFormOpen(false);
+      closeForm();
       fetchMine();
     } catch {
       setFormError(ar ? 'حدث خطأ، حاول مرة أخرى' : 'An error occurred, try again');
@@ -125,8 +153,8 @@ export default function MyPropertiesPage() {
     }
   };
 
-  const toggleStatus = async (property) => {
-    const newStatus = property.status === 'active' ? 'hidden' : 'active';
+  const changeStatus = async (property, newStatus) => {
+    if (newStatus === property.status) return;
     const res = await fetch(`/api/properties/${property._id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -153,7 +181,7 @@ export default function MyPropertiesPage() {
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-navy">{ar ? 'سكناتي' : 'My Properties'}</h1>
           <button
-            onClick={() => setFormOpen(!formOpen)}
+            onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
             className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white transition-all"
           >
             {formOpen ? (ar ? 'إغلاق النموذج' : 'Close form') : (ar ? '+ إضافة سكن' : '+ Add Property')}
@@ -163,6 +191,9 @@ export default function MyPropertiesPage() {
         {/* فورم إضافة سكن */}
         {formOpen && (
           <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6 space-y-4">
+            <h2 className="text-base font-bold text-navy">
+              {editingId ? (ar ? 'تعديل السكن' : 'Edit property') : (ar ? 'إضافة سكن جديد' : 'Add a new property')}
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'عنوان السكن' : 'Title'}</label>
@@ -282,6 +313,7 @@ export default function MyPropertiesPage() {
                   value={form.images}
                   onChange={(e) => setForm({ ...form, images: e.target.value })}
                   placeholder="https://..."
+                  maxLength={6600}
                   className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
@@ -307,8 +339,17 @@ export default function MyPropertiesPage() {
               disabled={submitting}
               className="w-full sm:w-auto px-6 py-2.5 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white disabled:opacity-60 transition-all"
             >
-              {submitting ? (ar ? 'جارٍ الحفظ...' : 'Saving...') : (ar ? 'حفظ السكن' : 'Save Property')}
+              {submitting ? (ar ? 'جارٍ الحفظ...' : 'Saving...') : editingId ? (ar ? 'حفظ التعديلات' : 'Save changes') : (ar ? 'حفظ السكن' : 'Save Property')}
             </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={closeForm}
+                className="w-full sm:w-auto sm:ms-2 px-6 py-2.5 border border-gray-300 text-gray-600 text-sm font-semibold rounded hover:border-gray-500 transition-all"
+              >
+                {ar ? 'إلغاء' : 'Cancel'}
+              </button>
+            )}
           </form>
         )}
 
@@ -336,8 +377,18 @@ export default function MyPropertiesPage() {
                   <p className="text-sm text-gray-500 mt-1">{p.price} {ar ? 'ج.م/شهر' : 'EGP/mo'}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => toggleStatus(p)} className="px-3 py-1.5 text-xs font-semibold border border-gray-300 rounded hover:border-gray-500 transition-all">
-                    {p.status === 'active' ? (ar ? 'إخفاء' : 'Hide') : (ar ? 'إظهار' : 'Show')}
+                  <select
+                    value={p.status}
+                    onChange={(e) => changeStatus(p, e.target.value)}
+                    aria-label={ar ? 'حالة السكن' : 'Property status'}
+                    className="px-2 py-1.5 text-xs font-semibold border border-gray-300 rounded bg-white hover:border-gray-500 transition-all"
+                  >
+                    <option value="active">{ar ? 'متاح' : 'Active'}</option>
+                    <option value="rented">{ar ? 'مؤجر' : 'Rented'}</option>
+                    <option value="hidden">{ar ? 'مخفي' : 'Hidden'}</option>
+                  </select>
+                  <button onClick={() => startEdit(p)} className="px-3 py-1.5 text-xs font-semibold border border-gray-300 rounded hover:border-gray-500 transition-all">
+                    {ar ? 'تعديل' : 'Edit'}
                   </button>
                   <button onClick={() => deleteProperty(p._id)} className="px-3 py-1.5 text-xs font-semibold border border-red-200 text-red-600 rounded hover:bg-red-50 transition-all">
                     {ar ? 'حذف' : 'Delete'}
