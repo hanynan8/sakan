@@ -6,9 +6,10 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AREAS, COLLEGES, CAMPUSES } from '@/lib/taxonomy';
 import FavoriteButton from '@/app/components/FavoriteButton';
+import BookingRequest from '@/app/components/BookingRequest';
 
 // رقم واتساب سكني الموحّد لكل الاستفسارات (مفيش أي بيانات عن المالك بتتعرض)
-const WHATSAPP_NUMBER = '201213819102';
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201213819102';
 
 const TYPE_LABELS = {
   apartment: { ar: 'شقة', en: 'Apartment' },
@@ -166,8 +167,9 @@ export default function PropertyDetailsPage({ params }) {
                 {property.price} <span className="text-sm font-medium text-gray-500">{ar ? 'ج.م / شهر' : 'EGP / month'}</span>
               </p>
               <p className="text-sm text-gray-500 mt-1 mb-4">
-                {ar ? 'للاستفسار عن السكن، تواصل معنا مباشرة على واتساب.' : 'For inquiries about this property, contact us directly on WhatsApp.'}
+                {ar ? 'اطلب الحجز من هنا، أو للاستفسار تواصل معنا مباشرة على واتساب.' : 'Request a booking here, or contact us directly on WhatsApp for inquiries.'}
               </p>
+              {property.status === 'active' && <BookingRequest propertyId={property._id} ar={ar} />}
               <a
                 href={waLink}
                 target="_blank"

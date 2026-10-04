@@ -10,6 +10,7 @@
 import mongoose from "mongoose";
 import { auth } from "@/lib/auth";
 import { sameOriginOk } from "@/lib/api";
+import { rateLimit } from "@/lib/rate-limit";
 
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
@@ -18,7 +19,6 @@ if (!MONGO_URI) {
 
 if (!globalThis._contentMongo) globalThis._contentMongo = { conn: null, promise: null };
 if (!globalThis._mongoModels) globalThis._mongoModels = {};
-if (!globalThis._dataRateLimit) globalThis._dataRateLimit = new Map();
 
 /* ═══════════════ إعدادات الأمان ═══════════════ */
 
@@ -142,26 +142,6 @@ function getClientIp(request) {
   return request.headers.get("x-real-ip") || "unknown";
 }
 
-// ملاحظة: الـ limiter ده في الذاكرة (per-instance). كفاية للبداية؛
-// على استضافة serverless/متعددة السيرفرات استخدم Upstash Redis أو ما شابه.
-function isRateLimited(ip) {
-  const now = Date.now();
-  const map = globalThis._dataRateLimit;
-
-  // تنظيف دوري
-  if (map.size > 5000) {
-    for (const [k, v] of map) if (now - v.start > RATE_LIMIT_WINDOW_MS) map.delete(k);
-  }
-
-  const entry = map.get(ip);
-  if (!entry || now - entry.start > RATE_LIMIT_WINDOW_MS) {
-    map.set(ip, { start: now, count: 1 });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > RATE_LIMIT_MAX;
-}
-
 const str = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 // تنضيف وفحص طلب الدعم العام. بيرجع { data } أو { error }
@@ -272,7 +252,7 @@ export async function POST(request) {
       const len = Number(request.headers.get("content-length") || 0);
       if (len > MAX_PUBLIC_BODY_BYTES) return jsonResponse({ error: "Payload too large" }, 413);
 
-      if (isRateLimited(getClientIp(request))) {
+      if ((await rateLimit(`support-request:${getClientIp(request)}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)).limited) {
         return jsonResponse({ error: "Too many requests. Please try again later." }, 429);
       }
 

@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { connectToMongo, UserModel } from "@/lib/auth";
 import Property from "@/models/property";
 import Favorite from "@/models/favorite";
+import Booking from "@/models/booking";
 import { json, requireUser, sameOriginOk, forbiddenOrigin } from "@/lib/api";
 import { rateLimit } from "@/lib/rate-limit";
 import { cleanName, isString, readJson } from "@/lib/validators";
@@ -64,7 +65,7 @@ export async function DELETE(request) {
     if (gate.error) return gate.error;
     const userId = gate.session.user.id;
 
-    const rl = rateLimit(`account-delete:${userId}`, 5, 15 * 60 * 1000);
+    const rl = await rateLimit(`account-delete:${userId}`, 5, 15 * 60 * 1000);
     if (rl.limited) return json({ message: "محاولات كتير، حاول بعد شوية" }, 429);
 
     const { data: body } = await readJson(request, 2 * 1024);
@@ -86,6 +87,7 @@ export async function DELETE(request) {
     const myProps = await Property.find({ owner: userId }).select("_id").lean();
     await Promise.all([
       Favorite.deleteMany({ $or: [{ user: userId }, { property: { $in: myProps.map((p) => p._id) } }] }),
+      Booking.deleteMany({ $or: [{ user: userId }, { property: { $in: myProps.map((p) => p._id) } }] }),
       Property.deleteMany({ owner: userId }),
       UserModel.deleteOne({ _id: userId }),
     ]);

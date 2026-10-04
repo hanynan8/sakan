@@ -32,10 +32,11 @@ const propertySchema = new Schema(
     // المالك اللي أضاف السكن (owner أو admin)
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
 
+    // pending = مستني موافقة الأدمن (إعلانات المالكين الجديدة) | active = ظاهر للكل
     status: {
       type: String,
-      enum: ["active", "hidden", "rented"],
-      default: "active",
+      enum: ["pending", "active", "hidden", "rented"],
+      default: "pending",
     },
   },
   { timestamps: true }

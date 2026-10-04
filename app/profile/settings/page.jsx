@@ -104,7 +104,8 @@ export default function SettingsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       setPw({ currentPassword: '', newPassword: '', confirm: '' });
-      setPwNotice({ type: 'ok', text: ar ? 'تم تغيير كلمة المرور' : 'Password changed' });
+      setPwNotice({ type: 'ok', text: ar ? 'تم تغيير كلمة المرور، سجّل دخول تاني' : 'Password changed, please sign in again' });
+      setTimeout(() => signOut({ callbackUrl: '/signin' }), 1200);
     } catch (err) {
       setPwNotice({ type: 'err', text: err.message || (ar ? 'حدث خطأ' : 'Something went wrong') });
     } finally {

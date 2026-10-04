@@ -11,6 +11,8 @@ const userSchema = new Schema(
     phone: { type: String, trim: true, sparse: true, unique: true, maxlength: 20 },
 
     password: { type: String, required: true, select: false },
+    // بيتحدّث عند تغيير كلمة المرور: أي جلسة اتعملت قبله بتنتهي
+    passwordChangedAt: { type: Date, default: null },
 
     // student = طالب بيدور على سكن | owner = مالك بيعرض سكن | admin = مسؤول النظام
     role: {
@@ -38,6 +40,7 @@ userSchema.set("toJSON", {
   virtuals: true,
   transform: (_doc, ret) => {
     delete ret.password;
+    delete ret.passwordChangedAt;
     delete ret.__v;
     return ret;
   },

@@ -14,7 +14,7 @@ export async function POST(request) {
     const userId = gate.session.user.id;
 
     const key = `pw-change:${userId}`;
-    const rl = rateLimit(key, 5, 15 * 60 * 1000);
+    const rl = await rateLimit(key, 5, 15 * 60 * 1000);
     if (rl.limited) {
       return json({ message: "محاولات كتير، حاول بعد شوية" }, 429, { "Retry-After": String(rl.retryAfter) });
     }
@@ -38,8 +38,9 @@ export async function POST(request) {
     }
 
     user.password = await bcrypt.hash(body.newPassword, 12);
+    user.passwordChangedAt = new Date();
     await user.save();
-    resetRateLimit(key);
+    await resetRateLimit(key);
     return json({ ok: true });
   } catch (err) {
     console.error("POST /api/account/password error:", err);

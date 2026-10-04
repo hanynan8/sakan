@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -44,57 +44,57 @@ function EmptyIllustration() {
   );
 }
 
-// ── Booking Card (لما يبقى في بيانات) ──
-function BookingCard({ item, ar }) {
-  const statusColor = {
-    completed: 'bg-green-100 text-green-700',
-    pending:   'bg-yellow-100 text-yellow-700',
-    cancelled: 'bg-red-100 text-red-600',
-  };
-  const statusLabel = {
-    completed: { en: 'Completed', ar: 'مكتمل' },
-    pending:   { en: 'Pending',   ar: 'معلق' },
-    cancelled: { en: 'Cancelled', ar: 'ملغي' },
-  };
-  const status = item.status || 'pending';
+// ── Booking Card ──
+const statusColor = {
+  confirmed: 'bg-green-100 text-green-700',
+  pending: 'bg-yellow-100 text-yellow-700',
+  cancelled: 'bg-red-100 text-red-600',
+};
+const statusLabel = {
+  confirmed: { en: 'Confirmed', ar: 'مؤكد' },
+  pending: { en: 'Pending', ar: 'قيد المراجعة' },
+  cancelled: { en: 'Cancelled', ar: 'ملغي' },
+};
 
+function BookingCard({ item, ar, onCancel }) {
+  const status = item.status || 'pending';
+  const p = item.property;
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="flex flex-col sm:flex-row">
-        {/* Image */}
         <div className="sm:w-40 h-36 sm:h-auto bg-gray-100 flex-shrink-0 overflow-hidden">
-          {item.image ? (
-            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-              </svg>
-            </div>
-          )}
+          {p?.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+          ) : null}
         </div>
-        {/* Info */}
-        <div className="flex-1 p-4 flex flex-col justify-between">
+        <div className="flex-1 p-4 flex flex-col justify-between gap-2">
           <div>
             <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="font-semibold text-navy text-sm">{item.name || '—'}</h3>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${statusColor[status] || statusColor.pending}`}>
-                {ar ? statusLabel[status]?.ar : statusLabel[status]?.en}
+              {p ? (
+                <Link href={`/properties/${p._id}`} className="font-semibold text-navy text-sm hover:underline">{p.title}</Link>
+              ) : (
+                <span className="font-semibold text-gray-400 text-sm">{ar ? 'السكن لم يعد متاحًا' : 'Listing no longer available'}</span>
+              )}
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${statusColor[status]}`}>
+                {ar ? statusLabel[status].ar : statusLabel[status].en}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mb-2">{item.location || item.city || '—'}</p>
-            {item.checkIn && (
+            {item.moveInDate && (
               <p className="text-xs text-gray-500">
-                {ar ? 'من' : 'From'} <span className="font-medium text-gray-700">{item.checkIn}</span>
-                {item.checkOut && <> {ar ? 'إلى' : 'to'} <span className="font-medium text-gray-700">{item.checkOut}</span></>}
+                {ar ? 'تاريخ السكن:' : 'Move-in:'} <span className="font-medium text-gray-700">{new Date(item.moveInDate).toLocaleDateString()}</span>
               </p>
             )}
+            <p className="text-xs text-gray-400 mt-1">{new Date(item.createdAt).toLocaleDateString()}</p>
           </div>
-          {item.price && (
-            <p className="text-sm font-bold text-navy mt-2">
-              {item.price} <span className="text-xs font-normal text-gray-400">/ {ar ? 'أسبوع' : 'week'}</span>
-            </p>
-          )}
+          <div className="flex items-center justify-between">
+            {p ? <p className="text-sm font-bold text-navy">{p.price} <span className="text-xs font-normal text-gray-400">{ar ? 'ج.م / شهر' : 'EGP / month'}</span></p> : <span />}
+            {status === 'pending' && (
+              <button onClick={() => onCancel(item._id)} className="px-3 py-1.5 text-xs font-semibold border border-red-200 text-red-600 rounded hover:bg-red-50">
+                {ar ? 'إلغاء الطلب' : 'Cancel'}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -104,24 +104,38 @@ function BookingCard({ item, ar }) {
 export default function BookingsPage() {
   const { language } = useLanguage();
   const ar = language === 'ar';
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // TODO: لما تبعتلي بنية الـ API غير دي لـ useState([]) وفك التعليق على fetchBookings
-  const [items] = useState([]);
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch('/api/bookings', { cache: 'no-store' });
+      if (!res.ok) throw new Error();
+      setItems(await res.json());
+      setError('');
+    } catch {
+      setError(ar ? 'تعذر تحميل الطلبات' : 'Failed to load bookings');
+    } finally {
+      setLoading(false);
+    }
+  }, [ar]);
+  useEffect(() => { load(); }, [load]);
 
-  // const fetchBookings = async () => {
-  //   const res = await fetch('/api/data?collection=bookings');
-  //   const data = await res.json();
-  //   const userId = session?.user?.id;
-  //   const filtered = userId ? data.filter(d => d.userId === userId) : data;
-  //   setItems(Array.isArray(filtered) ? filtered : []);
-  // };
-  // useEffect(() => { fetchBookings(); }, []);
+  const cancel = async (id) => {
+    if (!confirm(ar ? 'إلغاء طلب الحجز؟' : 'Cancel this booking request?')) return;
+    const res = await fetch(`/api/bookings/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'cancelled' }),
+    });
+    if (res.ok) load();
+    else alert((await res.json().catch(() => ({}))).message || 'Error');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir={ar ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
-
-        {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm mb-3">
           <Link href="/" className="text-brand-dark hover:text-navy transition-colors font-medium">{ar ? 'الرئيسية' : 'Home'}</Link>
           <span className="text-gray-400">/</span>
@@ -133,35 +147,24 @@ export default function BookingsPage() {
         <h1 className="text-2xl font-bold text-navy mb-6">{ar ? 'الحجوزات' : 'Booking'}</h1>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px] flex flex-col">
+          {loading && <p className="text-sm text-gray-400 py-16 text-center">{ar ? 'جارٍ التحميل...' : 'Loading...'}</p>}
+          {!loading && error && <p className="text-sm text-red-600 py-16 text-center">{error}</p>}
 
-          {/* Empty */}
-          {items.length === 0 && (
+          {!loading && !error && items.length === 0 && (
             <div className="flex-1 flex flex-col items-center justify-center py-16 px-4">
               <EmptyIllustration />
-              <p className="text-gray-500 text-sm mt-4 mb-6">
-                {ar ? 'لا توجد حجوزات متاحة' : 'No booking available'}
-              </p>
-              <Link
-                href="/"
-                className="px-6 py-2.5 bg-brand hover:bg-brand-dark text-white text-sm font-semibold rounded-full transition-colors"
-              >
+              <p className="text-gray-500 text-sm mt-4 mb-6">{ar ? 'لا توجد حجوزات متاحة' : 'No booking available'}</p>
+              <Link href="/properties" className="px-6 py-2.5 bg-brand hover:bg-brand-dark text-white text-sm font-semibold rounded-full transition-colors">
                 {ar ? 'استكشف العقارات' : 'Explore properties'}
               </Link>
             </div>
           )}
 
-          {/* Items */}
-          {items.length > 0 && (
+          {!loading && items.length > 0 && (
             <div className="p-6 space-y-4">
-              <p className="text-sm text-gray-500 mb-2">
-                {items.length} {ar ? 'حجز' : items.length === 1 ? 'booking' : 'bookings'}
-              </p>
-              {items.map(item => (
-                <BookingCard key={item._id} item={item} ar={ar} />
-              ))}
+              {items.map((item) => <BookingCard key={item._id} item={item} ar={ar} onCancel={cancel} />)}
             </div>
           )}
-
         </div>
       </div>
     </div>

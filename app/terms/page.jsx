@@ -6,8 +6,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const SECTIONS = [
   {
-    ar: { h: 'طبيعة المنصة', p: 'سكني منصة تعرض سكنًا طلابيًا في أسوان وتربط الطلاب بالسكنات المتاحة. المنصة لا تتولى الدفع أو الحجز داخل الموقع، ويتم الاتفاق النهائي خارج المنصة.' },
-    en: { h: 'About the platform', p: 'Sakani lists student housing in Aswan and connects students with available properties. The platform does not process payments or bookings; final arrangements are made outside the site.' },
+    ar: { h: 'طبيعة المنصة', p: 'سكني منصة تعرض سكنًا طلابيًا في أسوان وتربط الطلاب بالسكنات المتاحة. يمكن للطالب إرسال طلب حجز عبر الموقع، وتتواصل معه المنصة لتأكيده. المنصة لا تتولى أي مدفوعات، ويتم الاتفاق النهائي والدفع بين الطالب والمالك خارج المنصة. إعلانات المالكين تخضع للمراجعة قبل نشرها.' },
+    en: { h: 'About the platform', p: 'Sakani lists student housing in Aswan and connects students with available properties. Students can submit a booking request through the site and the platform contacts them to confirm it. The platform does not process any payments; final arrangements and payment are made between the student and the owner outside the site. Owner listings are reviewed before publication.' },
   },
   {
     ar: { h: 'الحسابات', p: 'أنت مسؤول عن صحة بياناتك وسرية كلمة مرورك وعن كل نشاط يتم من حسابك. يجب ألا تقل كلمة المرور عن 8 حروف وتحتوي على حرف كبير ورقم.' },

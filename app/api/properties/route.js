@@ -103,7 +103,7 @@ export async function POST(request) {
     if (gate.error) return gate.error;
     const { session } = gate;
 
-    const rl = rateLimit(`property-create:${session.user.id}`, 20, 60 * 60 * 1000);
+    const rl = await rateLimit(`property-create:${session.user.id}`, 20, 60 * 60 * 1000);
     if (rl.limited) {
       return json({ message: "محاولات كتير، حاول بعد شوية" }, 429, { "Retry-After": String(rl.retryAfter) });
     }
@@ -126,7 +126,8 @@ export async function POST(request) {
       images: data.images || [],
       amenities: data.amenities || [],
       owner: session.user.id,
-      status: "active",
+      // إعلانات المالكين بتستنى موافقة الأدمن قبل ما تظهر للزوار
+      status: session.user.role === "admin" ? "active" : "pending",
     });
 
     return json(property, 201);

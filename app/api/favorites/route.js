@@ -28,7 +28,7 @@ export async function GET(request) {
 
     const properties = await Property.find({
       _id: { $in: favs.map((f) => f.property) },
-      status: { $ne: "hidden" },
+      status: { $nin: ["hidden", "pending"] },
     })
       .select("-owner -__v")
       .lean();
@@ -55,7 +55,7 @@ export async function POST(request) {
     await connectToMongo();
     const userId = gate.session.user.id;
 
-    const exists = await Property.exists({ _id: propertyId, status: { $ne: "hidden" } });
+    const exists = await Property.exists({ _id: propertyId, status: { $nin: ["hidden", "pending"] } });
     if (!exists) return json({ message: "السكن غير موجود" }, 404);
 
     const count = await Favorite.countDocuments({ user: userId });

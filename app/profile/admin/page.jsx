@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AREAS } from '@/lib/taxonomy';
+import AdminPropertyEditor from '@/app/components/AdminPropertyEditor';
 
 const inputCls = 'px-3 py-2 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand';
 const btnCls = 'px-3 py-1.5 text-xs font-semibold border border-gray-300 rounded hover:border-gray-500 transition-all';
@@ -160,6 +161,7 @@ function PropertiesTab({ ar }) {
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ properties: [], pages: 1, total: 0 });
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -190,6 +192,7 @@ function PropertiesTab({ ar }) {
         <input className={`${inputCls} flex-1 min-w-[180px]`} placeholder={ar ? 'بحث بالعنوان' : 'Search title / address'} value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} />
         <select className={inputCls} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
           <option value="">{ar ? 'كل الحالات' : 'All statuses'}</option>
+          <option value="pending">{ar ? 'مستني موافقة' : 'Pending approval'}</option>
           <option value="active">{ar ? 'متاح' : 'Active'}</option>
           <option value="rented">{ar ? 'مؤجر' : 'Rented'}</option>
           <option value="hidden">{ar ? 'مخفي' : 'Hidden'}</option>
@@ -208,16 +211,97 @@ function PropertiesTab({ ar }) {
                 </p>
               </div>
               <div className="flex gap-2">
+                {p.status === 'pending' && (
+                  <button onClick={() => changeStatus(p.id, 'active')} className={`${btnCls} !border-green-300 text-green-700`}>{ar ? 'موافقة ونشر' : 'Approve'}</button>
+                )}
                 <select value={p.status} onChange={(e) => changeStatus(p.id, e.target.value)} className={`${btnCls} bg-white`}>
+                  <option value="pending">{ar ? 'مستني موافقة' : 'Pending'}</option>
                   <option value="active">{ar ? 'متاح' : 'Active'}</option>
                   <option value="rented">{ar ? 'مؤجر' : 'Rented'}</option>
                   <option value="hidden">{ar ? 'مخفي' : 'Hidden'}</option>
                 </select>
+                <button onClick={() => setEditing(p)} className={btnCls}>{ar ? 'تعديل' : 'Edit'}</button>
                 <button onClick={() => remove(p)} className={`${btnCls} !border-red-200 text-red-600`}>{ar ? 'حذف' : 'Delete'}</button>
               </div>
             </div>
           );
         })}
+      </div>
+      {editing && (
+        <AdminPropertyEditor
+          propertyId={editing.id}
+          ownerLabel={editing.owner ? editing.owner.contact : ''}
+          ar={ar}
+          onClose={() => setEditing(null)}
+          onSaved={() => { setEditing(null); load(); }}
+        />
+      )}
+      <Pager page={page} pages={data.pages} setPage={setPage} ar={ar} />
+    </div>
+  );
+}
+
+/* ───────── طلبات الحجز ───────── */
+function BookingsTab({ ar }) {
+  const [status, setStatus] = useState('pending');
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState({ bookings: [], pages: 1, total: 0 });
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const p = new URLSearchParams({ page: String(page) });
+      if (status) p.set('status', status);
+      setData(await api(`/api/admin/bookings?${p}`, { cache: 'no-store' }));
+    } catch { setData({ bookings: [], pages: 1, total: 0 }); }
+    finally { setLoading(false); }
+  }, [status, page]);
+  useEffect(() => { load(); }, [load]);
+
+  const setBookingStatus = async (id, newStatus) => {
+    try {
+      await api(`/api/bookings/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
+      load();
+    } catch (e) { alert(e.message); }
+  };
+  const color = { pending: 'bg-amber-100 text-amber-700', confirmed: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-600' };
+  const label = { pending: ar ? 'جديد' : 'Pending', confirmed: ar ? 'مؤكد' : 'Confirmed', cancelled: ar ? 'ملغي' : 'Cancelled' };
+
+  return (
+    <div>
+      <div className="flex gap-2 mb-4">
+        <select className={inputCls} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
+          <option value="">{ar ? 'كل الحالات' : 'All statuses'}</option>
+          <option value="pending">{label.pending}</option>
+          <option value="confirmed">{label.confirmed}</option>
+          <option value="cancelled">{label.cancelled}</option>
+        </select>
+      </div>
+      <p className="text-xs text-gray-500 mb-2">{data.total} {ar ? 'طلب' : 'requests'}</p>
+      {!loading && data.bookings.length === 0 && <p className="text-sm text-gray-500 py-8 text-center">{ar ? 'مفيش طلبات حجز' : 'No booking requests'}</p>}
+      <div className={`space-y-2 ${loading ? 'opacity-60' : ''}`}>
+        {data.bookings.map((b) => (
+          <div key={b.id} className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="flex items-start justify-between gap-3 flex-wrap">
+              <div className="min-w-0">
+                {b.property ? <Link href={`/properties/${b.property.id}`} className="font-semibold text-navy text-sm hover:underline">{b.property.title}</Link> : <span className="text-sm text-gray-400">{ar ? 'سكن محذوف' : 'Deleted listing'}</span>}
+                <p className="text-xs text-gray-500 mt-0.5">{b.user ? `${b.user.name} (${b.user.contact})` : '—'} · {fmt(b.createdAt)}</p>
+                <p className="text-xs text-gray-500" dir="ltr">
+                  <a href={`https://wa.me/${b.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-700 underline">{b.phone}</a>
+                  {b.moveInDate ? ` · ${ar ? 'سكن من' : 'move-in'} ${fmt(b.moveInDate)}` : ''}
+                </p>
+              </div>
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${color[b.status]}`}>{label[b.status]}</span>
+            </div>
+            {b.message && <p className="text-sm text-gray-600 mt-2 whitespace-pre-line break-words">{b.message}</p>}
+            <div className="flex gap-2 mt-3">
+              {b.status !== 'confirmed' && <button onClick={() => setBookingStatus(b.id, 'confirmed')} className={btnCls}>{ar ? 'تأكيد' : 'Confirm'}</button>}
+              {b.status !== 'cancelled' && <button onClick={() => setBookingStatus(b.id, 'cancelled')} className={`${btnCls} !border-red-200 text-red-600`}>{ar ? 'إلغاء' : 'Cancel'}</button>}
+              {b.status !== 'pending' && <button onClick={() => setBookingStatus(b.id, 'pending')} className={btnCls}>{ar ? 'إعادة فتح' : 'Reopen'}</button>}
+            </div>
+          </div>
+        ))}
       </div>
       <Pager page={page} pages={data.pages} setPage={setPage} ar={ar} />
     </div>
@@ -240,7 +324,7 @@ export default function AdminPage() {
   const { data: session, status } = useSession();
   const { language } = useLanguage();
   const ar = language === 'ar';
-  const [tab, setTab] = useState('requests');
+  const [tab, setTab] = useState('bookings');
   const [stats, setStats] = useState(null);
 
   const isAdmin = session?.user?.role === 'admin';
@@ -266,9 +350,11 @@ export default function AdminPage() {
     { label: ar ? 'المستخدمين' : 'Users', value: sum(stats?.users) },
     { label: ar ? 'السكنات' : 'Properties', value: sum(stats?.properties) },
     { label: ar ? 'المتاحة' : 'Active', value: stats?.properties?.active || 0 },
-    { label: ar ? 'المؤجرة' : 'Rented', value: stats?.properties?.rented || 0 },
+    { label: ar ? 'مستنية موافقة' : 'Awaiting approval', value: stats?.properties?.pending || 0 },
+    { label: ar ? 'حجوزات جديدة' : 'New bookings', value: stats?.bookings?.pending || 0 },
   ];
   const tabs = [
+    { id: 'bookings', label: ar ? 'طلبات الحجز' : 'Bookings' },
     { id: 'requests', label: ar ? 'طلبات الدعم' : 'Support requests' },
     { id: 'users', label: ar ? 'المستخدمين' : 'Users' },
     { id: 'properties', label: ar ? 'السكنات' : 'Properties' },
@@ -284,7 +370,7 @@ export default function AdminPage() {
         </nav>
         <h1 className="text-2xl font-bold text-navy mb-4">{ar ? 'لوحة الإدارة' : 'Admin Panel'}</h1>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5">
           {cards.map((c) => (
             <div key={c.label} className="bg-white rounded-xl border border-gray-100 p-4">
               <p className="text-xs text-gray-400">{c.label}</p>
@@ -305,6 +391,7 @@ export default function AdminPage() {
           ))}
         </div>
 
+        {tab === 'bookings' && <BookingsTab ar={ar} />}
         {tab === 'requests' && <RequestsTab ar={ar} />}
         {tab === 'users' && <UsersTab ar={ar} selfId={session.user.id} />}
         {tab === 'properties' && <PropertiesTab ar={ar} />}

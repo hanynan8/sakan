@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# سكن (Sakan) — منصة سكن طلاب جامعة أسوان
 
-## Getting Started
+Next.js 15 + MongoDB + NextAuth. الطالب بيدوّر على سكن ويطلب حجز، المالك بيضيف إعلانه، والأدمن بيراجع ويتابع.
 
-First, run the development server:
-
+## التشغيل
 ```bash
+npm install
+cp .env.example .env.local     # عبّي القيم
+node --env-file=.env.local scripts/create-admin.mjs admin@example.com "StrongPass1" Admin Sakan
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+(لازم Node 20+). بعد الدخول بحساب الأدمن افتح **/profile/admin**.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## الأدوار
+- **student**: بيدوّر، يضيف للمفضلة، يطلب حجز (`/profile/booking`).
+- **owner**: يضيف سكنات من `/profile/properties` — الإعلان الجديد بيبقى **تحت المراجعة** لحد ما الأدمن يوافق.
+- **admin**: لوحة الإدارة `/profile/admin` — طلبات الحجز، موافقة الإعلانات، المستخدمين، طلبات الدعم.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## الأمان (اللي موجود)
+bcrypt + rate limiting على الدخول والتسجيل والحجز، حماية CSRF بالـ Origin، CSP وهيدرز أمان، التحقق من كل المدخلات، تغيير الدور من الأدمن بيتطبق خلال 5 دقايق، وتغيير كلمة المرور بينهي كل الجلسات القديمة.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## خدمات مجانية لازم تفعّلها قبل النشر (5 دقايق)
+1. **Cloudinary** (رفع الصور): سجّل على cloudinary.com (مجاني، بدون كارت) وانسخ `CLOUD_NAME` و`API_KEY` و`API_SECRET` في `.env`. بدونهم رفع الصور بيرجع "غير مفعّل".
+2. **Upstash Redis** (حماية من التخمين والسبام): سجّل على upstash.com (مجاني) وانسخ `REST_URL` و`REST_TOKEN`. على Vercel لازم تعمله، لأن الذاكرة مابتتشاركش بين النسخ.
+3. على Vercel/أي استضافة ضيف كل متغيرات `.env.example` في إعدادات المشروع (Environment Variables)، وحط `AUTH_URL` بدومينك.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ملاحظات
+- استرجاع كلمة المرور بالإيميل لسه مش موجود (محتاج مزوّد إيميل).
+- الصور المرفوعة بتفضل على Cloudinary حتى لو الإعلان اتحذف؛ الخطة المجانية فيها حد تخزين، راجعه من لوحة Cloudinary.
+- الإعلانات القديمة اللي صورها من مواقع تانية بتفضل شغالة، بس أي صورة جديدة لازم تترفع من الموقع.

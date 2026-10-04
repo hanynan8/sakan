@@ -21,7 +21,7 @@ export async function POST(request) {
     if (!sameOriginOk(request)) return forbiddenOrigin();
 
     // 5 حسابات جديدة كل ساعة لكل IP
-    const rl = rateLimit(`register:${getClientIp(request)}`, 5, 60 * 60 * 1000);
+    const rl = await rateLimit(`register:${getClientIp(request)}`, 5, 60 * 60 * 1000);
     if (rl.limited) {
       return json({ message: "محاولات كتير، حاول بعد شوية" }, 429, { "Retry-After": String(rl.retryAfter) });
     }

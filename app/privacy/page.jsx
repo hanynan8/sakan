@@ -6,8 +6,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const SECTIONS = [
   {
-    ar: { h: 'البيانات التي نجمعها', p: 'نجمع الاسم، والبريد الإلكتروني أو رقم الهاتف، وكلمة المرور (مخزّنة مشفّرة ولا يمكن قراءتها)، بالإضافة إلى بيانات السكنات التي يضيفها المالكون وطلبات الدعم التي ترسلها.' },
-    en: { h: 'Information we collect', p: 'We collect your name, email or phone number, and your password (stored hashed and never readable), along with property listings added by owners and support requests you submit.' },
+    ar: { h: 'البيانات التي نجمعها', p: 'نجمع الاسم، والبريد الإلكتروني أو رقم الهاتف، وكلمة المرور (مخزّنة مشفّرة ولا يمكن قراءتها)، بالإضافة إلى رقم الهاتف ورسالة طلب الحجز عند إرسال طلب حجز (يراها فريق المنصة فقط)، وبيانات السكنات التي يضيفها المالكون وطلبات الدعم التي ترسلها.' },
+    en: { h: 'Information we collect', p: 'We collect your name, email or phone number, and your password (stored hashed and never readable), along with the phone number and message you provide in a booking request (visible to platform staff only), property listings added by owners and support requests you submit.' },
   },
   {
     ar: { h: 'كيف نستخدم بياناتك', p: 'نستخدم بياناتك لتشغيل حسابك، وعرض السكنات، والرد على استفساراتك. لا نبيع بياناتك لأي طرف ثالث.' },
@@ -22,7 +22,7 @@ const SECTIONS = [
     en: { h: 'Cookies', p: 'We only use essential cookies to keep you signed in, and we store your language preference in your browser.' },
   },
   {
-    ar: { h: 'حقوقك', p: 'يمكنك تعديل اسمك وتغيير كلمة المرور وحذف حسابك نهائيًا (مع كل سكناتك ومفضلتك) من صفحة إعدادات الحساب في أي وقت.' },
+    ar: { h: 'حقوقك', p: 'يمكنك تعديل اسمك وتغيير كلمة المرور وحذف حسابك نهائيًا (مع كل سكناتك ومفضلتك وطلبات حجزك) من صفحة إعدادات الحساب في أي وقت.' },
     en: { h: 'Your rights', p: 'You can edit your name, change your password, and permanently delete your account (with your listings and shortlist) from Account Settings at any time.' },
   },
   {

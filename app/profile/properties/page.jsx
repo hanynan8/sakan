@@ -1,6 +1,7 @@
 // path: app/profile/properties/page.jsx
 'use client';
 
+import ImageUploader from '@/app/components/ImageUploader';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -307,14 +308,11 @@ export default function MyPropertiesPage() {
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'روابط الصور (كل رابط في سطر)' : 'Image URLs (one per line)'}</label>
-                <textarea
-                  rows={2}
-                  value={form.images}
-                  onChange={(e) => setForm({ ...form, images: e.target.value })}
-                  placeholder="https://..."
-                  maxLength={6600}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'صور السكن' : 'Photos'}</label>
+                <ImageUploader
+                  ar={ar}
+                  value={form.images.split('\n').map((x) => x.trim()).filter(Boolean)}
+                  onChange={(arr) => setForm({ ...form, images: arr.join('\n') })}
                 />
               </div>
 
@@ -370,8 +368,8 @@ export default function MyPropertiesPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <Link href={`/properties/${p._id}`} className="font-semibold text-navy hover:underline">{p.title}</Link>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-700' : p.status === 'hidden' ? 'bg-gray-100 text-gray-500' : 'bg-amber-100 text-amber-700'}`}>
-                      {p.status === 'active' ? (ar ? 'متاح' : 'Active') : p.status === 'hidden' ? (ar ? 'مخفي' : 'Hidden') : (ar ? 'مؤجر' : 'Rented')}
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-700' : p.status === 'hidden' ? 'bg-gray-100 text-gray-500' : p.status === 'pending' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {p.status === 'active' ? (ar ? 'متاح' : 'Active') : p.status === 'pending' ? (ar ? 'تحت المراجعة' : 'Under review') : p.status === 'hidden' ? (ar ? 'مخفي' : 'Hidden') : (ar ? 'مؤجر' : 'Rented')}
                     </span>
                   </div>
                   <p className="text-sm text-gray-500 mt-1">{p.price} {ar ? 'ج.م/شهر' : 'EGP/mo'}</p>
@@ -380,9 +378,11 @@ export default function MyPropertiesPage() {
                   <select
                     value={p.status}
                     onChange={(e) => changeStatus(p, e.target.value)}
+                    disabled={p.status === 'pending'}
                     aria-label={ar ? 'حالة السكن' : 'Property status'}
                     className="px-2 py-1.5 text-xs font-semibold border border-gray-300 rounded bg-white hover:border-gray-500 transition-all"
                   >
+                    {p.status === 'pending' && <option value="pending">{ar ? 'تحت المراجعة' : 'Under review'}</option>}
                     <option value="active">{ar ? 'متاح' : 'Active'}</option>
                     <option value="rented">{ar ? 'مؤجر' : 'Rented'}</option>
                     <option value="hidden">{ar ? 'مخفي' : 'Hidden'}</option>

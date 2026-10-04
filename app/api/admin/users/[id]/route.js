@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { connectToMongo, UserModel } from "@/lib/auth";
 import Property from "@/models/property";
 import Favorite from "@/models/favorite";
+import Booking from "@/models/booking";
 import { json, requireRole, sameOriginOk, forbiddenOrigin } from "@/lib/api";
 import { readJson } from "@/lib/validators";
 
@@ -50,6 +51,7 @@ export async function DELETE(request, { params }) {
     const props = await Property.find({ owner: g.id }).select("_id").lean();
     await Promise.all([
       Favorite.deleteMany({ $or: [{ user: g.id }, { property: { $in: props.map((p) => p._id) } }] }),
+      Booking.deleteMany({ $or: [{ user: g.id }, { property: { $in: props.map((p) => p._id) } }] }),
       Property.deleteMany({ owner: g.id }),
       UserModel.deleteOne({ _id: g.id }),
     ]);
