@@ -33,8 +33,8 @@ export default function ReferPage() {
     <div className="min-h-screen bg-white" dir={ar ? 'rtl' : 'ltr'}>
 
       {/* ── HERO ── */}
-      <div className="relative bg-gray-900 overflow-hidden min-h-[340px] flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/75 to-transparent" />
+      <div className="relative bg-navy-dark overflow-hidden min-h-[340px] flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy-dark/75 to-transparent" />
 
         {/* Coins */}
         <div className="absolute right-1/4 top-0 bottom-0 items-center pointer-events-none select-none hidden md:flex">
@@ -86,7 +86,7 @@ export default function ReferPage() {
 
               <button
                 onClick={handleCopyLink}
-                className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all mb-3 ${copied ? 'bg-green-500 text-white' : 'bg-rose-500 hover:bg-rose-600 text-white'}`}
+                className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all mb-3 ${copied ? 'bg-green-500 text-white' : 'bg-brand hover:bg-brand-dark text-white'}`}
               >
                 {copied ? (ar ? '✓ تم النسخ' : '✓ Copied!') : (ar ? 'نسخ الرابط' : 'Copy Link')}
               </button>
@@ -120,7 +120,7 @@ export default function ReferPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                   </svg>
                   <div>
-                    <p className="text-sm font-bold text-gray-900">{count > 0 ? `${count}+` : '10,000+'}</p>
+                    <p className="text-sm font-bold text-navy">{count > 0 ? `${count}+` : '10,000+'}</p>
                     <p className="text-xs text-gray-400">{ar ? 'أشخاص تم دعوتهم' : 'People Referred'}</p>
                   </div>
                 </div>
@@ -130,7 +130,7 @@ export default function ReferPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <div>
-                    <p className="text-sm font-bold text-gray-900">£{earnings > 0 ? `${earnings}+` : '500K+'}</p>
+                    <p className="text-sm font-bold text-navy">£{earnings > 0 ? `${earnings}+` : '500K+'}</p>
                     <p className="text-xs text-gray-400">{ar ? 'إجمالي الأرباح' : 'Payout Disbursed'}</p>
                   </div>
                 </div>
@@ -145,13 +145,13 @@ export default function ReferPage() {
 
         {/* Your Referrals */}
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-1">{ar ? 'دعواتك' : 'Your Referrals'}</h2>
+          <h2 className="text-lg font-bold text-navy mb-1">{ar ? 'دعواتك' : 'Your Referrals'}</h2>
           <div className="border-t border-gray-200 pt-4">
             <div className="border border-gray-100 rounded-xl px-5 py-4 bg-gray-50 text-sm text-gray-500">
               {count === 0
                 ? ar
-                  ? <>ابدأ أول دعوة بمشاركة كودك الفريد مع أصدقائك واكسب <span className="text-rose-500 font-semibold">£50</span></>
-                  : <>Initiate your first referral by sharing your unique referral code with your friends and earn <span className="text-rose-500 font-semibold">£50</span></>
+                  ? <>ابدأ أول دعوة بمشاركة كودك الفريد مع أصدقائك واكسب <span className="text-brand-dark font-semibold">£50</span></>
+                  : <>Initiate your first referral by sharing your unique referral code with your friends and earn <span className="text-brand-dark font-semibold">£50</span></>
                 : ar
                   ? `لديك ${count} دعوة ناجحة — إجمالي أرباحك: £${earnings}`
                   : `You have ${count} successful referral(s) — Total earnings: £${earnings}`
@@ -162,7 +162,7 @@ export default function ReferPage() {
 
         {/* How it works */}
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-6">
+          <h2 className="text-lg font-bold text-navy mb-6">
             {ar ? 'الأمر بسيط كـ 1، 2، 3' : 'Referring is as easy as 1,2,3'}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-0">
@@ -192,7 +192,7 @@ export default function ReferPage() {
                     <span className="text-xs font-bold text-gray-400 w-4">{item.step}</span>
                     <span className="text-gray-500">{item.icon}</span>
                   </div>
-                  <p className="font-bold text-gray-900 text-sm mb-1">{ar ? item.ar.title : item.en.title}</p>
+                  <p className="font-bold text-navy text-sm mb-1">{ar ? item.ar.title : item.en.title}</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{ar ? item.ar.desc : item.en.desc}</p>
                 </div>
                 {i < 2 && (
@@ -209,7 +209,7 @@ export default function ReferPage() {
 
         {/* Terms */}
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">{ar ? 'الشروط والأحكام' : 'Terms and Conditions'}</h2>
+          <h2 className="text-lg font-bold text-navy mb-3">{ar ? 'الشروط والأحكام' : 'Terms and Conditions'}</h2>
           <ul className="space-y-2 text-sm text-gray-600">
             {[
               { en: 'You can refer multiple friends and win cashback upto GBP 10,000.', ar: 'يمكنك دعوة أصدقاء متعددين وكسب حتى 10,000 جنيه إسترليني.' },
@@ -220,7 +220,7 @@ export default function ReferPage() {
                 <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0" />
                 {ar ? t.ar : t.en}
                 {i === 2 && (
-                  <button className="text-rose-500 font-semibold text-sm hover:underline whitespace-nowrap">
+                  <button className="text-brand-dark font-semibold text-sm hover:underline whitespace-nowrap">
                     {ar ? 'اقرأ المزيد ↓' : 'See More ↓'}
                   </button>
                 )}

@@ -152,12 +152,12 @@ export default function HeroPropertiesSection() {
   const availableColleges = filters.campus ? collegesByCampus(filters.campus) : COLLEGES;
 
   return (
-    <section className="bg-black" dir={ar ? 'rtl' : 'ltr'}>
+    <section className="bg-brand" dir={ar ? 'rtl' : 'ltr'}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
         {/* عنوان مختصر - من غير صور زخرفية */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-black text-white mb-2">{t.heading}</h1>
-          <p className="text-base md:text-lg text-gray-300 font-medium">{t.subheading}</p>
+          <p className="text-base md:text-lg text-white/90 font-medium">{t.subheading}</p>
         </div>
 
         {/* البحث الرئيسي - أول حاجة يشوفها الزائر */}
@@ -172,12 +172,12 @@ export default function HeroPropertiesSection() {
                 value={filters.q}
                 onChange={(e) => setFilters({ ...filters, q: e.target.value })}
                 placeholder={t.searchPlaceholder}
-                className={`w-full py-3.5 text-base border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-black transition-all ${ar ? 'pr-10 pl-3 text-right' : 'pl-10 pr-3'}`}
+                className={`w-full py-3.5 text-base border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-brand transition-all ${ar ? 'pr-10 pl-3 text-right' : 'pl-10 pr-3'}`}
               />
             </div>
             <button
               type="submit"
-              className="px-6 sm:px-8 py-3.5 bg-black text-white text-base font-bold rounded-lg hover:bg-gray-800 transition-all whitespace-nowrap"
+              className="px-6 sm:px-8 py-3.5 bg-brand text-white text-base font-bold rounded-lg hover:bg-brand-dark hover:text-white transition-all whitespace-nowrap"
             >
               {t.search}
             </button>
@@ -197,8 +197,8 @@ export default function HeroPropertiesSection() {
                   onClick={() => toggleQuickCollege(collegeId)}
                   className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-full border transition-all ${
                     active
-                      ? 'bg-black text-white border-black'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black'
+                      ? 'bg-brand text-white border-brand'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-brand hover:text-brand-dark'
                   }`}
                 >
                   {ar ? college.ar : college.en}
@@ -221,8 +221,8 @@ export default function HeroPropertiesSection() {
                   onClick={() => toggleQuickArea(areaId)}
                   className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-full border transition-all ${
                     active
-                      ? 'bg-black text-white border-black'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black'
+                      ? 'bg-brand text-white border-brand'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-brand hover:text-brand-dark'
                   }`}
                 >
                   {ar ? area.ar : area.en}
@@ -236,7 +236,7 @@ export default function HeroPropertiesSection() {
               <select
                 value={filters.campus}
                 onChange={(e) => setFilters({ ...filters, campus: e.target.value, college: '' })}
-                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
               >
                 <option value="">{t.allCampuses}</option>
                 {CAMPUSES.map((c) => (
@@ -247,7 +247,7 @@ export default function HeroPropertiesSection() {
               <select
                 value={filters.college}
                 onChange={(e) => setFilters({ ...filters, college: e.target.value })}
-                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
               >
                 <option value="">{t.allColleges}</option>
                 {availableColleges.map((c) => (
@@ -258,7 +258,7 @@ export default function HeroPropertiesSection() {
               <select
                 value={filters.area}
                 onChange={(e) => setFilters({ ...filters, area: e.target.value })}
-                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
               >
                 <option value="">{t.allAreas}</option>
                 {AREAS.map((a) => (
@@ -269,7 +269,7 @@ export default function HeroPropertiesSection() {
               <select
                 value={filters.type}
                 onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
               >
                 <option value="">{t.allTypes}</option>
                 {TYPES.map((ty) => (
@@ -283,7 +283,7 @@ export default function HeroPropertiesSection() {
                 value={filters.minPrice}
                 onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
                 placeholder={t.minPrice}
-                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
               />
               <input
                 type="number"
@@ -291,11 +291,11 @@ export default function HeroPropertiesSection() {
                 value={filters.maxPrice}
                 onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
                 placeholder={t.maxPrice}
-                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
               />
 
               <div className="col-span-2 flex gap-2">
-                <button type="submit" className="flex-1 py-2.5 bg-black text-white text-sm font-semibold rounded hover:bg-gray-800 transition-all">
+                <button type="submit" className="flex-1 py-2.5 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white transition-all">
                   {t.apply}
                 </button>
                 <button type="button" onClick={resetFilters} className="px-4 py-2.5 border border-gray-300 text-sm font-medium rounded text-gray-600 hover:border-gray-500 transition-all">
@@ -333,7 +333,7 @@ export default function HeroPropertiesSection() {
               <div className="text-center mt-10">
                 <Link
                   href="/properties"
-                  className="inline-block px-10 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-all rounded-lg"
+                  className="inline-block px-10 py-3 bg-brand text-white font-bold hover:bg-brand-dark hover:text-white transition-all rounded-lg"
                 >
                   {t.viewAll}
                 </Link>
@@ -367,12 +367,12 @@ function PropertyCard({ property, ar, t }) {
             </svg>
           </div>
         )}
-        <span className="absolute top-2 right-2 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded">
+        <span className="absolute top-2 right-2 bg-navy text-white text-xs font-bold px-2 py-1 rounded">
           {property.price} {t.perMonth}
         </span>
       </div>
       <div className="p-4">
-        <h3 className="font-bold text-gray-900 truncate">{property.title}</h3>
+        <h3 className="font-bold text-navy truncate">{property.title}</h3>
         <p className="text-sm text-gray-500 mt-1 truncate">
           {ar ? area?.ar : area?.en}
           {college ? ` · ${ar ? college.ar : college.en}` : ''}

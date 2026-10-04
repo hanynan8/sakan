@@ -334,11 +334,11 @@ export default function HowItWorksPage() {
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
         <span
           className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 mb-5"
-          style={{ color: '#e8445a', backgroundColor: '#fef2f2' }}
+          style={{ color: '#0077B6', backgroundColor: '#E6F7FD' }}
         >
           {t(data.hero)?.badge}
         </span>
-        <h1 className="text-3xl md:text-4xl font-black text-black mb-4 leading-tight">
+        <h1 className="text-3xl md:text-4xl font-black text-navy mb-4 leading-tight">
           {t(data.hero)?.title}
         </h1>
         <p className="text-base text-gray-500 font-medium max-w-xl mx-auto mb-8">
@@ -348,13 +348,13 @@ export default function HowItWorksPage() {
           <a
             href={data.hero?.primaryCtaUrl || '/properties'}
             className="px-8 py-3 text-sm text-white font-bold hover:opacity-90 transition-all"
-            style={{ backgroundColor: '#e8445a' }}
+            style={{ backgroundColor: '#0077B6' }}
           >
             {t(data.hero)?.primaryCta}
           </a>
           <a
             href={data.hero?.secondaryCtaUrl || '/list-property'}
-            className="px-8 py-3 text-sm border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all"
+            className="px-8 py-3 text-sm border-2 border-brand text-brand font-bold hover:bg-brand hover:text-white transition-all"
           >
             {t(data.hero)?.secondaryCta}
           </a>
@@ -375,7 +375,7 @@ export default function HowItWorksPage() {
                 onClick={() => setActiveTab(tab)}
                 className="px-6 py-2 text-sm font-bold transition-all"
                 style={activeTab === tab
-                  ? { backgroundColor: '#e8445a', color: 'white' }
+                  ? { backgroundColor: '#0077B6', color: 'white' }
                   : { backgroundColor: 'transparent', color: '#9ca3af' }
                 }
               >
@@ -394,11 +394,11 @@ export default function HowItWorksPage() {
             <div key={step.id} className="text-center relative z-10">
               <div
                 className="w-16 h-16 mx-auto mb-4 flex items-center justify-center text-2xl font-black text-white"
-                style={{ backgroundColor: '#e8445a' }}
+                style={{ backgroundColor: '#0077B6' }}
               >
                 {step.stepNumber}
               </div>
-              <h4 className="text-sm font-bold text-black mb-2">{t(step)?.title}</h4>
+              <h4 className="text-sm font-bold text-navy mb-2">{t(step)?.title}</h4>
               <p className="text-xs text-gray-500 leading-relaxed">{t(step)?.description}</p>
             </div>
           ))}
@@ -409,9 +409,9 @@ export default function HowItWorksPage() {
           <a
             href={activeTab === 'student' ? (data.tabs?.studentCtaUrl || '/properties') : (data.tabs?.ownerCtaUrl || '/list-property')}
             className="inline-block px-8 py-2.5 text-sm border-2 font-bold transition-all"
-            style={{ borderColor: '#e8445a', color: '#e8445a' }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8445a'; e.currentTarget.style.color = 'white'; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#e8445a'; }}
+            style={{ borderColor: '#0077B6', color: '#0077B6' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#0077B6'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#0077B6'; }}
           >
             {activeTab === 'student' ? t(data.tabs)?.studentCta : t(data.tabs)?.ownerCta}
           </a>
@@ -423,7 +423,7 @@ export default function HowItWorksPage() {
       {/* ── FEATURES ── */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-black text-black mb-2">{t(data.features)?.sectionTitle}</h2>
+          <h2 className="text-2xl font-black text-navy mb-2">{t(data.features)?.sectionTitle}</h2>
           <p className="text-sm text-gray-500 font-medium">{t(data.features)?.sectionSubtitle}</p>
         </div>
 
@@ -431,11 +431,11 @@ export default function HowItWorksPage() {
           {data.features?.items?.map((feature) => (
             <div
               key={feature.id}
-              className="p-5 border-2 border-gray-200 hover:border-black transition-all duration-200"
+              className="p-5 border-2 border-gray-200 hover:border-brand transition-all duration-200"
             >
               <div
                 className="w-8 h-8 mb-4 flex items-center justify-center text-white flex-shrink-0"
-                style={{ backgroundColor: '#e8445a' }}
+                style={{ backgroundColor: '#0077B6' }}
               >
                 {feature.icon === 'shield' && (
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -468,7 +468,7 @@ export default function HowItWorksPage() {
                   </svg>
                 )}
               </div>
-              <h4 className="text-sm font-bold text-black mb-1">{t(feature)?.title}</h4>
+              <h4 className="text-sm font-bold text-navy mb-1">{t(feature)?.title}</h4>
               <p className="text-xs text-gray-500 leading-relaxed">{t(feature)?.description}</p>
             </div>
           ))}
@@ -478,7 +478,7 @@ export default function HowItWorksPage() {
       <div className="border-t border-gray-100" />
 
       {/* ── STATS ── */}
-      <section className="py-10" style={{ backgroundColor: '#e8445a' }}>
+      <section className="py-10" style={{ backgroundColor: '#00ADEF' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {data.stats?.map((stat, index) => (
@@ -486,12 +486,12 @@ export default function HowItWorksPage() {
                 key={index}
                 className={`text-center ${
                   language === 'ar'
-                    ? index !== 0 ? 'border-r border-white border-opacity-30' : ''
-                    : index !== data.stats.length - 1 ? 'border-r border-white border-opacity-30' : ''
+                    ? index !== 0 ? 'border-r border-white/30' : ''
+                    : index !== data.stats.length - 1 ? 'border-r border-white/30' : ''
                 }`}
               >
                 <div className="text-3xl md:text-4xl font-black text-white mb-1">{stat.number}</div>
-                <div className="text-xs text-red-100 font-medium">{t(stat)?.label}</div>
+                <div className="text-xs text-white/90 font-medium">{t(stat)?.label}</div>
               </div>
             ))}
           </div>
@@ -503,7 +503,7 @@ export default function HowItWorksPage() {
       {/* ── FAQ ── */}
       <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-black text-black mb-2">{t(data.faq)?.sectionTitle}</h2>
+          <h2 className="text-2xl font-black text-navy mb-2">{t(data.faq)?.sectionTitle}</h2>
           <p className="text-sm text-gray-500 font-medium">{t(data.faq)?.sectionSubtitle}</p>
         </div>
 
@@ -514,11 +514,11 @@ export default function HowItWorksPage() {
                 className="w-full flex items-center justify-between px-5 py-3.5 text-left"
                 onClick={() => setOpenFaq(openFaq === index ? null : index)}
               >
-                <span className="font-bold text-black text-sm">{t(item)?.question}</span>
+                <span className="font-bold text-navy text-sm">{t(item)?.question}</span>
                 <span
                   className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-white ml-3 transition-transform duration-200"
                   style={{
-                    backgroundColor: '#e8445a',
+                    backgroundColor: '#0077B6',
                     transform: openFaq === index ? 'rotate(45deg)' : 'rotate(0deg)'
                   }}
                 >
@@ -540,7 +540,7 @@ export default function HowItWorksPage() {
       <div className="border-t border-gray-100" />
 
       {/* ── CTA ── */}
-      <section className="bg-black py-16">
+      <section className="bg-brand py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-black text-white mb-3">
             {t(data.cta)?.title}
@@ -552,13 +552,13 @@ export default function HowItWorksPage() {
             <a
               href={data.cta?.studentUrl || '/properties'}
               className="px-8 py-3 text-sm text-white font-bold hover:opacity-90 transition-all"
-              style={{ backgroundColor: '#e8445a' }}
+              style={{ backgroundColor: '#0077B6' }}
             >
               {t(data.cta)?.studentBtn}
             </a>
             <a
               href={data.cta?.ownerUrl || '/list-property'}
-              className="px-8 py-3 text-sm border-2 border-white text-white font-bold hover:bg-white hover:text-black transition-all"
+              className="px-8 py-3 text-sm border-2 border-white text-white font-bold hover:bg-white hover:text-brand-dark transition-all"
             >
               {t(data.cta)?.ownerBtn}
             </a>

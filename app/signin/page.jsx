@@ -45,8 +45,8 @@ function SignInForm() {
   return (
     <div className="min-h-screen flex" dir={ar ? 'rtl' : 'ltr'}>
       {/* ── لوحة البراندنج ── */}
-      <div className="hidden lg:flex lg:w-1/2 bg-black text-white flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-gray-800" />
+      <div className="hidden lg:flex lg:w-1/2 bg-brand text-white flex-col justify-between p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark" />
         <div className="relative z-10">
           <Link href="/" className="text-2xl font-black tracking-tight">
             {ar ? 'سكني' : 'Sakani'}
@@ -56,13 +56,13 @@ function SignInForm() {
           <h2 className="text-4xl font-black leading-tight">
             {ar ? 'سكنك الجامعي في أسوان، بضغطة واحدة.' : 'Your student housing in Aswan, one click away.'}
           </h2>
-          <p className="text-gray-300 text-lg">
+          <p className="text-white/90 text-lg">
             {ar
               ? 'ابحث عن سكن قريب من كليتك أو منطقتك في ثواني.'
               : 'Find housing close to your college or area in seconds.'}
           </p>
         </div>
-        <div className="relative z-10 text-sm text-gray-400">
+        <div className="relative z-10 text-sm text-white/80">
           {ar ? '© سكني — منصة السكن الطلابي في أسوان' : '© Sakani — Student housing platform in Aswan'}
         </div>
       </div>
@@ -70,11 +70,11 @@ function SignInForm() {
       {/* ── الفورم ── */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white">
         <div className="w-full max-w-sm">
-          <Link href="/" className="lg:hidden block text-center text-2xl font-black mb-8">
+          <Link href="/" className="lg:hidden block text-center text-2xl font-black text-brand mb-8">
             {ar ? 'سكني' : 'Sakani'}
           </Link>
 
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          <h1 className="text-2xl font-bold text-navy mb-1">
             {ar ? 'تسجيل الدخول' : 'Sign In'}
           </h1>
           <p className="text-sm text-gray-500 mb-6">
@@ -93,7 +93,7 @@ function SignInForm() {
                 value={form.identifier}
                 onChange={(e) => setForm({ ...form, identifier: e.target.value })}
                 placeholder={ar ? 'example@mail.com أو 010xxxxxxxx' : 'example@mail.com or 010xxxxxxxx'}
-                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
               />
             </div>
 
@@ -109,7 +109,7 @@ function SignInForm() {
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   placeholder={ar ? 'أدخل كلمة المرور' : 'Enter your password'}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
                 />
                 <button
                   type="button"
@@ -130,14 +130,14 @@ function SignInForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-black text-white text-sm font-semibold hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed transition-all rounded"
+              className="w-full py-2.5 bg-brand text-white text-sm font-semibold hover:bg-brand-dark hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-all rounded"
             >
               {loading ? (ar ? 'جارٍ الدخول...' : 'Signing in...') : (ar ? 'تسجيل الدخول' : 'Sign In')}
             </button>
 
             <p className="text-center text-xs text-gray-500">
               {ar ? 'ليس لديك حساب؟' : "Don't have an account?"}{' '}
-              <Link href="/signup" className="font-semibold text-black underline underline-offset-2">
+              <Link href="/signup" className="font-semibold text-navy underline underline-offset-2">
                 {ar ? 'إنشاء حساب' : 'Sign Up'}
               </Link>
             </p>

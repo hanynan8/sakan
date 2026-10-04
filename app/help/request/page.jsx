@@ -98,13 +98,13 @@ export default function SubmitRequestPage() {
         <div className="text-center max-w-sm">
           <div
             className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
-            style={{ backgroundColor: '#fef2f2' }}
+            style={{ backgroundColor: '#E6F7FD' }}
           >
-            <svg className="w-7 h-7" fill="none" stroke="#e8445a" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="w-7 h-7" fill="none" stroke="#0077B6" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
             </svg>
           </div>
-          <h2 className="text-xl font-black text-black mb-2">
+          <h2 className="text-xl font-black text-navy mb-2">
             {t('Request Submitted!', 'تم إرسال طلبك!')}
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed">
@@ -126,11 +126,11 @@ export default function SubmitRequestPage() {
         <div className="mb-8">
           <span
             className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 mb-4"
-            style={{ color: '#e8445a', backgroundColor: '#fef2f2' }}
+            style={{ color: '#0077B6', backgroundColor: '#E6F7FD' }}
           >
             {t('Support', 'الدعم')}
           </span>
-          <h1 className="text-2xl md:text-3xl font-black text-black mb-2">
+          <h1 className="text-2xl md:text-3xl font-black text-navy mb-2">
             {t('Submit a Request', 'إرسال طلب')}
           </h1>
           <p className="text-sm text-gray-500 font-medium">
@@ -148,9 +148,9 @@ export default function SubmitRequestPage() {
 
           {/* Email */}
           <div>
-            <label className="block text-xs font-bold text-black mb-1.5">
+            <label className="block text-xs font-bold text-navy mb-1.5">
               {t('Your email address', 'بريدك الإلكتروني')}
-              <span style={{ color: '#e8445a' }}> *</span>
+              <span style={{ color: '#DC2626' }}> *</span>
             </label>
             <input
               type="email"
@@ -160,22 +160,22 @@ export default function SubmitRequestPage() {
               placeholder={t('you@example.com', 'you@example.com')}
               className="w-full px-4 py-2.5 text-sm border rounded-lg outline-none transition-all"
               style={{
-                borderColor: fieldErrors.email ? '#e8445a' : '#e5e7eb',
+                borderColor: fieldErrors.email ? '#DC2626' : '#e5e7eb',
                 boxShadow: fieldErrors.email ? '0 0 0 3px #fef2f2' : 'none',
               }}
-              onFocus={(e) => { if (!fieldErrors.email) e.target.style.borderColor = '#e8445a'; }}
+              onFocus={(e) => { if (!fieldErrors.email) e.target.style.borderColor = '#0077B6'; }}
               onBlur={(e) => { if (!fieldErrors.email) e.target.style.borderColor = '#e5e7eb'; }}
             />
             {fieldErrors.email && (
-              <p className="text-xs mt-1 font-medium" style={{ color: '#e8445a' }}>{fieldErrors.email}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: '#DC2626' }}>{fieldErrors.email}</p>
             )}
           </div>
 
           {/* Query Select */}
           <div>
-            <label className="block text-xs font-bold text-black mb-1.5">
+            <label className="block text-xs font-bold text-navy mb-1.5">
               {t('Select your query', 'نوع الاستفسار')}
-              <span style={{ color: '#e8445a' }}> *</span>
+              <span style={{ color: '#DC2626' }}> *</span>
             </label>
             <div className="relative">
               <select
@@ -184,11 +184,11 @@ export default function SubmitRequestPage() {
                 onChange={handleChange}
                 className="w-full px-4 py-2.5 text-sm border rounded-lg outline-none appearance-none bg-white transition-all"
                 style={{
-                  borderColor: fieldErrors.query ? '#e8445a' : '#e5e7eb',
+                  borderColor: fieldErrors.query ? '#DC2626' : '#e5e7eb',
                   boxShadow: fieldErrors.query ? '0 0 0 3px #fef2f2' : 'none',
                   color: form.query ? '#111' : '#9ca3af',
                 }}
-                onFocus={(e) => { if (!fieldErrors.query) e.target.style.borderColor = '#e8445a'; }}
+                onFocus={(e) => { if (!fieldErrors.query) e.target.style.borderColor = '#0077B6'; }}
                 onBlur={(e) => { if (!fieldErrors.query) e.target.style.borderColor = '#e5e7eb'; }}
               >
                 {QUERY_OPTIONS.map((opt) => (
@@ -205,15 +205,15 @@ export default function SubmitRequestPage() {
               </svg>
             </div>
             {fieldErrors.query && (
-              <p className="text-xs mt-1 font-medium" style={{ color: '#e8445a' }}>{fieldErrors.query}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: '#DC2626' }}>{fieldErrors.query}</p>
             )}
           </div>
 
           {/* Subject */}
           <div>
-            <label className="block text-xs font-bold text-black mb-1.5">
+            <label className="block text-xs font-bold text-navy mb-1.5">
               {t('Subject', 'الموضوع')}
-              <span style={{ color: '#e8445a' }}> *</span>
+              <span style={{ color: '#DC2626' }}> *</span>
             </label>
             <input
               type="text"
@@ -223,22 +223,22 @@ export default function SubmitRequestPage() {
               placeholder={t('Brief summary of your request', 'ملخص قصير لطلبك')}
               className="w-full px-4 py-2.5 text-sm border rounded-lg outline-none transition-all"
               style={{
-                borderColor: fieldErrors.subject ? '#e8445a' : '#e5e7eb',
+                borderColor: fieldErrors.subject ? '#DC2626' : '#e5e7eb',
                 boxShadow: fieldErrors.subject ? '0 0 0 3px #fef2f2' : 'none',
               }}
-              onFocus={(e) => { if (!fieldErrors.subject) e.target.style.borderColor = '#e8445a'; }}
+              onFocus={(e) => { if (!fieldErrors.subject) e.target.style.borderColor = '#0077B6'; }}
               onBlur={(e) => { if (!fieldErrors.subject) e.target.style.borderColor = '#e5e7eb'; }}
             />
             {fieldErrors.subject && (
-              <p className="text-xs mt-1 font-medium" style={{ color: '#e8445a' }}>{fieldErrors.subject}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: '#DC2626' }}>{fieldErrors.subject}</p>
             )}
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold text-black mb-1.5">
+            <label className="block text-xs font-bold text-navy mb-1.5">
               {t('Description', 'الوصف')}
-              <span style={{ color: '#e8445a' }}> *</span>
+              <span style={{ color: '#DC2626' }}> *</span>
             </label>
             <textarea
               name="description"
@@ -251,20 +251,20 @@ export default function SubmitRequestPage() {
               )}
               className="w-full px-4 py-2.5 text-sm border rounded-lg outline-none transition-all resize-none"
               style={{
-                borderColor: fieldErrors.description ? '#e8445a' : '#e5e7eb',
+                borderColor: fieldErrors.description ? '#DC2626' : '#e5e7eb',
                 boxShadow: fieldErrors.description ? '0 0 0 3px #fef2f2' : 'none',
               }}
-              onFocus={(e) => { if (!fieldErrors.description) e.target.style.borderColor = '#e8445a'; }}
+              onFocus={(e) => { if (!fieldErrors.description) e.target.style.borderColor = '#0077B6'; }}
               onBlur={(e) => { if (!fieldErrors.description) e.target.style.borderColor = '#e5e7eb'; }}
             />
             {fieldErrors.description && (
-              <p className="text-xs mt-1 font-medium" style={{ color: '#e8445a' }}>{fieldErrors.description}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: '#DC2626' }}>{fieldErrors.description}</p>
             )}
           </div>
 
           {/* Attachments */}
           <div>
-            <label className="block text-xs font-bold text-black mb-1.5">
+            <label className="block text-xs font-bold text-navy mb-1.5">
               {t('Attachments', 'المرفقات')}
               <span className="text-gray-400 font-normal ml-1">({t('optional', 'اختياري')})</span>
             </label>
@@ -273,7 +273,7 @@ export default function SubmitRequestPage() {
             <label
               className="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg py-6 px-4 cursor-pointer transition-all"
               style={{ borderColor: '#e5e7eb' }}
-              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#e8445a'}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#0077B6'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
             >
               <svg className="w-6 h-6 text-gray-400 mb-2" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -324,7 +324,7 @@ export default function SubmitRequestPage() {
 
           {/* Global error */}
           {error && (
-            <p className="text-xs font-medium text-center py-2 px-4 rounded-lg bg-red-50" style={{ color: '#e8445a' }}>
+            <p className="text-xs font-medium text-center py-2 px-4 rounded-lg bg-red-50" style={{ color: '#DC2626' }}>
               {error}
             </p>
           )}
@@ -334,7 +334,7 @@ export default function SubmitRequestPage() {
             onClick={handleSubmit}
             disabled={submitting}
             className="w-full py-3 text-sm font-black text-white transition-all disabled:opacity-60"
-            style={{ backgroundColor: '#e8445a' }}
+            style={{ backgroundColor: '#0077B6' }}
             onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.opacity = '0.9'; }}
             onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
           >

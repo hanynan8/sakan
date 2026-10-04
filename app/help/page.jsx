@@ -45,7 +45,7 @@ const HELP_DATA = {
     ]
   },
   hero: {
-    bgColor: '#e8445a',
+    bgColor: '#00ADEF',
     ar: {
       heading: 'مرحباً، كيف يمكننا مساعدتك؟',
       searchPlaceholder: 'ابحث عن مقالات المساعدة...'
@@ -278,7 +278,7 @@ export default function HelpCenterPage() {
               {data.navbar?.brand?.logo ? (
                 <img src={data.navbar.brand.logo} alt={t(data.navbar?.brand)?.name} className="h-7 w-auto" />
               ) : (
-                <span className="text-xl font-black text-black tracking-tight">
+                <span className="text-xl font-black text-brand tracking-tight">
                   {t(data.navbar?.brand)?.name}
                 </span>
               )}
@@ -294,7 +294,7 @@ export default function HelpCenterPage() {
                 <a
                   key={i}
                   href={link.url}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-black transition-colors rounded"
+                  className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-brand-dark transition-colors rounded"
                 >
                   {t(link)?.label}
                 </a>
@@ -303,7 +303,7 @@ export default function HelpCenterPage() {
               {/* Language toggle */}
               <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-1 px-2.5 py-1.5 ml-2 text-sm font-medium text-gray-600 hover:text-black border border-gray-200 hover:border-gray-400 transition-all rounded"
+                className="flex items-center gap-1 px-2.5 py-1.5 ml-2 text-sm font-medium text-gray-600 hover:text-brand-dark border border-gray-200 hover:border-gray-400 transition-all rounded"
               >
                 {language === 'ar' ? 'English' : 'عربي'}
               </button>
@@ -312,7 +312,7 @@ export default function HelpCenterPage() {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-8 h-8 flex items-center justify-center border border-gray-200 rounded text-gray-500 hover:text-black"
+              className="md:hidden w-8 h-8 flex items-center justify-center border border-gray-200 rounded text-gray-500 hover:text-brand-dark"
             >
               {mobileMenuOpen ? (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
@@ -331,7 +331,7 @@ export default function HelpCenterPage() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1">
             {data.navbar?.links?.map((link, i) => (
-              <a key={i} href={link.url} className="block py-2 text-sm font-medium text-gray-700 hover:text-black">
+              <a key={i} href={link.url} className="block py-2 text-sm font-medium text-gray-700 hover:text-brand-dark">
                 {t(link)?.label}
               </a>
             ))}
@@ -343,11 +343,11 @@ export default function HelpCenterPage() {
       </nav>
 
       {/* ══════════════════════════════════════
-          HERO — red banner with search
+          HERO — brand banner with search
       ══════════════════════════════════════ */}
       <section
         className="relative py-14 md:py-20 overflow-hidden"
-        style={{ backgroundColor: data.hero?.bgColor || '#e8445a' }}
+        style={{ backgroundColor: data.hero?.bgColor || '#00ADEF' }}
       >
         {/* dot pattern overlay */}
         <div
@@ -372,7 +372,7 @@ export default function HelpCenterPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t(data.hero)?.searchPlaceholder}
-              className="w-full pl-10 pr-4 py-3 text-sm text-gray-800 bg-white border-0 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-gray-400"
+              className="w-full pl-10 pr-4 py-3 text-sm text-navy bg-white border-0 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-gray-400"
             />
           </div>
         </div>
@@ -395,7 +395,7 @@ export default function HelpCenterPage() {
                 className="group block p-6 border border-gray-200 rounded-xl hover:border-gray-400 hover:shadow-md transition-all duration-200 bg-white"
               >
                 {/* Icon */}
-                <div className="mb-4 text-gray-500 group-hover:text-gray-800 transition-colors">
+                <div className="mb-4 text-gray-500 group-hover:text-navy transition-colors">
                   {cat.icon === 'info' && (
                     <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
@@ -434,7 +434,7 @@ export default function HelpCenterPage() {
                   )}
                 </div>
 
-                <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-black transition-colors">
+                <h3 className="text-sm font-bold text-navy mb-1.5 group-hover:text-brand-dark transition-colors">
                   {t(cat)?.title}
                 </h3>
                 <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">
@@ -448,7 +448,7 @@ export default function HelpCenterPage() {
         {/* Promoted Articles */}
         {data.promotedArticles && data.promotedArticles.length > 0 && (
           <div className="mt-14">
-            <h2 className="text-base font-bold text-gray-800 mb-4">
+            <h2 className="text-base font-bold text-navy mb-4">
               {language === 'ar' ? 'مقالات مميزة' : 'Promoted articles'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
@@ -456,7 +456,7 @@ export default function HelpCenterPage() {
                 <a
                   key={i}
                   href={article.url || '#'}
-                  className="py-2 text-sm text-gray-600 hover:text-black border-b border-gray-100 hover:border-gray-300 transition-colors flex items-center gap-2 group"
+                  className="py-2 text-sm text-gray-600 hover:text-brand-dark border-b border-gray-100 hover:border-gray-300 transition-colors flex items-center gap-2 group"
                 >
                   <svg className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 flex-shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -481,7 +481,7 @@ export default function HelpCenterPage() {
               {data.footer?.brand?.logo ? (
                 <img src={data.footer.brand.logo} alt="" className="h-6 w-auto" />
               ) : (
-                <span className="text-base font-black text-black tracking-tight">
+                <span className="text-base font-black text-brand tracking-tight">
                   {t(data.footer?.brand)?.name}
                 </span>
               )}
@@ -491,7 +491,7 @@ export default function HelpCenterPage() {
             {/* Footer Links */}
             <div className={`flex flex-wrap items-center gap-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
               {data.footer?.links?.map((link, i) => (
-                <a key={i} href={link.url} className="text-xs text-gray-500 hover:text-black transition-colors">
+                <a key={i} href={link.url} className="text-xs text-gray-500 hover:text-brand-dark transition-colors">
                   {t(link)?.label}
                 </a>
               ))}

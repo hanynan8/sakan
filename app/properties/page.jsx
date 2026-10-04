@@ -89,10 +89,10 @@ function PropertiesContent() {
   return (
     <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <div className="bg-black text-white py-10 px-4">
+      <div className="bg-brand text-white py-10 px-4">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-2xl sm:text-3xl font-black">{ar ? 'دور على سكنك في أسوان' : 'Find your housing in Aswan'}</h1>
-          <p className="text-gray-300 mt-1 text-sm">
+          <p className="text-white/90 mt-1 text-sm">
             {ar ? 'فلتر حسب الكلية أو الحرم الجامعي أو منطقة المدينة.' : 'Filter by college, campus, or city area.'}
           </p>
         </div>
@@ -106,13 +106,13 @@ function PropertiesContent() {
             value={filters.q}
             onChange={(e) => setFilters({ ...filters, q: e.target.value })}
             placeholder={ar ? 'ابحث بالاسم أو العنوان...' : 'Search by title or address...'}
-            className="col-span-1 sm:col-span-2 lg:col-span-4 px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="col-span-1 sm:col-span-2 lg:col-span-4 px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           />
 
           <select
             value={filters.campus}
             onChange={(e) => setFilters({ ...filters, campus: e.target.value, college: '' })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{ar ? 'كل الحرم الجامعي' : 'All campuses'}</option>
             {CAMPUSES.map((c) => (
@@ -123,7 +123,7 @@ function PropertiesContent() {
           <select
             value={filters.college}
             onChange={(e) => setFilters({ ...filters, college: e.target.value })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{ar ? 'كل الكليات' : 'All colleges'}</option>
             {availableColleges.map((c) => (
@@ -134,7 +134,7 @@ function PropertiesContent() {
           <select
             value={filters.area}
             onChange={(e) => setFilters({ ...filters, area: e.target.value })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{ar ? 'كل مناطق أسوان' : 'All Aswan areas'}</option>
             {AREAS.map((a) => (
@@ -145,7 +145,7 @@ function PropertiesContent() {
           <select
             value={filters.type}
             onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{ar ? 'كل الأنواع' : 'All types'}</option>
             {TYPES.map((t) => (
@@ -159,7 +159,7 @@ function PropertiesContent() {
             value={filters.minPrice}
             onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
             placeholder={ar ? 'أقل سعر' : 'Min price'}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           />
 
           <input
@@ -168,11 +168,11 @@ function PropertiesContent() {
             value={filters.maxPrice}
             onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
             placeholder={ar ? 'أعلى سعر' : 'Max price'}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           />
 
           <div className="flex gap-2 col-span-1 sm:col-span-2 lg:col-span-2">
-            <button type="submit" className="flex-1 py-2.5 bg-black text-white text-sm font-semibold rounded hover:bg-gray-800 transition-all">
+            <button type="submit" className="flex-1 py-2.5 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white transition-all">
               {ar ? 'بحث' : 'Search'}
             </button>
             <button type="button" onClick={resetFilters} className="px-4 py-2.5 border border-gray-300 text-sm font-medium rounded text-gray-600 hover:border-gray-500 transition-all">
@@ -235,12 +235,12 @@ function PropertyCard({ property, ar }) {
             </svg>
           </div>
         )}
-        <span className="absolute top-2 right-2 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded">
+        <span className="absolute top-2 right-2 bg-navy text-white text-xs font-bold px-2 py-1 rounded">
           {property.price} {ar ? 'ج.م/شهر' : 'EGP/mo'}
         </span>
       </div>
       <div className="p-4">
-        <h3 className="font-bold text-gray-900 truncate">{property.title}</h3>
+        <h3 className="font-bold text-navy truncate">{property.title}</h3>
         <p className="text-sm text-gray-500 mt-1 truncate">
           {ar ? area?.ar : area?.en}
           {college ? ` · ${ar ? college.ar : college.en}` : ''}

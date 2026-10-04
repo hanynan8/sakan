@@ -257,10 +257,10 @@ export default function Footer() {
   const t = (section) => language === 'ar' ? section?.ar : section?.en;
 
   return (
-    <footer className={`bg-gray-800 text-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>
+    <footer className={`bg-navy text-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>
 
       {/* Top Newsletter Strip */}
-      <div className="border-b border-gray-600">
+      <div className="border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className={`flex flex-col md:flex-row items-center justify-between gap-4 ${language === 'ar' ? 'md:flex-row-reverse' : ''}`}>
             <div className={language === 'ar' ? 'text-right' : 'text-left'}>
@@ -275,9 +275,9 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder={t(data.newsletter)?.placeholder}
-                className="flex-1 md:w-64 px-4 py-2.5 bg-gray-700 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 border border-gray-600"
+                className="flex-1 md:w-64 px-4 py-2.5 bg-navy-dark text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-brand border border-white/20"
               />
-              <button className="px-6 py-2.5 bg-white text-gray-900 font-bold text-sm hover:bg-gray-200 transition-all whitespace-nowrap">
+              <button className="px-6 py-2.5 bg-brand text-white font-bold text-sm hover:bg-white hover:text-navy transition-all whitespace-nowrap">
                 {t(data.newsletter)?.buttonText}
               </button>
             </div>
@@ -295,7 +295,7 @@ export default function Footer() {
               {/* {data.brand?.logo && (
                 <img src={data.brand.logo} alt="Logo" className="h-7 w-auto" />
               )} */}
-              <span className="text-lg font-black text-white tracking-tight">
+              <span className="text-lg font-black text-brand tracking-tight">
                 {t(data.brand)?.name}
               </span>
             </div>
@@ -312,7 +312,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.platform}
-                  className="w-8 h-8 border border-gray-600 flex items-center justify-center text-gray-400 hover:border-gray-300 hover:text-white transition-all"
+                  className="w-8 h-8 border border-white/20 flex items-center justify-center text-gray-400 hover:border-gray-300 hover:text-white transition-all"
                 >
                   {social.platform === 'facebook' && (
                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -349,7 +349,7 @@ export default function Footer() {
           {/* Links Columns */}
           {data.linkGroups?.map((group, groupIndex) => (
             <div key={groupIndex}>
-              <h5 className="text-gray-200 font-bold text-xs uppercase tracking-widest mb-4 pb-2 border-b border-gray-600">
+              <h5 className="text-gray-200 font-bold text-xs uppercase tracking-widest mb-4 pb-2 border-b border-white/20">
                 {t(group)?.title}
               </h5>
               <ul className="space-y-2.5">
@@ -389,12 +389,12 @@ export default function Footer() {
       </div>
 
       {/* Contact Bar */}
-      <div className="border-t border-gray-600">
+      <div className="border-t border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ${language === 'ar' ? 'text-right' : 'text-left'}`}>
             {data.contactInfo?.map((item, index) => (
               <div key={index} className={`flex items-center gap-3 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
-                <div className="w-8 h-8 border border-gray-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 border border-white/20 flex items-center justify-center flex-shrink-0">
                   {item.type === 'phone' && (
                     <svg className="w-3.5 h-3.5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -427,7 +427,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-600 bg-gray-900">
+      <div className="border-t border-white/20 bg-navy-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className={`flex flex-col md:flex-row items-center justify-between gap-3 ${language === 'ar' ? 'md:flex-row-reverse' : ''}`}>
             <p className="text-gray-500 text-xs">

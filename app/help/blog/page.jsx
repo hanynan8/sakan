@@ -60,7 +60,7 @@ function HeroSlider({ blogs, pageData, lang }) {
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           <span
             className="text-xs font-bold uppercase tracking-widest px-3 py-1 text-white"
-            style={{ backgroundColor: '#e8445a' }}
+            style={{ backgroundColor: '#0077B6' }}
           >
             {blog.category}
           </span>
@@ -75,7 +75,7 @@ function HeroSlider({ blogs, pageData, lang }) {
 
         {/* Title */}
         <Link href={`/blog/${blog.slug}`} className="group">
-          <h1 className="text-2xl md:text-3xl font-black text-black leading-tight mb-4 group-hover:text-gray-700 transition-colors">
+          <h1 className="text-2xl md:text-3xl font-black text-navy leading-tight mb-4 group-hover:text-gray-700 transition-colors">
             {title}
           </h1>
         </Link>
@@ -95,7 +95,7 @@ function HeroSlider({ blogs, pageData, lang }) {
                 className="h-2 rounded-full transition-all duration-300"
                 style={{
                   width: i === current ? '24px' : '8px',
-                  backgroundColor: i === current ? '#e8445a' : '#d1d5db',
+                  backgroundColor: i === current ? '#0077B6' : '#d1d5db',
                 }}
                 aria-label={`Slide ${i + 1}`}
               />
@@ -138,7 +138,7 @@ function BlogCard({ blog, pageData, lang }) {
           <div className="flex items-center gap-1 mb-1.5 flex-wrap">
             <span
               className="text-xs font-bold px-1.5 py-0.5 rounded-full border"
-              style={{ color: '#e8445a', borderColor: '#fca5a5', backgroundColor: '#fff1f2' }}
+              style={{ color: '#0077B6', borderColor: '#99DDF8', backgroundColor: '#E6F7FD' }}
             >
               {blog.category}
             </span>
@@ -152,7 +152,7 @@ function BlogCard({ blog, pageData, lang }) {
           </div>
 
           {/* Title */}
-          <h3 className="text-sm font-black text-black leading-snug line-clamp-2 group-hover:text-gray-700 transition-colors">
+          <h3 className="text-sm font-black text-navy leading-snug line-clamp-2 group-hover:text-gray-700 transition-colors">
             {title}
           </h3>
         </div>
@@ -185,11 +185,11 @@ function FeaturedSideCard({ blog, pageData, lang }) {
       <div className="flex-1 min-w-0">
         <span
           className="text-xs font-bold px-1.5 py-0.5 rounded-full mb-1 inline-block"
-          style={{ color: '#e8445a', backgroundColor: '#fff1f2' }}
+          style={{ color: '#0077B6', backgroundColor: '#E6F7FD' }}
         >
           {blog.category}
         </span>
-        <h4 className="text-lg font-bold text-black leading-snug line-clamp-2 group-hover:text-gray-600 transition-colors">
+        <h4 className="text-lg font-bold text-navy leading-snug line-clamp-2 group-hover:text-gray-600 transition-colors">
           {title}
         </h4>
         <span className="text-xs text-gray-400">{blog.readingTime} {readingTimeLabel}</span>
@@ -255,7 +255,7 @@ export default function BlogsPage() {
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div
           className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin"
-          style={{ borderColor: '#e8445a', borderTopColor: 'transparent' }}
+          style={{ borderColor: '#0077B6', borderTopColor: 'transparent' }}
         />
       </div>
     );
@@ -293,7 +293,7 @@ export default function BlogsPage() {
             </div>
 
             {/* Section header */}
-            <h2 className="text-xl font-black text-black mb-1">
+            <h2 className="text-xl font-black text-navy mb-1">
               {lang === 'ar' ? 'اقرأ من آلاف المقالات' : 'Read From Thousands Of Blogs'}
             </h2>
             <p className="text-sm text-gray-500 font-medium mb-4">
@@ -314,7 +314,7 @@ export default function BlogsPage() {
                     className="flex-shrink-0 px-4 py-1.5 text-sm font-bold rounded-full border-2 transition-all whitespace-nowrap"
                     style={
                       isActive
-                        ? { borderColor: '#e8445a', backgroundColor: '#e8445a', color: 'white' }
+                        ? { borderColor: '#0077B6', backgroundColor: '#0077B6', color: 'white' }
                         : { borderColor: '#e5e7eb', backgroundColor: 'white', color: '#374151' }
                     }
                   >
@@ -330,7 +330,7 @@ export default function BlogsPage() {
                   className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-bold rounded-full border-2 transition-all whitespace-nowrap"
                   style={
                     activeIsMore
-                      ? { borderColor: '#e8445a', backgroundColor: '#e8445a', color: 'white' }
+                      ? { borderColor: '#0077B6', backgroundColor: '#0077B6', color: 'white' }
                       : { borderColor: '#e5e7eb', backgroundColor: 'white', color: '#374151' }
                   }
                 >
@@ -356,7 +356,7 @@ export default function BlogsPage() {
                           key={item.key}
                           onClick={() => { setActiveCategory(item.key); setMoreOpen(false); }}
                           className="w-full text-left px-4 py-2.5 text-xs font-bold transition-all"
-                          style={isActive ? { backgroundColor: '#fef2f2', color: '#e8445a' } : { color: '#374151' }}
+                          style={isActive ? { backgroundColor: '#E6F7FD', color: '#0077B6' } : { color: '#374151' }}
                           onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = '#f9fafb'; }}
                           onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
                         >
@@ -394,9 +394,9 @@ export default function BlogsPage() {
                     <button
                       onClick={() => setVisibleCount((v) => v + 6)}
                       className="inline-block px-10 py-3 text-sm border-2 font-bold transition-all"
-                      style={{ borderColor: '#e8445a', color: '#e8445a' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#e8445a'; e.currentTarget.style.color = 'white'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#e8445a'; }}
+                      style={{ borderColor: '#0077B6', color: '#0077B6' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0077B6'; e.currentTarget.style.color = 'white'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#0077B6'; }}
                     >
                       {t(pageData?.loadMoreLabel, lang)}
                     </button>
@@ -410,7 +410,7 @@ export default function BlogsPage() {
           <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0">
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
               <span className="text-sm">⭐</span>
-              <h2 className="text-sm font-black text-black uppercase tracking-wide">
+              <h2 className="text-sm font-black text-navy uppercase tracking-wide">
                 {lang === 'ar' ? 'المقالات المميزة' : 'Featured Blogs'}
               </h2>
             </div>

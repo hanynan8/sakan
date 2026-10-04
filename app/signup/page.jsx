@@ -121,8 +121,8 @@ function SignUpForm() {
   return (
     <div className="min-h-screen flex" dir={ar ? 'rtl' : 'ltr'}>
       {/* ── لوحة البراندنج ── */}
-      <div className="hidden lg:flex lg:w-1/2 bg-black text-white flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-gray-800" />
+      <div className="hidden lg:flex lg:w-1/2 bg-brand text-white flex-col justify-between p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark" />
         <div className="relative z-10">
           <Link href="/" className="text-2xl font-black tracking-tight">
             {ar ? 'سكني' : 'Sakani'}
@@ -132,13 +132,13 @@ function SignUpForm() {
           <h2 className="text-4xl font-black leading-tight">
             {ar ? 'اختر سكنك في أسوان بكل سهولة.' : 'Choose your home in Aswan with ease.'}
           </h2>
-          <p className="text-gray-300 text-lg">
+          <p className="text-white/90 text-lg">
             {ar
               ? 'طالب بتدور على سكن، ولا مالك عندك عقار؟ سكني ليك.'
               : 'A student looking for housing, or an owner listing a place? Sakani is for you.'}
           </p>
         </div>
-        <div className="relative z-10 text-sm text-gray-400">
+        <div className="relative z-10 text-sm text-white/80">
           {ar ? '© سكني — منصة السكن الطلابي في أسوان' : '© Sakani — Student housing platform in Aswan'}
         </div>
       </div>
@@ -146,11 +146,11 @@ function SignUpForm() {
       {/* ── الفورم ── */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white overflow-y-auto">
         <div className="w-full max-w-sm py-8">
-          <Link href="/" className="lg:hidden block text-center text-2xl font-black mb-6">
+          <Link href="/" className="lg:hidden block text-center text-2xl font-black text-brand mb-6">
             {ar ? 'سكني' : 'Sakani'}
           </Link>
 
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          <h1 className="text-2xl font-bold text-navy mb-1">
             {ar ? 'إنشاء حساب جديد' : 'Create an account'}
           </h1>
           <p className="text-sm text-gray-500 mb-6">
@@ -169,7 +169,7 @@ function SignUpForm() {
                   required
                   value={form.firstName}
                   onChange={update('firstName')}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
                 />
               </div>
               <div>
@@ -181,7 +181,7 @@ function SignUpForm() {
                   required
                   value={form.lastName}
                   onChange={update('lastName')}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
                 />
               </div>
             </div>
@@ -196,14 +196,14 @@ function SignUpForm() {
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, contactType: 'email' })}
-                    className={`px-2.5 py-1 rounded border ${form.contactType === 'email' ? 'bg-black text-white border-black' : 'border-gray-300 text-gray-600'}`}
+                    className={`px-2.5 py-1 rounded border ${form.contactType === 'email' ? 'bg-brand text-white border-brand' : 'border-gray-300 text-gray-600'}`}
                   >
                     {ar ? 'إيميل' : 'Email'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, contactType: 'phone' })}
-                    className={`px-2.5 py-1 rounded border ${form.contactType === 'phone' ? 'bg-black text-white border-black' : 'border-gray-300 text-gray-600'}`}
+                    className={`px-2.5 py-1 rounded border ${form.contactType === 'phone' ? 'bg-brand text-white border-brand' : 'border-gray-300 text-gray-600'}`}
                   >
                     {ar ? 'هاتف' : 'Phone'}
                   </button>
@@ -217,7 +217,7 @@ function SignUpForm() {
                   value={form.email}
                   onChange={update('email')}
                   placeholder="example@mail.com"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
                 />
               ) : (
                 <input
@@ -227,7 +227,7 @@ function SignUpForm() {
                   value={form.phone}
                   onChange={update('phone')}
                   placeholder="010xxxxxxxx"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
                 />
               )}
             </div>
@@ -245,7 +245,7 @@ function SignUpForm() {
                   value={form.password}
                   onChange={update('password')}
                   placeholder={ar ? '8 أحرف على الأقل، حرف كبير ورقم' : 'At least 8 chars, 1 uppercase, 1 number'}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
                 />
                 <button
                   type="button"
@@ -267,7 +267,7 @@ function SignUpForm() {
                 autoComplete="new-password"
                 value={form.confirmPassword}
                 onChange={update('confirmPassword')}
-                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded"
+                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
               />
             </div>
 
@@ -280,14 +280,14 @@ function SignUpForm() {
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, role: 'student' })}
-                  className={`px-3 py-2.5 text-sm rounded border font-medium transition-all ${form.role === 'student' ? 'bg-black text-white border-black' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
+                  className={`px-3 py-2.5 text-sm rounded border font-medium transition-all ${form.role === 'student' ? 'bg-brand text-white border-brand' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
                 >
                   {ar ? '🎓 طالب بدور على سكن' : '🎓 Student looking for housing'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, role: 'owner' })}
-                  className={`px-3 py-2.5 text-sm rounded border font-medium transition-all ${form.role === 'owner' ? 'bg-black text-white border-black' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
+                  className={`px-3 py-2.5 text-sm rounded border font-medium transition-all ${form.role === 'owner' ? 'bg-brand text-white border-brand' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
                 >
                   {ar ? '🏠 مالك عندي سكن أعرضه' : '🏠 Owner listing a property'}
                 </button>
@@ -304,7 +304,7 @@ function SignUpForm() {
                 value={form.referralCode}
                 onChange={update('referralCode')}
                 placeholder={ar ? 'مثال: MOHAMEDX4F2' : 'e.g. MOHAMEDX4F2'}
-                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:border-gray-800 focus:bg-white transition-all rounded uppercase"
+                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded uppercase"
               />
             </div>
 
@@ -317,14 +317,14 @@ function SignUpForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-black text-white text-sm font-semibold hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed transition-all rounded"
+              className="w-full py-2.5 bg-brand text-white text-sm font-semibold hover:bg-brand-dark hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-all rounded"
             >
               {loading ? (ar ? 'جارٍ الإنشاء...' : 'Creating...') : (ar ? 'إنشاء حساب' : 'Sign Up')}
             </button>
 
             <p className="text-center text-xs text-gray-500">
               {ar ? 'عندك حساب بالفعل؟' : 'Already have an account?'}{' '}
-              <Link href="/signin" className="font-semibold text-black underline underline-offset-2">
+              <Link href="/signin" className="font-semibold text-navy underline underline-offset-2">
                 {ar ? 'تسجيل الدخول' : 'Sign In'}
               </Link>
             </p>

@@ -57,7 +57,7 @@ export default function PropertyDetailsPage({ params }) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-20 text-center">
         <p className="text-lg font-semibold text-gray-700 mb-2">{error || (ar ? 'السكن غير موجود' : 'Property not found')}</p>
-        <Link href="/properties" className="text-black underline text-sm">{ar ? 'رجوع لكل السكنات' : 'Back to all properties'}</Link>
+        <Link href="/properties" className="text-brand-dark underline text-sm">{ar ? 'رجوع لكل السكنات' : 'Back to all properties'}</Link>
       </div>
     );
   }
@@ -80,9 +80,9 @@ export default function PropertyDetailsPage({ params }) {
       <div className="max-w-5xl mx-auto px-4 py-6">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm mb-4">
-          <Link href="/" className="text-gray-500 hover:text-black">{ar ? 'الرئيسية' : 'Home'}</Link>
+          <Link href="/" className="text-gray-500 hover:text-brand-dark">{ar ? 'الرئيسية' : 'Home'}</Link>
           <span className="text-gray-300">/</span>
-          <Link href="/properties" className="text-gray-500 hover:text-black">{ar ? 'السكنات' : 'Properties'}</Link>
+          <Link href="/properties" className="text-gray-500 hover:text-brand-dark">{ar ? 'السكنات' : 'Properties'}</Link>
           <span className="text-gray-300">/</span>
           <span className="text-gray-700 font-medium truncate">{property.title}</span>
         </nav>
@@ -104,7 +104,7 @@ export default function PropertyDetailsPage({ params }) {
               <button
                 key={i}
                 onClick={() => setActiveImage(i)}
-                className={`w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 ${activeImage === i ? 'border-black' : 'border-transparent'}`}
+                className={`w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 ${activeImage === i ? 'border-brand' : 'border-transparent'}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={img} alt="" className="w-full h-full object-cover" />
@@ -116,10 +116,10 @@ export default function PropertyDetailsPage({ params }) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
           {/* التفاصيل */}
           <div className="lg:col-span-2">
-            <span className="inline-block bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded mb-2">
+            <span className="inline-block bg-navy-dark text-white text-xs font-bold px-2.5 py-1 rounded mb-2">
               {ar ? typeLabel.ar : typeLabel.en}
             </span>
-            <h1 className="text-2xl font-black text-gray-900">{property.title}</h1>
+            <h1 className="text-2xl font-black text-navy">{property.title}</h1>
             <p className="text-gray-500 mt-1">
               {property.address ? `${property.address} · ` : ''}
               {ar ? area?.ar : area?.en}
@@ -135,14 +135,14 @@ export default function PropertyDetailsPage({ params }) {
 
             {property.description && (
               <div className="mt-5">
-                <h2 className="font-bold text-gray-900 mb-2">{ar ? 'الوصف' : 'Description'}</h2>
+                <h2 className="font-bold text-navy mb-2">{ar ? 'الوصف' : 'Description'}</h2>
                 <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{property.description}</p>
               </div>
             )}
 
             {property.amenities?.length > 0 && (
               <div className="mt-5">
-                <h2 className="font-bold text-gray-900 mb-2">{ar ? 'المميزات' : 'Amenities'}</h2>
+                <h2 className="font-bold text-navy mb-2">{ar ? 'المميزات' : 'Amenities'}</h2>
                 <div className="flex flex-wrap gap-2">
                   {property.amenities.map((a, i) => (
                     <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">{a}</span>
@@ -155,7 +155,7 @@ export default function PropertyDetailsPage({ params }) {
           {/* بوكس التواصل — واتساب فقط، بدون أي بيانات عن المالك */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 sticky top-20">
-              <p className="text-2xl font-black text-gray-900">
+              <p className="text-2xl font-black text-navy">
                 {property.price} <span className="text-sm font-medium text-gray-500">{ar ? 'ج.م / شهر' : 'EGP / month'}</span>
               </p>
               <p className="text-sm text-gray-500 mt-1 mb-4">
@@ -187,7 +187,7 @@ function Stat({ label, value }) {
   return (
     <div>
       <p className="text-xs text-gray-400">{label}</p>
-      <p className="font-bold text-gray-900">{value}</p>
+      <p className="font-bold text-navy">{value}</p>
     </div>
   );
 }

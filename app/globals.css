@@ -2,6 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --brand: #00ADEF;
+  --brand-dark: #0077B6;
+  --navy: #224251;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  font-weight: 400;
+  color: var(--navy);
+  background: #fff;
+}
+
+::selection {
+  background: var(--brand);
+  color: var(--navy);
+}
+
 input {
   @apply w-[400px] border border-gray-200 py-2 px-6 bg-zinc-100/40;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }

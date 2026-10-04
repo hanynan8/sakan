@@ -136,7 +136,7 @@ export default function PropertiesSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-black text-black mb-3">{t.title}</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-navy mb-3">{t.title}</h2>
           <p className="text-lg text-gray-600 font-medium">{t.subtitle}</p>
         </div>
 
@@ -150,13 +150,13 @@ export default function PropertiesSection() {
             value={filters.q}
             onChange={(e) => setFilters({ ...filters, q: e.target.value })}
             placeholder={t.searchPlaceholder}
-            className="col-span-1 sm:col-span-2 lg:col-span-4 px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="col-span-1 sm:col-span-2 lg:col-span-4 px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           />
 
           <select
             value={filters.campus}
             onChange={(e) => setFilters({ ...filters, campus: e.target.value, college: '' })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{t.allCampuses}</option>
             {CAMPUSES.map((c) => (
@@ -167,7 +167,7 @@ export default function PropertiesSection() {
           <select
             value={filters.college}
             onChange={(e) => setFilters({ ...filters, college: e.target.value })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{t.allColleges}</option>
             {availableColleges.map((c) => (
@@ -178,7 +178,7 @@ export default function PropertiesSection() {
           <select
             value={filters.area}
             onChange={(e) => setFilters({ ...filters, area: e.target.value })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{t.allAreas}</option>
             {AREAS.map((a) => (
@@ -189,7 +189,7 @@ export default function PropertiesSection() {
           <select
             value={filters.type}
             onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{t.allTypes}</option>
             {TYPES.map((ty) => (
@@ -203,7 +203,7 @@ export default function PropertiesSection() {
             value={filters.minPrice}
             onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
             placeholder={t.minPrice}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           />
 
           <input
@@ -212,13 +212,13 @@ export default function PropertiesSection() {
             value={filters.maxPrice}
             onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
             placeholder={t.maxPrice}
-            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           />
 
           <div className="flex gap-2 col-span-1 sm:col-span-2 lg:col-span-2">
             <button
               type="submit"
-              className="flex-1 py-2.5 bg-black text-white text-sm font-semibold rounded hover:bg-gray-800 transition-all"
+              className="flex-1 py-2.5 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white transition-all"
             >
               {t.search}
             </button>
@@ -262,7 +262,7 @@ export default function PropertiesSection() {
         <div className="text-center mt-10">
           <Link
             href="/properties"
-            className="inline-block px-10 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-all rounded-lg"
+            className="inline-block px-10 py-3 bg-brand text-white font-bold hover:bg-brand-dark hover:text-white transition-all rounded-lg"
           >
             {t.viewAll}
           </Link>
@@ -293,12 +293,12 @@ function PropertyCard({ property, ar, t }) {
             </svg>
           </div>
         )}
-        <span className="absolute top-2 right-2 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded">
+        <span className="absolute top-2 right-2 bg-navy text-white text-xs font-bold px-2 py-1 rounded">
           {property.price} {t.perMonth}
         </span>
       </div>
       <div className="p-4">
-        <h3 className="font-bold text-gray-900 truncate">{property.title}</h3>
+        <h3 className="font-bold text-navy truncate">{property.title}</h3>
         <p className="text-sm text-gray-500 mt-1 truncate">
           {ar ? area?.ar : area?.en}
           {college ? ` · ${ar ? college.ar : college.en}` : ''}

@@ -66,13 +66,13 @@ export default function ProfilePage() {
       {/* Breadcrumb */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <nav className="flex items-center gap-1.5 text-sm">
-          <Link href="/" className="text-rose-500 hover:text-rose-600 transition-colors font-medium">
+          <Link href="/" className="text-brand-dark hover:text-navy transition-colors font-medium">
             {ar ? 'الرئيسية' : 'Home'}
           </Link>
           <span className="text-gray-400">/</span>
           <span className="text-gray-600 font-medium">{ar ? 'الملف الشخصي' : 'Profile'}</span>
         </nav>
-        <h1 className="text-2xl font-bold text-gray-900 mt-3">
+        <h1 className="text-2xl font-bold text-navy mt-3">
           {ar ? 'الملف الشخصي' : 'Profile'}
         </h1>
       </div>
@@ -95,7 +95,7 @@ export default function ProfilePage() {
                 </>
               ) : (
                 <>
-                  <p className="text-lg font-bold text-gray-900">{name}</p>
+                  <p className="text-lg font-bold text-navy">{name}</p>
                   <p className="text-sm text-gray-500">{email}</p>
                 </>
               )}
@@ -119,7 +119,7 @@ export default function ProfilePage() {
                   </span>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-gray-900 text-base">
+                      <span className="font-semibold text-navy text-base">
                         {ar ? item.label.ar : item.label.en}
                       </span>
                     </div>

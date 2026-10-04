@@ -74,7 +74,7 @@ export default function MyPropertiesPage() {
         <p className="text-sm text-gray-500 mb-4">
           {ar ? 'لو عندك سكن عايز تعرضه، تواصل مع الدعم عشان يتحول حسابك لمالك.' : 'If you have a property to list, contact support to upgrade your account.'}
         </p>
-        <Link href="/profile" className="text-black underline text-sm">{ar ? 'رجوع للملف الشخصي' : 'Back to profile'}</Link>
+        <Link href="/profile" className="text-navy underline text-sm">{ar ? 'رجوع للملف الشخصي' : 'Back to profile'}</Link>
       </div>
     );
   }
@@ -145,16 +145,16 @@ export default function MyPropertiesPage() {
     <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto px-4 pt-6">
         <nav className="flex items-center gap-1.5 text-sm mb-3">
-          <Link href="/profile" className="text-gray-500 hover:text-black">{ar ? 'الملف الشخصي' : 'Profile'}</Link>
+          <Link href="/profile" className="text-gray-500 hover:text-brand-dark">{ar ? 'الملف الشخصي' : 'Profile'}</Link>
           <span className="text-gray-300">/</span>
           <span className="text-gray-700 font-medium">{ar ? 'سكناتي' : 'My Properties'}</span>
         </nav>
 
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">{ar ? 'سكناتي' : 'My Properties'}</h1>
+          <h1 className="text-2xl font-bold text-navy">{ar ? 'سكناتي' : 'My Properties'}</h1>
           <button
             onClick={() => setFormOpen(!formOpen)}
-            className="px-4 py-2 bg-black text-white text-sm font-semibold rounded hover:bg-gray-800 transition-all"
+            className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white transition-all"
           >
             {formOpen ? (ar ? 'إغلاق النموذج' : 'Close form') : (ar ? '+ إضافة سكن' : '+ Add Property')}
           </button>
@@ -171,7 +171,7 @@ export default function MyPropertiesPage() {
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   placeholder={ar ? 'مثال: شقة مفروشة 3 غرف قريبة من الهندسة' : 'e.g. Furnished 3-bedroom apartment near Engineering'}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
 
@@ -182,7 +182,7 @@ export default function MyPropertiesPage() {
                   min="0"
                   value={form.price}
                   onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
 
@@ -191,7 +191,7 @@ export default function MyPropertiesPage() {
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 >
                   {TYPES.map((t) => <option key={t.id} value={t.id}>{ar ? t.ar : t.en}</option>)}
                 </select>
@@ -204,7 +204,7 @@ export default function MyPropertiesPage() {
                   min="0"
                   value={form.bedrooms}
                   onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
 
@@ -215,7 +215,7 @@ export default function MyPropertiesPage() {
                   min="1"
                   value={form.capacity}
                   onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
 
@@ -224,7 +224,7 @@ export default function MyPropertiesPage() {
                 <select
                   value={form.campus}
                   onChange={(e) => setForm({ ...form, campus: e.target.value, college: '' })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 >
                   <option value="">{ar ? '— بدون —' : '— None —'}</option>
                   {CAMPUSES.map((c) => <option key={c.id} value={c.id}>{ar ? c.ar : c.en}</option>)}
@@ -236,7 +236,7 @@ export default function MyPropertiesPage() {
                 <select
                   value={form.college}
                   onChange={(e) => setForm({ ...form, college: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 >
                   <option value="">{ar ? '— بدون —' : '— None —'}</option>
                   {availableColleges.map((c) => <option key={c.id} value={c.id}>{ar ? c.ar : c.en}</option>)}
@@ -248,7 +248,7 @@ export default function MyPropertiesPage() {
                 <select
                   value={form.area}
                   onChange={(e) => setForm({ ...form, area: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 >
                   <option value="">{ar ? 'اختر منطقة' : 'Select an area'}</option>
                   {AREAS.map((a) => <option key={a.id} value={a.id}>{ar ? a.ar : a.en}</option>)}
@@ -261,7 +261,7 @@ export default function MyPropertiesPage() {
                   type="text"
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
 
@@ -271,7 +271,7 @@ export default function MyPropertiesPage() {
                   rows={3}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
 
@@ -282,7 +282,7 @@ export default function MyPropertiesPage() {
                   value={form.images}
                   onChange={(e) => setForm({ ...form, images: e.target.value })}
                   placeholder="https://..."
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
 
@@ -293,7 +293,7 @@ export default function MyPropertiesPage() {
                   value={form.amenities}
                   onChange={(e) => setForm({ ...form, amenities: e.target.value })}
                   placeholder={ar ? 'واي فاي، تكييف، مصعد' : 'WiFi, AC, Elevator'}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-black"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 />
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function MyPropertiesPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full sm:w-auto px-6 py-2.5 bg-black text-white text-sm font-semibold rounded hover:bg-gray-800 disabled:opacity-60 transition-all"
+              className="w-full sm:w-auto px-6 py-2.5 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white disabled:opacity-60 transition-all"
             >
               {submitting ? (ar ? 'جارٍ الحفظ...' : 'Saving...') : (ar ? 'حفظ السكن' : 'Save Property')}
             </button>
@@ -328,7 +328,7 @@ export default function MyPropertiesPage() {
               <div key={p._id} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between gap-4 flex-wrap">
                 <div>
                   <div className="flex items-center gap-2">
-                    <Link href={`/properties/${p._id}`} className="font-semibold text-gray-900 hover:underline">{p.title}</Link>
+                    <Link href={`/properties/${p._id}`} className="font-semibold text-navy hover:underline">{p.title}</Link>
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-700' : p.status === 'hidden' ? 'bg-gray-100 text-gray-500' : 'bg-amber-100 text-amber-700'}`}>
                       {p.status === 'active' ? (ar ? 'متاح' : 'Active') : p.status === 'hidden' ? (ar ? 'مخفي' : 'Hidden') : (ar ? 'مؤجر' : 'Rented')}
                     </span>

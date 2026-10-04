@@ -1,5 +1,5 @@
 // app/layout.js
-import { Rubik, Geist_Mono } from 'next/font/google';
+import { Inter, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import ClientLayout from './clientLayout';
@@ -8,14 +8,19 @@ import Navbar from './components/navbar';
 import Footer from './components/footer';
 import ConditionalShell from './components/ConditionalShell';
 
-const rubik = Rubik({
-  variable: '--font-rubik-sans',
+// الإنجليزي: Inter (عصري وبسيط) — العربي: IBM Plex Sans Arabic (نظيف ومتناسق معاه)
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+const plexArabic = IBM_Plex_Sans_Arabic({
+  variable: '--font-arabic',
+  subsets: ['arabic'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
 });
 
 export const metadata = {
@@ -25,8 +30,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ar" suppressHydrationWarning={true}>
-      <body className={`${rubik.className} ${geistMono.variable} antialiased`}>
+    <html lang="ar" className={`${inter.variable} ${plexArabic.variable}`} suppressHydrationWarning={true}>
+      <body className="font-sans antialiased">
         <LanguageProvider>
           <SessionProvider>
             <ConditionalShell

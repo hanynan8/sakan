@@ -467,7 +467,7 @@ export default function HomeSections() {
       <section className="bg-white py-16">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
           <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-black text-black mb-4">
+            <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.trendingColleges)?.sectionTitle}
             </h3>
             <p className="text-lg text-gray-600 font-medium">
@@ -506,7 +506,7 @@ export default function HomeSections() {
                   >
                     <Link
                       href={`/properties?college=${college.id}`}
-                      className="group cursor-pointer border-2 border-gray-300 hover:border-black transition-all duration-300 h-full rounded-xl overflow-hidden block"
+                      className="group cursor-pointer border-2 border-gray-300 hover:border-brand transition-all duration-300 h-full rounded-xl overflow-hidden block"
                     >
                       <div className="relative h-48 md:h-56 lg:h-64 bg-gray-100">
                         <img
@@ -516,7 +516,7 @@ export default function HomeSections() {
                         />
                       </div>
                       <div className="p-4 md:p-6 bg-white">
-                        <h4 className="text-lg md:text-xl font-bold text-black mb-2 line-clamp-1">
+                        <h4 className="text-lg md:text-xl font-bold text-navy mb-2 line-clamp-1">
                           {t(college)?.name}
                         </h4>
                         <p className="text-sm text-gray-600 mb-2 font-medium line-clamp-1">{t(college)?.location}</p>
@@ -524,14 +524,14 @@ export default function HomeSections() {
                         
                         <div className="flex justify-between items-center pt-3 md:pt-4 border-t-2 border-gray-200">
                           <div>
-                            <span className="text-xl md:text-2xl font-black text-black">
+                            <span className="text-xl md:text-2xl font-black text-navy">
                               {college.availableProperties}
                             </span>
                             <span className="text-xs md:text-sm text-gray-600 mr-1 md:mr-2 font-medium">سكن متاح</span>
                           </div>
                           <div className="text-left">
                             <div className="text-xs text-gray-600 font-medium">من</div>
-                            <div className="text-sm md:text-lg font-bold text-black">
+                            <div className="text-sm md:text-lg font-bold text-navy">
                               {college.averagePrice.min} {college.averagePrice.currency}
                             </div>
                           </div>
@@ -558,7 +558,7 @@ export default function HomeSections() {
             <button
               onClick={prevCollegeSlide}
               disabled={collegeSlideIndex <= 0}
-              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Previous colleges"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -568,7 +568,7 @@ export default function HomeSections() {
             <button
               onClick={nextCollegeSlide}
               disabled={collegeSlideIndex >= collegeMaxIndex}
-              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Next colleges"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -584,7 +584,7 @@ export default function HomeSections() {
                   onClick={() => setCollegeSlideIndex(index)}
                   className={`h-2 rounded-full transition-all ${
                     index === collegeSlideIndex
-                      ? 'bg-black w-8'
+                      ? 'bg-brand w-8'
                       : 'bg-gray-300 w-2'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
@@ -596,7 +596,7 @@ export default function HomeSections() {
           <div className="text-center mt-12">
             <Link
               href="/properties"
-              className="inline-block px-10 py-3 border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all rounded-lg"
+              className="inline-block px-10 py-3 border-2 border-brand text-brand font-bold hover:bg-brand hover:text-white transition-all rounded-lg"
             >
               {t(data.trendingColleges)?.viewAllText}
             </Link>
@@ -608,7 +608,7 @@ export default function HomeSections() {
       <section className="bg-gray-50 py-16">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
           <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-black text-black mb-4">
+            <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.topAreas)?.sectionTitle}
             </h3>
             <p className="text-lg text-gray-600 font-medium">
@@ -647,7 +647,7 @@ export default function HomeSections() {
                   >
                     <Link
                       href={`/properties?area=${area.id}`}
-                      className="group cursor-pointer border-2 border-gray-300 hover:border-black transition-all duration-300 h-full rounded-xl overflow-hidden block"
+                      className="group cursor-pointer border-2 border-gray-300 hover:border-brand transition-all duration-300 h-full rounded-xl overflow-hidden block"
                     >
                       <div className="relative h-48 md:h-56 lg:h-64 bg-gray-100">
                         <img
@@ -657,14 +657,14 @@ export default function HomeSections() {
                         />
                       </div>
                       <div className="p-4 md:p-6 bg-white">
-                        <h4 className="text-lg md:text-xl font-bold text-black mb-2 line-clamp-1">
+                        <h4 className="text-lg md:text-xl font-bold text-navy mb-2 line-clamp-1">
                           {t(area)?.name}
                         </h4>
                         <p className="text-xs md:text-sm text-gray-500 mb-4 line-clamp-2">{t(area)?.description}</p>
 
                         <div className="flex justify-between items-center pt-3 md:pt-4 border-t-2 border-gray-200">
                           <div>
-                            <span className="text-xl md:text-2xl font-black text-black">
+                            <span className="text-xl md:text-2xl font-black text-navy">
                               {area.propertiesCount}
                             </span>
                             <span className="text-xs md:text-sm text-gray-600 mr-1 md:mr-2 font-medium">
@@ -673,7 +673,7 @@ export default function HomeSections() {
                           </div>
                           <div className="text-left">
                             <div className="text-xs text-gray-600 font-medium">{language === 'ar' ? 'من' : 'From'}</div>
-                            <div className="text-sm md:text-lg font-bold text-black">
+                            <div className="text-sm md:text-lg font-bold text-navy">
                               {area.averagePrice} {language === 'ar' ? 'ج.م' : 'EGP'}
                             </div>
                           </div>
@@ -689,7 +689,7 @@ export default function HomeSections() {
             <button
               onClick={prevAreaSlide}
               disabled={areaSlideIndex <= 0}
-              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Previous areas"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -699,7 +699,7 @@ export default function HomeSections() {
             <button
               onClick={nextAreaSlide}
               disabled={areaSlideIndex >= areaMaxIndex}
-              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-black text-white hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-black transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Next areas"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -715,7 +715,7 @@ export default function HomeSections() {
                   onClick={() => setAreaSlideIndex(index)}
                   className={`h-2 rounded-full transition-all ${
                     index === areaSlideIndex
-                      ? 'bg-black w-8'
+                      ? 'bg-brand w-8'
                       : 'bg-gray-300 w-2'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
@@ -727,7 +727,7 @@ export default function HomeSections() {
           <div className="text-center mt-12">
             <Link
               href="/properties"
-              className="inline-block px-10 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-all rounded-lg"
+              className="inline-block px-10 py-3 bg-brand text-white font-bold hover:bg-brand-dark hover:text-white transition-all rounded-lg"
             >
               {t(data.topAreas)?.viewAllText}
             </Link>
@@ -739,7 +739,7 @@ export default function HomeSections() {
       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-black text-black mb-4">
+            <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.testimonials)?.sectionTitle}
             </h3>
             <p className="text-lg text-gray-600 font-medium">
@@ -751,23 +751,23 @@ export default function HomeSections() {
             {data.testimonials?.reviews?.map((review) => (
               <div
                 key={review.id}
-                className="bg-white p-6 border-2 border-gray-300 hover:border-black hover:shadow-lg transition-all duration-300 rounded-xl"
+                className="bg-white p-6 border-2 border-gray-300 hover:border-brand hover:shadow-lg transition-all duration-300 rounded-xl"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <img
                     src={review.avatar}
                     alt={t(review)?.name}
-                    className="w-14 h-14 rounded-full border-2 border-black object-cover"
+                    className="w-14 h-14 rounded-full border-2 border-brand object-cover"
                   />
                   <div>
-                    <div className="font-bold text-black">{t(review)?.name}</div>
+                    <div className="font-bold text-navy">{t(review)?.name}</div>
                     <div className="text-xs text-gray-600 font-medium">{t(review)?.university}</div>
                   </div>
                 </div>
 
                 <div className="flex gap-0.5 mb-3">
                   {[...Array(t(review)?.rating)].map((_, i) => (
-                    <span key={i} className="text-black text-lg">★</span>
+                    <span key={i} className="text-brand text-lg">★</span>
                   ))}
                 </div>
 
@@ -784,7 +784,7 @@ export default function HomeSections() {
       <section className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-black text-black mb-4">
+            <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.howItWorks)?.sectionTitle}
             </h3>
             <p className="text-lg text-gray-600 font-medium">
@@ -798,10 +798,10 @@ export default function HomeSections() {
                 {index < data.howItWorks.steps.length - 1 && (
                   <div className="hidden md:block absolute top-10 right-0 w-full h-0.5 bg-gray-300 -z-10"></div>
                 )}
-                <div className="w-20 h-20 mx-auto mb-6 bg-black text-white flex items-center justify-center text-4xl font-black shadow-lg rounded-xl">
+                <div className="w-20 h-20 mx-auto mb-6 bg-brand text-white flex items-center justify-center text-4xl font-black shadow-lg rounded-xl">
                   {step.stepNumber}
                 </div>
-                <h4 className="text-xl font-bold text-black mb-3">
+                <h4 className="text-xl font-bold text-navy mb-3">
                   {t(step)?.title}
                 </h4>
                 <p className="text-gray-600 leading-relaxed font-medium">
@@ -817,7 +817,7 @@ export default function HomeSections() {
       {/* <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-black text-black mb-4">
+            <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.whyChooseUs)?.sectionTitle}
             </h3>
             <p className="text-lg text-gray-600 font-medium">
@@ -829,12 +829,12 @@ export default function HomeSections() {
             {data.whyChooseUs?.features?.map((feature) => (
               <div
                 key={feature.id}
-                className="text-center p-6 border-2 border-gray-300 hover:border-black hover:shadow-lg transition-all duration-300"
+                className="text-center p-6 border-2 border-gray-300 hover:border-brand hover:shadow-lg transition-all duration-300"
               >
-                <div className="w-16 h-16 mx-auto mb-4 bg-black text-white flex items-center justify-center text-3xl font-bold">
+                <div className="w-16 h-16 mx-auto mb-4 bg-brand text-white flex items-center justify-center text-3xl font-bold">
                   ✦
                 </div>
-                <h4 className="text-xl font-bold text-black mb-3">
+                <h4 className="text-xl font-bold text-navy mb-3">
                   {t(feature)?.title}
                 </h4>
                 <p className="text-gray-600 leading-relaxed font-medium">
@@ -849,7 +849,7 @@ export default function HomeSections() {
       {/* Call to Action Section */}
       <section className="bg-white py-20 border-t-2 border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-3xl md:text-4xl font-black text-black mb-4">
+          <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
             {t(data.callToAction)?.title}
           </h3>
           <p className="text-lg text-gray-600 mb-6 font-medium">
@@ -860,10 +860,10 @@ export default function HomeSections() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-10 py-4 bg-black text-white text-lg font-bold hover:bg-gray-800 transition-all rounded-lg">
+            <button className="px-10 py-4 bg-brand text-white text-lg font-bold hover:bg-brand-dark hover:text-white transition-all rounded-lg">
               {t(data.callToAction)?.studentCTA}
             </button>
-            <button className="px-10 py-4 border-2 border-black text-black text-lg font-bold hover:bg-black hover:text-white transition-all rounded-lg">
+            <button className="px-10 py-4 border-2 border-brand text-brand text-lg font-bold hover:bg-brand hover:text-white transition-all rounded-lg">
               {t(data.callToAction)?.ownerCTA}
             </button>
           </div>
