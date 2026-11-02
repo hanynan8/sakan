@@ -233,11 +233,25 @@ export default function Footer() {
     <footer className={`relative overflow-hidden bg-navy text-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>
 
       {/* زخرفة نوبية: خلفية باهتة جوا الفوتر فقط */}
-      <div
+      <svg
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none select-none opacity-[0.08]"
-        style={{ backgroundImage: 'url(/nubian-down.svg), url(/nubian-up.svg)', backgroundRepeat: 'repeat', backgroundPosition: '20px 0, 0 0' }}
-      />
+        className="absolute inset-0 w-full h-full pointer-events-none select-none opacity-[0.05]"
+      >
+        <defs>
+          <pattern id="nubian-footer-pattern" width="80" height="42" viewBox="0 1 80 42" patternUnits="userSpaceOnUse">
+            <g stroke="#fff" strokeWidth="2" strokeLinejoin="round">
+              {/* المثلثات اللي لفوق: كلها أحمر ثابت */}
+              <path d="M20 0 L40 44 L0 44 Z" fill="#E0242A" />
+              <path d="M60 0 L80 44 L40 44 Z" fill="#E0242A" />
+              {/* المثلثات اللي نازلة لتحت: كلها أصفر فاتح ثابت (غير الشفافية من fillOpacity) */}
+              <path d="M20 0 L60 0 L40 44 Z" fill="#FFD966" fillOpacity={0.55} />
+              <path d="M60 0 L100 0 L80 44 Z" fill="#FFD966" fillOpacity={0.55} />
+              <path d="M-20 0 L20 0 L0 44 Z" fill="#FFD966" fillOpacity={0.55} />
+            </g>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#nubian-footer-pattern)" />
+      </svg>
 
       <div className="relative z-10">
 
