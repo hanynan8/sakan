@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { NubianOrnament } from '@/app/components/NubianOrnament';
 
 /* ═══════════════════════════════════════════════
    STATIC DATA (كانت جايه من /api/data?collection=howItWorks)
@@ -468,8 +469,9 @@ export default function HowItWorksPage() {
       <div className="border-t border-gray-100" />
 
       {/* ── STATS ── */}
-      <section className="py-10" style={{ backgroundColor: '#4169E1' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden py-10" style={{ backgroundColor: '#4169E1' }}>
+        <NubianOrnament position="top-left" size={180} opacity={0.16} className="hidden sm:block" />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {data.stats?.map((stat, index) => (
               <div

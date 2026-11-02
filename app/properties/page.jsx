@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import PropertyCard from '@/app/components/PropertyCard';
 import PropertyFilters from '@/app/components/PropertyFilters';
+import { NubianOrnament } from '@/app/components/NubianOrnament';
 import { INITIAL_FILTERS, filtersToParams, filtersFromSearchParams } from '@/lib/property-filters';
 
 const HERO_BG =
@@ -75,10 +76,12 @@ function PropertiesContent() {
     <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div
-        className={`py-8 px-4 ${hasHeroBg ? 'bg-cover bg-center' : 'bg-brand text-white'}`}
+        className={`relative overflow-hidden py-8 px-4 ${hasHeroBg ? 'bg-cover bg-center' : 'bg-brand text-white'}`}
         style={hasHeroBg ? { backgroundImage: `url(${HERO_BG})` } : undefined}
       >
-        <div className="max-w-6xl mx-auto">
+        {/* لمسة نوبية في ركن الهيدر (مش بتظهر لما الهيدر عليه صورة خلفية) */}
+        {!hasHeroBg && <NubianOrnament position="top-right" size={200} opacity={0.16} className="hidden sm:block" />}
+        <div className="relative z-10 max-w-6xl mx-auto">
           <div className={hasHeroBg ? 'inline-block bg-white text-gray-900 rounded-2xl px-8 py-6 sm:px-10 sm:py-8 shadow-md' : ''}>
             <h1 className={`font-black ${hasHeroBg ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'}`}>{ar ? 'دور على سكنك في أسوان' : 'Find your housing in Aswan'}</h1>
             <p className={`mt-2 ${hasHeroBg ? 'text-base text-gray-600' : 'text-sm text-white/90'}`}>
@@ -88,7 +91,7 @@ function PropertiesContent() {
         </div>
       </div>
 
-      <div className={`max-w-6xl mx-auto px-4 ${hasHeroBg ? 'mt-5' : '-mt-6'}`}>
+      <div className={`relative z-10 max-w-6xl mx-auto px-4 ${hasHeroBg ? 'mt-5' : '-mt-6'}`}>
         {/* فلاتر */}
         <form onSubmit={applyFilters} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 space-y-2.5">
           <input

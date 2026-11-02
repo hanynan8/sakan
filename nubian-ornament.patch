@@ -1,0 +1,261 @@
+diff --git a/app/components/HomeSections.jsx b/app/components/HomeSections.jsx
+index 8b965ca..efcd13f 100644
+--- a/app/components/HomeSections.jsx
++++ b/app/components/HomeSections.jsx
+@@ -3,6 +3,7 @@
+ import { useState, useEffect, useRef } from 'react';
+ import Link from 'next/link';
+ import { useLanguage } from '@/contexts/LanguageContext';
++import { NubianOrnament, NubianBand } from '@/app/components/NubianOrnament';
+ 
+ /* ═══════════════════════════════════════════════
+    نفس بيانات سكاشن الهوم (الكليات، المناطق، آراء الطلاب،
+@@ -467,8 +468,10 @@ export default function HomeSections() {
+   return (
+     <>
+       {/* Trending Colleges Section - Responsive Slider */}
+-      <section className="bg-white py-16">
+-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
++      <section className="relative overflow-hidden bg-white py-16">
++        {/* لمسة نوبية صغيرة في ركن السكشن */}
++        <NubianOrnament position="top-left" size={240} opacity={0.22} className="hidden sm:block" />
++        <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
+           <div className="text-center mb-12">
+             <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
+               {t(data.trendingColleges)?.sectionTitle}
+@@ -784,8 +787,9 @@ export default function HomeSections() {
+       </section>
+ 
+       {/* How It Works Section */}
+-      <section className="bg-gray-50 py-16">
+-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
++      <section className="relative overflow-hidden bg-gray-50 py-16">
++        <NubianOrnament position="bottom-right" size={220} opacity={0.22} className="hidden sm:block" />
++        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="text-center mb-12">
+             <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
+               {t(data.howItWorks)?.sectionTitle}
+@@ -850,7 +854,9 @@ export default function HomeSections() {
+       </section> */}
+ 
+       {/* Call to Action Section */}
+-      <section className="bg-white py-20 border-t-2 border-gray-200">
++      <section className="relative bg-white py-20">
++        {/* شريط نوبي رفيع بدل خط الفاصل */}
++        <NubianBand className="absolute top-0 inset-x-0" opacity={0.7} />
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
+             {t(data.callToAction)?.title}
+diff --git a/app/components/NubianOrnament.jsx b/app/components/NubianOrnament.jsx
+new file mode 100644
+index 0000000..e298a93
+--- /dev/null
++++ b/app/components/NubianOrnament.jsx
+@@ -0,0 +1,107 @@
++'use client';
++
++import { useId } from 'react';
++
++/* ═══════════════════════════════════════════════
++   الزخرفة النوبية (نفس مثلثات الفوتر: أحمر + أصفر فاتح)
++   بدل ما تتكرر على خلفية كاملة، بنستخدمها هنا كلمسات صغيرة
++   متفرقة في الموقع. كل لمسة بتتلاشى تدريجياً ناحية الأطراف
++   عشان ما تبانش كمربع مقصوص.
++   الاستخدام: حط المكوّن جوه عنصر position: relative + overflow-hidden،
++   وخلّي المحتوى اللي فوقه relative z-10.
++═══════════════════════════════════════════════ */
++
++const TILE_W = 80;
++const TILE_H = 42;
++
++// الزاوية اللي هتتلاشى منها الزخرفة (مركز التدرج)
++const ANCHORS = {
++  'top-left': { css: 'top-0 left-0', origin: '0% 0%' },
++  'top-right': { css: 'top-0 right-0', origin: '100% 0%' },
++  'bottom-left': { css: 'bottom-0 left-0', origin: '0% 100%' },
++  'bottom-right': { css: 'bottom-0 right-0', origin: '100% 100%' },
++};
++
++function Tile({ id, stroke }) {
++  return (
++    <pattern id={id} width={TILE_W} height={TILE_H} viewBox={`0 1 ${TILE_W} ${TILE_H}`} patternUnits="userSpaceOnUse">
++      <g stroke={stroke} strokeWidth="2" strokeLinejoin="round">
++        {/* المثلثات اللي لفوق: أحمر ثابت */}
++        <path d="M20 0 L40 44 L0 44 Z" fill="#E0242A" />
++        <path d="M60 0 L80 44 L40 44 Z" fill="#E0242A" />
++        {/* المثلثات اللي نازلة لتحت: أصفر فاتح */}
++        <path d="M20 0 L60 0 L40 44 Z" fill="#FFD966" fillOpacity={0.55} />
++        <path d="M60 0 L100 0 L80 44 Z" fill="#FFD966" fillOpacity={0.55} />
++        <path d="M-20 0 L20 0 L0 44 Z" fill="#FFD966" fillOpacity={0.55} />
++      </g>
++    </pattern>
++  );
++}
++
++/**
++ * لمسة زخرفية في ركن سكشن.
++ * @param position  'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
++ * @param size      المقاس بالبكسل (مربع)
++ * @param opacity   الشفافية الكلية (الفوتر 0.05 على كحلي، وعلى الأبيض محتاجة أعلى شوية)
++ * @param stroke    لون الخطوط بين المثلثات (أبيض على الخلفيات الملونة، وممكن يتغير)
++ * @param className كلاسات إضافية (مثلاً hidden sm:block عشان تختفي على الموبايل)
++ */
++export function NubianOrnament({
++  position = 'top-left',
++  size = 220,
++  opacity = 0.16,
++  stroke = '#fff',
++  className = '',
++}) {
++  const uid = useId().replace(/:/g, '');
++  const patternId = `nubian-${uid}`;
++  const anchor = ANCHORS[position] || ANCHORS['top-left'];
++  const fade = `radial-gradient(circle at ${anchor.origin}, #000 0%, rgba(0,0,0,0.6) 40%, transparent 72%)`;
++
++  return (
++    <svg
++      aria-hidden="true"
++      focusable="false"
++      width={size}
++      height={size}
++      className={`absolute ${anchor.css} pointer-events-none select-none ${className}`}
++      style={{ opacity, WebkitMaskImage: fade, maskImage: fade }}
++    >
++      <defs>
++        <Tile id={patternId} stroke={stroke} />
++      </defs>
++      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
++    </svg>
++  );
++}
++
++/**
++ * شريط رفيع (صف واحد من المثلثات) يتحط كفاصل بين سكشنين.
++ * بيتلاشى من الطرفين عشان يبان خفيف.
++ */
++export function NubianBand({ height = 21, opacity = 0.5, stroke = '#fff', className = '' }) {
++  const uid = useId().replace(/:/g, '');
++  const patternId = `nubian-band-${uid}`;
++  const fade = 'linear-gradient(to right, transparent 0%, #000 25%, #000 75%, transparent 100%)';
++
++  return (
++    <svg
++      aria-hidden="true"
++      focusable="false"
++      width="100%"
++      height={height}
++      className={`block pointer-events-none select-none ${className}`}
++      style={{ opacity, WebkitMaskImage: fade, maskImage: fade }}
++    >
++      <defs>
++        <Tile id={patternId} stroke={stroke} />
++      </defs>
++      {/* التايل الأصلي ارتفاعه 42، فبنصغّره للنص عشان الشريط يبقى رفيع */}
++      <g transform={`scale(${height / TILE_H})`}>
++        <rect width={`${(100 * TILE_H) / height}%`} height={TILE_H} fill={`url(#${patternId})`} />
++      </g>
++    </svg>
++  );
++}
++
++export default NubianOrnament;
+diff --git a/app/help/how-it-works/page.jsx b/app/help/how-it-works/page.jsx
+index 2f7cc7c..a0c823d 100644
+--- a/app/help/how-it-works/page.jsx
++++ b/app/help/how-it-works/page.jsx
+@@ -2,6 +2,7 @@
+ 
+ import { useState } from 'react';
+ import { useLanguage } from '@/contexts/LanguageContext';
++import { NubianOrnament } from '@/app/components/NubianOrnament';
+ 
+ /* ═══════════════════════════════════════════════
+    STATIC DATA (كانت جايه من /api/data?collection=howItWorks)
+@@ -468,8 +469,9 @@ export default function HowItWorksPage() {
+       <div className="border-t border-gray-100" />
+ 
+       {/* ── STATS ── */}
+-      <section className="py-10" style={{ backgroundColor: '#4169E1' }}>
+-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
++      <section className="relative overflow-hidden py-10" style={{ backgroundColor: '#4169E1' }}>
++        <NubianOrnament position="top-left" size={180} opacity={0.16} className="hidden sm:block" />
++        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+             {data.stats?.map((stat, index) => (
+               <div
+diff --git a/app/properties/page.jsx b/app/properties/page.jsx
+index e6c29cc..2194e53 100644
+--- a/app/properties/page.jsx
++++ b/app/properties/page.jsx
+@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
+ import { useLanguage } from '@/contexts/LanguageContext';
+ import PropertyCard from '@/app/components/PropertyCard';
+ import PropertyFilters from '@/app/components/PropertyFilters';
++import { NubianOrnament } from '@/app/components/NubianOrnament';
+ import { INITIAL_FILTERS, filtersToParams, filtersFromSearchParams } from '@/lib/property-filters';
+ 
+ const HERO_BG =
+@@ -75,10 +76,12 @@ function PropertiesContent() {
+     <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>
+       {/* Header */}
+       <div
+-        className={`py-8 px-4 ${hasHeroBg ? 'bg-cover bg-center' : 'bg-brand text-white'}`}
++        className={`relative overflow-hidden py-8 px-4 ${hasHeroBg ? 'bg-cover bg-center' : 'bg-brand text-white'}`}
+         style={hasHeroBg ? { backgroundImage: `url(${HERO_BG})` } : undefined}
+       >
+-        <div className="max-w-6xl mx-auto">
++        {/* لمسة نوبية في ركن الهيدر (مش بتظهر لما الهيدر عليه صورة خلفية) */}
++        {!hasHeroBg && <NubianOrnament position="top-right" size={200} opacity={0.16} className="hidden sm:block" />}
++        <div className="relative z-10 max-w-6xl mx-auto">
+           <div className={hasHeroBg ? 'inline-block bg-white text-gray-900 rounded-2xl px-8 py-6 sm:px-10 sm:py-8 shadow-md' : ''}>
+             <h1 className={`font-black ${hasHeroBg ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'}`}>{ar ? 'دور على سكنك في أسوان' : 'Find your housing in Aswan'}</h1>
+             <p className={`mt-2 ${hasHeroBg ? 'text-base text-gray-600' : 'text-sm text-white/90'}`}>
+@@ -88,7 +91,7 @@ function PropertiesContent() {
+         </div>
+       </div>
+ 
+-      <div className={`max-w-6xl mx-auto px-4 ${hasHeroBg ? 'mt-5' : '-mt-6'}`}>
++      <div className={`relative z-10 max-w-6xl mx-auto px-4 ${hasHeroBg ? 'mt-5' : '-mt-6'}`}>
+         {/* فلاتر */}
+         <form onSubmit={applyFilters} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 space-y-2.5">
+           <input
+diff --git a/app/signin/page.jsx b/app/signin/page.jsx
+index e8e268c..46bf822 100644
+--- a/app/signin/page.jsx
++++ b/app/signin/page.jsx
+@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
+ import Link from 'next/link';
+ import { signIn } from 'next-auth/react';
+ import { useLanguage } from '@/contexts/LanguageContext';
++import { NubianOrnament } from '@/app/components/NubianOrnament';
+ import { safeCallbackUrl } from '@/lib/safe-redirect';
+ 
+ function SignInForm() {
+@@ -48,6 +49,7 @@ function SignInForm() {
+       {/* ── لوحة البراندنج ── */}
+       <div className="hidden lg:flex lg:w-1/2 bg-brand text-white flex-col justify-between p-12 relative overflow-hidden">
+         <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark" />
++        <NubianOrnament position="bottom-left" size={260} opacity={0.18} />
+         <div className="relative z-10">
+           <Link href="/" className="text-2xl font-black tracking-tight">
+             {ar ? 'سكني' : 'Sakani'}
+diff --git a/app/signup/page.jsx b/app/signup/page.jsx
+index 65358b3..f994684 100644
+--- a/app/signup/page.jsx
++++ b/app/signup/page.jsx
+@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
+ import Link from 'next/link';
+ import { signIn } from 'next-auth/react';
+ import { useLanguage } from '@/contexts/LanguageContext';
++import { NubianOrnament } from '@/app/components/NubianOrnament';
+ import { safeCallbackUrl } from '@/lib/safe-redirect';
+ 
+ function SignUpForm() {
+@@ -102,6 +103,7 @@ function SignUpForm() {
+       {/* ── لوحة البراندنج ── */}
+       <div className="hidden lg:flex lg:w-1/2 bg-brand text-white flex-col justify-between p-12 relative overflow-hidden">
+         <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark" />
++        <NubianOrnament position="top-right" size={260} opacity={0.18} />
+         <div className="relative z-10">
+           <Link href="/" className="text-2xl font-black tracking-tight">
+             {ar ? 'سكني' : 'Sakani'}

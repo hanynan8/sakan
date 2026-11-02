@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { NubianOrnament, NubianBand } from '@/app/components/NubianOrnament';
 
 /* ═══════════════════════════════════════════════
    نفس بيانات سكاشن الهوم (الكليات، المناطق، آراء الطلاب،
@@ -467,8 +468,10 @@ export default function HomeSections() {
   return (
     <>
       {/* Trending Colleges Section - Responsive Slider */}
-      <section className="bg-white py-16">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
+      <section className="relative overflow-hidden bg-white py-16">
+        {/* لمسة نوبية صغيرة في ركن السكشن */}
+        <NubianOrnament position="top-left" size={240} opacity={0.22} className="hidden sm:block" />
+        <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
           <div className="text-center mb-12">
             <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.trendingColleges)?.sectionTitle}
@@ -784,8 +787,9 @@ export default function HomeSections() {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-gray-50 py-16">
+        <NubianOrnament position="bottom-right" size={220} opacity={0.22} className="hidden sm:block" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.howItWorks)?.sectionTitle}
@@ -850,7 +854,9 @@ export default function HomeSections() {
       </section> */}
 
       {/* Call to Action Section */}
-      <section className="bg-white py-20 border-t-2 border-gray-200">
+      <section className="relative bg-white py-20">
+        {/* شريط نوبي رفيع بدل خط الفاصل */}
+        <NubianBand className="absolute top-0 inset-x-0" opacity={0.7} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
             {t(data.callToAction)?.title}
