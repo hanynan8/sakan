@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
-import { useSearchParams, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -58,14 +58,17 @@ function NavbarContent() {
 
   const { data: session, status } = useSession();
 
-  // التاب النشط: نفس صفحة /properties بس الفلتر (furnished) هو اللي بيفرّق
+  // تابات النافبار. التاب النشط بيتحدد بالمسار (isActive).
+  // مستقبلاً: نضيف هنا تاب "شقق للبيع" (href: '/sale') من غير ما نغير باقي الكود.
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const furnishedParam = searchParams.get('furnished');
-  const onProperties = pathname === '/properties';
   const navTabs = [
-    { key: 'yes', href: '/properties?furnished=yes', ar: 'شقق مفروشة', en: 'Furnished apartments' },
-    { key: 'no', href: '/properties?furnished=no', ar: 'شقق غير مفروشة', en: 'Unfurnished apartments' },
+    {
+      key: 'available',
+      href: '/properties',
+      ar: 'الشقق المتاحة',
+      en: 'Available apartments',
+      isActive: (path) => path === '/properties',
+    },
   ];
 
   const ar = language === 'ar';
@@ -143,10 +146,10 @@ function NavbarContent() {
               )}
             </Link>
 
-            {/* Furnished / Unfurnished tabs — نفس صفحة /properties والفلتر بيتحدد مسبقًا */}
+            {/* تابات النافبار: الشقق المتاحة (ومستقبلاً شقق للبيع) */}
             <div className="hidden md:flex items-center gap-1 flex-shrink-0">
               {navTabs.map((tab) => {
-                const active = onProperties && furnishedParam === tab.key;
+                const active = tab.isActive(pathname);
                 return (
                   <Link
                     key={tab.key}
@@ -346,7 +349,7 @@ function NavbarContent() {
                   key={tab.key}
                   href={tab.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block py-2 text-sm font-semibold ${onProperties && furnishedParam === tab.key ? 'text-brand-dark' : 'text-navy'}`}
+                  className={`block py-2 text-sm font-semibold ${tab.isActive(pathname) ? 'text-brand-dark' : 'text-navy'}`}
                 >
                   {ar ? tab.ar : tab.en}
                 </Link>
@@ -391,7 +394,7 @@ function NavbarContent() {
 
 /* ═══════════════════════════════════════════════
    DEFAULT EXPORT — wrapped in Suspense because
-   NavbarContent uses useSearchParams()
+   NavbarContent (kept for safety; harmless without useSearchParams)
 ═══════════════════════════════════════════════ */
 export default function Navbar() {
   return (
