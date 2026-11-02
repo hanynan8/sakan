@@ -14,6 +14,10 @@ import { CAMPUSES, COLLEGES, AREAS, collegesByCampus } from '@/lib/taxonomy';
    لأشهر المناطق، وفلاتر متقدمة تتفتح لو محتاجها بس.
 ═══════════════════════════════════════════════ */
 
+// صورة خلفية الهيرو
+const HERO_IMAGE =
+  'https://res.cloudinary.com/di6ctjhjp/image/upload/v1793633176/ChatGPT_Image_Nov_2_2026_05_24_04_PM_kpdsy7.png';
+
 const TYPES = [
   { id: 'apartment', ar: 'شقة', en: 'Apartment' },
   { id: 'room', ar: 'غرفة', en: 'Room' },
@@ -154,8 +158,19 @@ export default function HeroPropertiesSection() {
 
   return (
     <section className="bg-brand" dir={ar ? 'rtl' : 'ltr'}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
-        {/* عنوان مختصر - من غير صور زخرفية */}
+      {/* منطقة الهيرو: صورة خلفية + طبقة غامقة خفيفة عشان النص والبحث يفضلوا واضحين */}
+      <div className="relative overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={HERO_IMAGE}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
+        {/* عنوان مختصر فوق صورة الهيرو */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-black text-white mb-2">{t.heading}</h1>
           <p className="text-base md:text-lg text-white/90 font-medium">{t.subheading}</p>
@@ -305,6 +320,7 @@ export default function HeroPropertiesSection() {
               </div>
           </div>
         </form>
+      </div>
       </div>
 
       {/* النتائج - تظهر على طول تحت البحث من غير سكرول لصور تانية */}
