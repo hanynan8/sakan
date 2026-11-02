@@ -7,18 +7,18 @@ import { useLanguage } from '@/contexts/LanguageContext';
 function EmptyIllustration() {
   return (
     <svg viewBox="0 0 220 180" className="w-56 h-44 mx-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="60" cy="48" r="14" fill="#9BE0F9" opacity="0.7" />
+      <circle cx="60" cy="48" r="14" fill="#B4C3F2" opacity="0.7" />
       <path d="M80 38 Q83 35 86 38" stroke="#555" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
       <path d="M88 34 Q91 31 94 34" stroke="#555" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
-      <rect x="65" y="95" width="90" height="60" rx="2" fill="#CDEEFB"/>
-      <polygon points="55,97 110,55 165,97" fill="#0077B6"/>
-      <rect x="130" y="60" width="10" height="22" fill="#00ADEF"/>
-      <circle cx="135" cy="55" r="4" fill="#9BE0F9" opacity="0.5"/>
-      <circle cx="138" cy="48" r="3" fill="#9BE0F9" opacity="0.3"/>
-      <circle cx="110" cy="82" r="9" fill="white" stroke="#0077B6" strokeWidth="2"/>
-      <line x1="110" y1="73" x2="110" y2="91" stroke="#0077B6" strokeWidth="1.5"/>
-      <line x1="101" y1="82" x2="119" y2="82" stroke="#0077B6" strokeWidth="1.5"/>
-      <rect x="96" y="120" width="28" height="35" rx="14" fill="#00ADEF"/>
+      <rect x="65" y="95" width="90" height="60" rx="2" fill="#DCE4FA"/>
+      <polygon points="55,97 110,55 165,97" fill="#2C4AB8"/>
+      <rect x="130" y="60" width="10" height="22" fill="#4169E1"/>
+      <circle cx="135" cy="55" r="4" fill="#B4C3F2" opacity="0.5"/>
+      <circle cx="138" cy="48" r="3" fill="#B4C3F2" opacity="0.3"/>
+      <circle cx="110" cy="82" r="9" fill="white" stroke="#2C4AB8" strokeWidth="2"/>
+      <line x1="110" y1="73" x2="110" y2="91" stroke="#2C4AB8" strokeWidth="1.5"/>
+      <line x1="101" y1="82" x2="119" y2="82" stroke="#2C4AB8" strokeWidth="1.5"/>
+      <rect x="96" y="120" width="28" height="35" rx="14" fill="#4169E1"/>
       <circle cx="121" cy="137" r="2" fill="white"/>
       <rect x="70" y="105" width="20" height="16" rx="2" fill="white" stroke="#ddd" strokeWidth="1"/>
       <line x1="80" y1="105" x2="80" y2="121" stroke="#ddd" strokeWidth="1"/>
@@ -26,9 +26,9 @@ function EmptyIllustration() {
       <rect x="130" y="105" width="20" height="16" rx="2" fill="white" stroke="#ddd" strokeWidth="1"/>
       <line x1="140" y1="105" x2="140" y2="121" stroke="#ddd" strokeWidth="1"/>
       <line x1="130" y1="113" x2="150" y2="113" stroke="#ddd" strokeWidth="1"/>
-      <rect x="148" y="130" width="7" height="25" rx="1" fill="#00ADEF" opacity="0.7"/>
-      <rect x="142" y="145" width="22" height="10" rx="3" fill="#00ADEF"/>
-      <rect x="145" y="140" width="16" height="8" rx="2" fill="#7FD6F6"/>
+      <rect x="148" y="130" width="7" height="25" rx="1" fill="#4169E1" opacity="0.7"/>
+      <rect x="142" y="145" width="22" height="10" rx="3" fill="#4169E1"/>
+      <rect x="145" y="140" width="16" height="8" rx="2" fill="#8FA5EE"/>
       <circle cx="147" cy="156" r="3" fill="#333"/>
       <circle cx="161" cy="156" r="3" fill="#333"/>
       <line x1="52" y1="155" x2="58" y2="110" stroke="#1B8F65" strokeWidth="2.5"/>

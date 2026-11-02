@@ -45,7 +45,7 @@ const HELP_DATA = {
     ]
   },
   hero: {
-    bgColor: '#00ADEF',
+    bgColor: '#4169E1',
     ar: {
       heading: 'مرحباً، كيف يمكننا مساعدتك؟',
       searchPlaceholder: 'ابحث عن مقالات المساعدة...'
@@ -254,7 +254,7 @@ export default function HelpCenterPage() {
       ══════════════════════════════════════ */}
       <section
         className="relative py-14 md:py-20 overflow-hidden"
-        style={{ backgroundColor: data.hero?.bgColor || '#00ADEF' }}
+        style={{ backgroundColor: data.hero?.bgColor || '#4169E1' }}
       >
         {/* dot pattern overlay */}
         <div

@@ -119,7 +119,7 @@ export default function PropertyDetailsPage({ params }) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
           {/* التفاصيل */}
           <div className="lg:col-span-2">
-            <span className="inline-block bg-navy-dark text-white text-xs font-bold px-2.5 py-1 rounded mb-2">
+            <span className="inline-block bg-slate text-white text-xs font-bold px-2.5 py-1 rounded mb-2">
               {ar ? typeLabel.ar : typeLabel.en}
             </span>
             {property.status === 'rented' && (

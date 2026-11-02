@@ -98,9 +98,9 @@ export default function SubmitRequestPage() {
         <div className="text-center max-w-sm">
           <div
             className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
-            style={{ backgroundColor: '#E6F7FD' }}
+            style={{ backgroundColor: '#EEF2FD' }}
           >
-            <svg className="w-7 h-7" fill="none" stroke="#0077B6" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="w-7 h-7" fill="none" stroke="#2C4AB8" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
             </svg>
           </div>
@@ -126,7 +126,7 @@ export default function SubmitRequestPage() {
         <div className="mb-8">
           <span
             className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 mb-4"
-            style={{ color: '#0077B6', backgroundColor: '#E6F7FD' }}
+            style={{ color: '#2C4AB8', backgroundColor: '#EEF2FD' }}
           >
             {t('Support', 'الدعم')}
           </span>
@@ -163,7 +163,7 @@ export default function SubmitRequestPage() {
                 borderColor: fieldErrors.email ? '#DC2626' : '#e5e7eb',
                 boxShadow: fieldErrors.email ? '0 0 0 3px #fef2f2' : 'none',
               }}
-              onFocus={(e) => { if (!fieldErrors.email) e.target.style.borderColor = '#0077B6'; }}
+              onFocus={(e) => { if (!fieldErrors.email) e.target.style.borderColor = '#2C4AB8'; }}
               onBlur={(e) => { if (!fieldErrors.email) e.target.style.borderColor = '#e5e7eb'; }}
             />
             {fieldErrors.email && (
@@ -188,7 +188,7 @@ export default function SubmitRequestPage() {
                   boxShadow: fieldErrors.query ? '0 0 0 3px #fef2f2' : 'none',
                   color: form.query ? '#111' : '#9ca3af',
                 }}
-                onFocus={(e) => { if (!fieldErrors.query) e.target.style.borderColor = '#0077B6'; }}
+                onFocus={(e) => { if (!fieldErrors.query) e.target.style.borderColor = '#2C4AB8'; }}
                 onBlur={(e) => { if (!fieldErrors.query) e.target.style.borderColor = '#e5e7eb'; }}
               >
                 {QUERY_OPTIONS.map((opt) => (
@@ -226,7 +226,7 @@ export default function SubmitRequestPage() {
                 borderColor: fieldErrors.subject ? '#DC2626' : '#e5e7eb',
                 boxShadow: fieldErrors.subject ? '0 0 0 3px #fef2f2' : 'none',
               }}
-              onFocus={(e) => { if (!fieldErrors.subject) e.target.style.borderColor = '#0077B6'; }}
+              onFocus={(e) => { if (!fieldErrors.subject) e.target.style.borderColor = '#2C4AB8'; }}
               onBlur={(e) => { if (!fieldErrors.subject) e.target.style.borderColor = '#e5e7eb'; }}
             />
             {fieldErrors.subject && (
@@ -254,7 +254,7 @@ export default function SubmitRequestPage() {
                 borderColor: fieldErrors.description ? '#DC2626' : '#e5e7eb',
                 boxShadow: fieldErrors.description ? '0 0 0 3px #fef2f2' : 'none',
               }}
-              onFocus={(e) => { if (!fieldErrors.description) e.target.style.borderColor = '#0077B6'; }}
+              onFocus={(e) => { if (!fieldErrors.description) e.target.style.borderColor = '#2C4AB8'; }}
               onBlur={(e) => { if (!fieldErrors.description) e.target.style.borderColor = '#e5e7eb'; }}
             />
             {fieldErrors.description && (
@@ -273,7 +273,7 @@ export default function SubmitRequestPage() {
             <label
               className="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg py-6 px-4 cursor-pointer transition-all"
               style={{ borderColor: '#e5e7eb' }}
-              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#0077B6'}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#2C4AB8'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
             >
               <svg className="w-6 h-6 text-gray-400 mb-2" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -334,7 +334,7 @@ export default function SubmitRequestPage() {
             onClick={handleSubmit}
             disabled={submitting}
             className="w-full py-3 text-sm font-black text-white transition-all disabled:opacity-60"
-            style={{ backgroundColor: '#0077B6' }}
+            style={{ backgroundColor: '#2C4AB8' }}
             onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.opacity = '0.9'; }}
             onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
           >

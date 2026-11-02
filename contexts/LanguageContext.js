@@ -13,7 +13,7 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState('en'); // Default: English
+  const [language, setLanguage] = useState('ar'); // Default: Arabic
 
   // حفظ اللغة في localStorage
   useEffect(() => {
@@ -23,10 +23,10 @@ export const LanguageProvider = ({ children }) => {
       document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = savedLanguage;
     } else {
-      // Default: English
-      localStorage.setItem('language', 'en');
-      document.documentElement.dir = 'ltr';
-      document.documentElement.lang = 'en';
+      // Default: Arabic
+      localStorage.setItem('language', 'ar');
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = 'ar';
     }
   }, []);
 

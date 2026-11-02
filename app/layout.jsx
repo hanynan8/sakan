@@ -1,5 +1,5 @@
 // app/layout.js
-import { Inter, IBM_Plex_Sans_Arabic } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import ClientLayout from './clientLayout';
@@ -9,18 +9,12 @@ import Navbar from './components/navbar';
 import Footer from './components/footer';
 import ConditionalShell from './components/ConditionalShell';
 
-// الإنجليزي: Inter (عصري وبسيط) — العربي: IBM Plex Sans Arabic (نظيف ومتناسق معاه)
-const inter = Inter({
+// الخطوط متخزنة جوه المشروع (app/fonts) فمش بتعتمد على اتصال بـ Google وقت التشغيل أو البيلد
+// Inter للإنجليزي هنا، وCairo (العربي الافتراضي) متعرّف في globals.css بـ @font-face
+const inter = localFont({
+  src: './fonts/inter-latin-wght-normal.woff2',
   variable: '--font-inter',
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  display: 'swap',
-});
-
-const plexArabic = IBM_Plex_Sans_Arabic({
-  variable: '--font-arabic',
-  subsets: ['arabic'],
-  weight: ['400', '500', '600'],
+  weight: '100 900',
   display: 'swap',
 });
 
@@ -31,7 +25,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ar" className={`${inter.variable} ${plexArabic.variable}`} suppressHydrationWarning={true}>
+    <html lang="ar" dir="rtl" className={`${inter.variable}`} suppressHydrationWarning={true}>
       <body className="font-sans antialiased">
         <LanguageProvider>
           <SessionProvider>

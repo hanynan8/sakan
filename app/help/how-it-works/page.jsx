@@ -324,7 +324,7 @@ export default function HowItWorksPage() {
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
         <span
           className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 mb-5"
-          style={{ color: '#0077B6', backgroundColor: '#E6F7FD' }}
+          style={{ color: '#2C4AB8', backgroundColor: '#EEF2FD' }}
         >
           {t(data.hero)?.badge}
         </span>
@@ -338,7 +338,7 @@ export default function HowItWorksPage() {
           <a
             href={data.hero?.primaryCtaUrl || '/properties'}
             className="px-8 py-3 text-sm text-white font-bold hover:opacity-90 transition-all"
-            style={{ backgroundColor: '#0077B6' }}
+            style={{ backgroundColor: '#2C4AB8' }}
           >
             {t(data.hero)?.primaryCta}
           </a>
@@ -365,7 +365,7 @@ export default function HowItWorksPage() {
                 onClick={() => setActiveTab(tab)}
                 className="px-6 py-2 text-sm font-bold transition-all"
                 style={activeTab === tab
-                  ? { backgroundColor: '#0077B6', color: 'white' }
+                  ? { backgroundColor: '#2C4AB8', color: 'white' }
                   : { backgroundColor: 'transparent', color: '#9ca3af' }
                 }
               >
@@ -384,7 +384,7 @@ export default function HowItWorksPage() {
             <div key={step.id} className="text-center relative z-10">
               <div
                 className="w-16 h-16 mx-auto mb-4 flex items-center justify-center text-2xl font-black text-white"
-                style={{ backgroundColor: '#0077B6' }}
+                style={{ backgroundColor: '#2C4AB8' }}
               >
                 {step.stepNumber}
               </div>
@@ -399,9 +399,9 @@ export default function HowItWorksPage() {
           <a
             href={activeTab === 'student' ? (data.tabs?.studentCtaUrl || '/properties') : (data.tabs?.ownerCtaUrl || '/list-property')}
             className="inline-block px-8 py-2.5 text-sm border-2 font-bold transition-all"
-            style={{ borderColor: '#0077B6', color: '#0077B6' }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#0077B6'; e.currentTarget.style.color = 'white'; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#0077B6'; }}
+            style={{ borderColor: '#2C4AB8', color: '#2C4AB8' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#2C4AB8'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#2C4AB8'; }}
           >
             {activeTab === 'student' ? t(data.tabs)?.studentCta : t(data.tabs)?.ownerCta}
           </a>
@@ -425,7 +425,7 @@ export default function HowItWorksPage() {
             >
               <div
                 className="w-8 h-8 mb-4 flex items-center justify-center text-white flex-shrink-0"
-                style={{ backgroundColor: '#0077B6' }}
+                style={{ backgroundColor: '#2C4AB8' }}
               >
                 {feature.icon === 'shield' && (
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -468,7 +468,7 @@ export default function HowItWorksPage() {
       <div className="border-t border-gray-100" />
 
       {/* ── STATS ── */}
-      <section className="py-10" style={{ backgroundColor: '#00ADEF' }}>
+      <section className="py-10" style={{ backgroundColor: '#4169E1' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {data.stats?.map((stat, index) => (
@@ -508,7 +508,7 @@ export default function HowItWorksPage() {
                 <span
                   className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-white ml-3 transition-transform duration-200"
                   style={{
-                    backgroundColor: '#0077B6',
+                    backgroundColor: '#2C4AB8',
                     transform: openFaq === index ? 'rotate(45deg)' : 'rotate(0deg)'
                   }}
                 >
@@ -542,7 +542,7 @@ export default function HowItWorksPage() {
             <a
               href={data.cta?.studentUrl || '/properties'}
               className="px-8 py-3 text-sm text-white font-bold hover:opacity-90 transition-all"
-              style={{ backgroundColor: '#0077B6' }}
+              style={{ backgroundColor: '#2C4AB8' }}
             >
               {t(data.cta)?.studentBtn}
             </a>

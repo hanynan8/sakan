@@ -60,7 +60,7 @@ function HeroSlider({ blogs, pageData, lang }) {
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           <span
             className="text-xs font-bold uppercase tracking-widest px-3 py-1 text-white"
-            style={{ backgroundColor: '#0077B6' }}
+            style={{ backgroundColor: '#2C4AB8' }}
           >
             {blog.category}
           </span>
@@ -95,7 +95,7 @@ function HeroSlider({ blogs, pageData, lang }) {
                 className="h-2 rounded-full transition-all duration-300"
                 style={{
                   width: i === current ? '24px' : '8px',
-                  backgroundColor: i === current ? '#0077B6' : '#d1d5db',
+                  backgroundColor: i === current ? '#2C4AB8' : '#d1d5db',
                 }}
                 aria-label={`Slide ${i + 1}`}
               />
@@ -138,7 +138,7 @@ function BlogCard({ blog, pageData, lang }) {
           <div className="flex items-center gap-1 mb-1.5 flex-wrap">
             <span
               className="text-xs font-bold px-1.5 py-0.5 rounded-full border"
-              style={{ color: '#0077B6', borderColor: '#99DDF8', backgroundColor: '#E6F7FD' }}
+              style={{ color: '#2C4AB8', borderColor: '#B4C3F2', backgroundColor: '#EEF2FD' }}
             >
               {blog.category}
             </span>
@@ -185,7 +185,7 @@ function FeaturedSideCard({ blog, pageData, lang }) {
       <div className="flex-1 min-w-0">
         <span
           className="text-xs font-bold px-1.5 py-0.5 rounded-full mb-1 inline-block"
-          style={{ color: '#0077B6', backgroundColor: '#E6F7FD' }}
+          style={{ color: '#2C4AB8', backgroundColor: '#EEF2FD' }}
         >
           {blog.category}
         </span>
@@ -255,7 +255,7 @@ export default function BlogsPage() {
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div
           className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin"
-          style={{ borderColor: '#0077B6', borderTopColor: 'transparent' }}
+          style={{ borderColor: '#2C4AB8', borderTopColor: 'transparent' }}
         />
       </div>
     );
@@ -314,7 +314,7 @@ export default function BlogsPage() {
                     className="flex-shrink-0 px-4 py-1.5 text-sm font-bold rounded-full border-2 transition-all whitespace-nowrap"
                     style={
                       isActive
-                        ? { borderColor: '#0077B6', backgroundColor: '#0077B6', color: 'white' }
+                        ? { borderColor: '#2C4AB8', backgroundColor: '#2C4AB8', color: 'white' }
                         : { borderColor: '#e5e7eb', backgroundColor: 'white', color: '#374151' }
                     }
                   >
@@ -330,7 +330,7 @@ export default function BlogsPage() {
                   className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-bold rounded-full border-2 transition-all whitespace-nowrap"
                   style={
                     activeIsMore
-                      ? { borderColor: '#0077B6', backgroundColor: '#0077B6', color: 'white' }
+                      ? { borderColor: '#2C4AB8', backgroundColor: '#2C4AB8', color: 'white' }
                       : { borderColor: '#e5e7eb', backgroundColor: 'white', color: '#374151' }
                   }
                 >
@@ -356,7 +356,7 @@ export default function BlogsPage() {
                           key={item.key}
                           onClick={() => { setActiveCategory(item.key); setMoreOpen(false); }}
                           className="w-full text-left px-4 py-2.5 text-xs font-bold transition-all"
-                          style={isActive ? { backgroundColor: '#E6F7FD', color: '#0077B6' } : { color: '#374151' }}
+                          style={isActive ? { backgroundColor: '#EEF2FD', color: '#2C4AB8' } : { color: '#374151' }}
                           onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = '#f9fafb'; }}
                           onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
                         >
@@ -394,9 +394,9 @@ export default function BlogsPage() {
                     <button
                       onClick={() => setVisibleCount((v) => v + 6)}
                       className="inline-block px-10 py-3 text-sm border-2 font-bold transition-all"
-                      style={{ borderColor: '#0077B6', color: '#0077B6' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0077B6'; e.currentTarget.style.color = 'white'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#0077B6'; }}
+                      style={{ borderColor: '#2C4AB8', color: '#2C4AB8' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2C4AB8'; e.currentTarget.style.color = 'white'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#2C4AB8'; }}
                     >
                       {t(pageData?.loadMoreLabel, lang)}
                     </button>

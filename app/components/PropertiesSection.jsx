@@ -294,7 +294,7 @@ function PropertyCard({ property, ar, t }) {
             </svg>
           </div>
         )}
-        <span className="absolute top-2 right-2 bg-navy text-white text-xs font-bold px-2 py-1 rounded">
+        <span className="absolute top-2 right-2 bg-slate text-white text-xs font-bold px-2 py-1 rounded">
           {property.price} {t.perMonth}
         </span>
         <FavoriteButton propertyId={property._id} className="absolute top-2 left-2" />

@@ -337,12 +337,15 @@ export default function HomeSections() {
     return 1.3; // mobile - 1 full + third of 2nd (more visible)
   };
 
-  const [slidesPerView, setSlidesPerView] = useState(getSlidesPerView());
+  // القيمة الأولية لازم تطابق اللي السيرفر بيرندره (3) عشان ما يحصلش hydration mismatch،
+  // وبعد الـ mount بنحسب القيمة الحقيقية حسب عرض الشاشة
+  const [slidesPerView, setSlidesPerView] = useState(3);
 
   useEffect(() => {
     const handleResize = () => {
       setSlidesPerView(getSlidesPerView());
     };
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);

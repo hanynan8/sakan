@@ -43,7 +43,7 @@ function FeaturedSideCard({ blog, lang }) {
       <div className="flex-1 min-w-0">
         <span
           className="text-xs font-bold px-1.5 py-0.5 rounded-full mb-1 inline-block"
-          style={{ color: '#0077B6', backgroundColor: '#E6F7FD' }}
+          style={{ color: '#2C4AB8', backgroundColor: '#EEF2FD' }}
         >
           {blog.category}
         </span>
@@ -99,7 +99,7 @@ export default function BlogDetailPage() {
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div
           className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin"
-          style={{ borderColor: '#0077B6', borderTopColor: 'transparent' }}
+          style={{ borderColor: '#2C4AB8', borderTopColor: 'transparent' }}
         />
       </div>
     );
@@ -113,7 +113,7 @@ export default function BlogDetailPage() {
         <Link
           href="/help/blog"
           className="text-xs font-bold px-5 py-2 border-2 transition-all"
-          style={{ borderColor: '#0077B6', color: '#0077B6' }}
+          style={{ borderColor: '#2C4AB8', color: '#2C4AB8' }}
         >
           {lang === 'ar' ? 'العودة للمدونة' : 'Back to Blogs'}
         </Link>
@@ -161,7 +161,7 @@ export default function BlogDetailPage() {
               {/* Category badge */}
               <span
                 className="absolute top-4 left-4 text-xs font-bold uppercase tracking-widest px-3 py-1 text-white"
-                style={{ backgroundColor: '#0077B6' }}
+                style={{ backgroundColor: '#2C4AB8' }}
               >
                 {blog.category}
               </span>
@@ -173,7 +173,7 @@ export default function BlogDetailPage() {
                 {formatDate(blog.publishedAt, lang)}
               </span>
               <span className="w-1 h-1 rounded-full bg-gray-300" />
-              <span className="text-xs font-bold" style={{ color: '#0077B6' }}>
+              <span className="text-xs font-bold" style={{ color: '#2C4AB8' }}>
                 {blog.readingTime} {lang === 'ar' ? 'دقيقة قراءة' : 'min read'}
               </span>
               {blog.tags?.length > 0 && (
@@ -200,7 +200,7 @@ export default function BlogDetailPage() {
 
             {/* Excerpt */}
             <p className="text-sm text-gray-500 leading-relaxed mb-6 border-l-4 pl-4"
-              style={{ borderColor: '#0077B6' }}>
+              style={{ borderColor: '#2C4AB8' }}>
               {excerpt}
             </p>
 
@@ -209,7 +209,7 @@ export default function BlogDetailPage() {
               <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-100">
                 <div
                   className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black flex-shrink-0"
-                  style={{ backgroundColor: '#0077B6' }}
+                  style={{ backgroundColor: '#2C4AB8' }}
                 >
                   {blog.author.name?.[0] ?? '?'}
                 </div>
@@ -230,7 +230,7 @@ export default function BlogDetailPage() {
                 prose-a:font-bold prose-a:no-underline
                 prose-li:text-gray-600 prose-li:leading-relaxed
                 prose-strong:text-navy"
-              style={{ '--tw-prose-links': '#0077B6' }}
+              style={{ '--tw-prose-links': '#2C4AB8' }}
               dangerouslySetInnerHTML={{ __html: description }}
             />
 
@@ -239,7 +239,7 @@ export default function BlogDetailPage() {
               <Link
                 href="/blog"
                 className="inline-flex items-center gap-2 text-sm font-bold transition-colors"
-                style={{ color: '#0077B6' }}
+                style={{ color: '#2C4AB8' }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
