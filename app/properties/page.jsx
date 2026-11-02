@@ -8,6 +8,9 @@ import PropertyCard from '@/app/components/PropertyCard';
 import PropertyFilters from '@/app/components/PropertyFilters';
 import { INITIAL_FILTERS, filtersToParams, filtersFromSearchParams } from '@/lib/property-filters';
 
+const HERO_BG =
+  'https://res.cloudinary.com/di6ctjhjp/image/upload/v1793634088/Gemini_Generated_Image_xkc13lxkc13lxkc1_ik9ckx.jpg';
+
 function PropertiesContent() {
   const { language } = useLanguage();
   const ar = language === 'ar';
@@ -21,6 +24,9 @@ function PropertiesContent() {
   useEffect(() => {
     setFilters((f) => (f.furnished === furnishedParam ? f : { ...f, furnished: furnishedParam }));
   }, [furnishedParam]);
+
+  // خلفية الهيدر لصفحتي الشقق المفروشة وغير المفروشة
+  const hasHeroBg = furnishedParam === 'yes' || furnishedParam === 'no';
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,16 +74,21 @@ function PropertiesContent() {
   return (
     <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <div className="bg-brand text-white py-10 px-4">
+      <div
+        className={`py-8 px-4 ${hasHeroBg ? 'bg-cover bg-center' : 'bg-brand text-white'}`}
+        style={hasHeroBg ? { backgroundImage: `url(${HERO_BG})` } : undefined}
+      >
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-black">{ar ? 'دور على سكنك في أسوان' : 'Find your housing in Aswan'}</h1>
-          <p className="text-white/90 mt-1 text-sm">
-            {ar ? 'فلتر حسب الكلية القريبة أو منطقة المدينة.' : 'Filter by nearby college or city area.'}
-          </p>
+          <div className={hasHeroBg ? 'inline-block bg-white text-gray-900 rounded-2xl px-8 py-6 sm:px-10 sm:py-8 shadow-md' : ''}>
+            <h1 className={`font-black ${hasHeroBg ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'}`}>{ar ? 'دور على سكنك في أسوان' : 'Find your housing in Aswan'}</h1>
+            <p className={`mt-2 ${hasHeroBg ? 'text-base text-gray-600' : 'text-sm text-white/90'}`}>
+              {ar ? 'فلتر حسب الكلية القريبة أو منطقة المدينة.' : 'Filter by nearby college or city area.'}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 -mt-6">
+      <div className={`max-w-6xl mx-auto px-4 ${hasHeroBg ? 'mt-5' : '-mt-6'}`}>
         {/* فلاتر */}
         <form onSubmit={applyFilters} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 space-y-2.5">
           <input

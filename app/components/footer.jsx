@@ -232,6 +232,13 @@ export default function Footer() {
   return (
     <footer className={`bg-navy text-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>
 
+      {/* زخرفة نوبية */}
+      <div
+        aria-hidden="true"
+        className="h-[42px] w-full"
+        style={{ backgroundImage: 'url(/nubian-pattern.svg)', backgroundRepeat: 'repeat-x', backgroundPosition: 'center' }}
+      />
+
       {/* Top Newsletter Strip */}
       <div className="border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -421,6 +428,12 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* زخرفة نوبية */}
+      <div
+        aria-hidden="true"
+        className="h-[42px] w-full"
+        style={{ backgroundImage: 'url(/nubian-pattern.svg)', backgroundRepeat: 'repeat-x', backgroundPosition: 'center' }}
+      />
     </footer>
   );
 }
