@@ -3,7 +3,7 @@
 import { useId } from 'react';
 
 /* ═══════════════════════════════════════════════
-   الزخرفة النوبية (نفس مثلثات الفوتر: أحمر + أصفر فاتح)
+   الزخرفة النوبية (نفس مثلثات الفوتر: أزرق فاتح + أزرق غامق)
    بدل ما تتكرر على خلفية كاملة، بنستخدمها هنا كلمسات صغيرة
    متفرقة في الموقع. كل لمسة بتتلاشى تدريجياً ناحية الأطراف
    عشان ما تبانش كمربع مقصوص.
@@ -26,13 +26,13 @@ function Tile({ id, stroke }) {
   return (
     <pattern id={id} width={TILE_W} height={TILE_H} viewBox={`0 1 ${TILE_W} ${TILE_H}`} patternUnits="userSpaceOnUse">
       <g stroke={stroke} strokeWidth="2" strokeLinejoin="round">
-        {/* المثلثات اللي لفوق: أحمر ثابت */}
-        <path d="M20 0 L40 44 L0 44 Z" fill="#E0242A" />
-        <path d="M60 0 L80 44 L40 44 Z" fill="#E0242A" />
-        {/* المثلثات اللي نازلة لتحت: أصفر فاتح */}
-        <path d="M20 0 L60 0 L40 44 Z" fill="#FFD966" fillOpacity={0.55} />
-        <path d="M60 0 L100 0 L80 44 Z" fill="#FFD966" fillOpacity={0.55} />
-        <path d="M-20 0 L20 0 L0 44 Z" fill="#FFD966" fillOpacity={0.55} />
+        {/* المثلثات اللي لفوق: أزرق فاتح #9DB4F5 */}
+        <path d="M20 0 L40 44 L0 44 Z" fill="#9DB4F5" />
+        <path d="M60 0 L80 44 L40 44 Z" fill="#9DB4F5" />
+        {/* المثلثات اللي نازلة لتحت: أزرق غامق #4169E1 */}
+        <path d="M20 0 L60 0 L40 44 Z" fill="#4169E1" />
+        <path d="M60 0 L100 0 L80 44 Z" fill="#4169E1" />
+        <path d="M-20 0 L20 0 L0 44 Z" fill="#4169E1" />
       </g>
     </pattern>
   );

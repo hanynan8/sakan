@@ -6,7 +6,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import PropertyCard from '@/app/components/PropertyCard';
 import PropertyFilters from '@/app/components/PropertyFilters';
-import { NubianOrnament } from '@/app/components/NubianOrnament';
 import { INITIAL_FILTERS, filtersToParams, filtersFromSearchParams } from '@/lib/property-filters';
 
 const HERO_BG =
@@ -79,8 +78,6 @@ function PropertiesContent() {
         className={`relative overflow-hidden py-8 px-4 ${hasHeroBg ? 'bg-cover bg-center' : 'bg-brand text-white'}`}
         style={hasHeroBg ? { backgroundImage: `url(${HERO_BG})` } : undefined}
       >
-        {/* لمسة نوبية في ركن الهيدر (مش بتظهر لما الهيدر عليه صورة خلفية) */}
-        {!hasHeroBg && <NubianOrnament position="top-right" size={200} opacity={0.16} className="hidden sm:block" />}
         <div className="relative z-10 max-w-6xl mx-auto">
           <div className={hasHeroBg ? 'inline-block bg-white text-gray-900 rounded-2xl px-8 py-6 sm:px-10 sm:py-8 shadow-md' : ''}>
             <h1 className={`font-black ${hasHeroBg ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'}`}>{ar ? 'دور على سكنك في أسوان' : 'Find your housing in Aswan'}</h1>

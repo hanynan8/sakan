@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { NubianOrnament } from '@/app/components/NubianOrnament';
 import { safeCallbackUrl } from '@/lib/safe-redirect';
 
 function SignInForm() {
@@ -49,7 +48,6 @@ function SignInForm() {
       {/* ── لوحة البراندنج ── */}
       <div className="hidden lg:flex lg:w-1/2 bg-brand text-white flex-col justify-between p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark" />
-        <NubianOrnament position="bottom-left" size={260} opacity={0.18} />
         <div className="relative z-10">
           <Link href="/" className="text-2xl font-black tracking-tight">
             {ar ? 'سكني' : 'Sakani'}
