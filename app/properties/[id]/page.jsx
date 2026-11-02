@@ -4,19 +4,12 @@
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { AREAS, COLLEGES, CAMPUSES } from '@/lib/taxonomy';
+import { AREAS, COLLEGES, GENDER_OPTIONS, propertyCollegeIds } from '@/lib/taxonomy';
 import FavoriteButton from '@/app/components/FavoriteButton';
 import BookingRequest from '@/app/components/BookingRequest';
 
 // رقم واتساب سكني الموحّد لكل الاستفسارات (مفيش أي بيانات عن المالك بتتعرض)
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201213819102';
-
-const TYPE_LABELS = {
-  apartment: { ar: 'شقة', en: 'Apartment' },
-  room: { ar: 'غرفة', en: 'Room' },
-  'shared-room': { ar: 'غرفة مشتركة', en: 'Shared room' },
-  studio: { ar: 'استوديو', en: 'Studio' },
-};
 
 export default function PropertyDetailsPage({ params }) {
   const { id } = use(params);
@@ -65,9 +58,10 @@ export default function PropertyDetailsPage({ params }) {
   }
 
   const area = AREAS.find((a) => a.id === property.area);
-  const college = COLLEGES.find((c) => c.id === property.college);
-  const campus = CAMPUSES.find((c) => c.id === property.campus);
-  const typeLabel = TYPE_LABELS[property.type] || TYPE_LABELS.apartment;
+  const colleges = propertyCollegeIds(property)
+    .map((id) => COLLEGES.find((c) => c.id === id))
+    .filter(Boolean);
+  const gender = GENDER_OPTIONS.find((g) => g.id === (property.gender || 'any'));
   const images = property.images?.length ? property.images : [];
 
   const waMessage = encodeURIComponent(
@@ -119,9 +113,11 @@ export default function PropertyDetailsPage({ params }) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
           {/* التفاصيل */}
           <div className="lg:col-span-2">
-            <span className="inline-block bg-slate text-white text-xs font-bold px-2.5 py-1 rounded mb-2">
-              {ar ? typeLabel.ar : typeLabel.en}
-            </span>
+            {gender && (
+              <span className="inline-block bg-slate text-white text-xs font-bold px-2.5 py-1 rounded mb-2">
+                {ar ? gender.ar : gender.en}
+              </span>
+            )}
             {property.status === 'rented' && (
               <span className="inline-block bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded mb-2 ms-2">
                 {ar ? 'مؤجر حاليًا' : 'Currently rented'}
@@ -138,8 +134,20 @@ export default function PropertyDetailsPage({ params }) {
               <Stat label={ar ? 'الغرف' : 'Bedrooms'} value={property.bedrooms} />
               <Stat label={ar ? 'السعة' : 'Capacity'} value={property.capacity} />
               <Stat label={ar ? 'التأثيث' : 'Furnishing'} value={property.furnished ? (ar ? 'مفروشة' : 'Furnished') : (ar ? 'غير مفروشة' : 'Unfurnished')} />
-              {college && <Stat label={ar ? 'أقرب كلية' : 'Nearest college'} value={ar ? college.ar : college.en} />}
-              {campus && <Stat label={ar ? 'الحرم الجامعي' : 'Campus'} value={ar ? campus.ar : campus.en} />}
+              {property.beds ? <Stat label={ar ? 'السراير' : 'Beds'} value={property.beds} /> : null}
+              {property.floor !== null && property.floor !== undefined && (
+                <Stat label={ar ? 'الدور' : 'Floor'} value={property.floor === 0 ? (ar ? 'الأرضي' : 'Ground') : property.floor} />
+              )}
+              <Stat
+                label={ar ? 'المرافق (مياه وكهرباء وغاز)' : 'Utilities (water, electricity, gas)'}
+                value={property.utilitiesIncluded ? (ar ? 'شامل' : 'Included') : (ar ? 'غير شامل' : 'Not included')}
+              />
+              {colleges.length > 0 && (
+                <Stat
+                  label={ar ? 'الكليات القريبة' : 'Nearby colleges'}
+                  value={colleges.map((c) => (ar ? c.ar : c.en)).join(' · ')}
+                />
+              )}
             </div>
 
             {property.description && (

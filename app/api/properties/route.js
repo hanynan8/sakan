@@ -1,15 +1,14 @@
 // path: app/api/properties/route.js
 import { auth, connectToMongo } from "@/lib/auth";
 import Property from "@/models/property";
-import { AREAS, COLLEGES, CAMPUSES } from "@/lib/taxonomy";
+import { AREAS, COLLEGES, GENDER_IDS } from "@/lib/taxonomy";
 import { json, requireRole, sameOriginOk, forbiddenOrigin } from "@/lib/api";
 import { rateLimit } from "@/lib/rate-limit";
 import { escapeRegex, readJson } from "@/lib/validators";
-import { validateProperty, PROPERTY_TYPES } from "@/lib/property-validation";
+import { validateProperty } from "@/lib/property-validation";
 
 const areaIds = new Set(AREAS.map((a) => a.id));
 const collegeIds = new Set(COLLEGES.map((c) => c.id));
-const campusIds = new Set(CAMPUSES.map((c) => c.id));
 
 const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 60;
@@ -27,7 +26,17 @@ const num = (v) => {
   return Number.isFinite(n) && n >= 0 ? n : null;
 };
 
-// GET /api/properties?area=&college=&campus=&type=&furnished=yes|no&minPrice=&maxPrice=&q=&sort=&page=&limit=&mine=1
+// عدد صحيح بين min و max من الـ query (أو null لو مش صالح)
+const intParam = (v, min, max) => {
+  if (v === null || v === "") return null;
+  const n = Number(v);
+  return Number.isInteger(n) && n >= min && n <= max ? n : null;
+};
+
+// GET /api/properties?area=&college=&gender=&furnished=yes|no&bedrooms=&floor=&beds=&utilities=included|excluded
+//                    &minPrice=&maxPrice=&q=&sort=&page=&limit=&mine=1
+// - لو فيه area بيتم تجاهل college خالص (الفلتر بالمنطقة بس)
+// - bedrooms: 1-3 بالظبط و4 = 4 فأكتر | floor: 0-5 بالظبط و6 = 6 فأعلى | beds: 1-5 بالظبط و6 = 6 فأكتر
 // بيرجع Array (متوافق مع الواجهات الحالية) والعدد الكلي في الهيدر X-Total-Count
 export async function GET(request) {
   try {
@@ -37,9 +46,12 @@ export async function GET(request) {
     // القيم لازم تكون من التصنيفات المعروفة (بيمنع أي قيم غريبة توصل للاستعلام)
     const area = sp.get("area");
     const college = sp.get("college");
-    const campus = sp.get("campus");
-    const type = sp.get("type");
+    const gender = sp.get("gender"); // male | female
     const furnished = sp.get("furnished"); // "yes" | "no"
+    const utilities = sp.get("utilities"); // "included" | "excluded"
+    const bedrooms = intParam(sp.get("bedrooms"), 1, 4);
+    const floor = intParam(sp.get("floor"), 0, 6);
+    const beds = intParam(sp.get("beds"), 1, 6);
     const minPrice = num(sp.get("minPrice"));
     const maxPrice = num(sp.get("maxPrice"));
     const q = (sp.get("q") || "").trim().slice(0, 80);
@@ -48,12 +60,27 @@ export async function GET(request) {
     const limit = Math.min(MAX_LIMIT, Math.max(1, parseInt(sp.get("limit") || String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT));
 
     const filter = {};
+    const and = [];
+
     if (area && areaIds.has(area)) filter.area = area;
-    if (college && collegeIds.has(college)) filter.college = college;
-    if (campus && campusIds.has(campus)) filter.campus = campus;
-    if (type && PROPERTY_TYPES.includes(type)) filter.type = type;
+    else if (college && collegeIds.has(college)) {
+      // السكن يظهر لو الكلية دي من ضمن كلياته القريبة (أو الكلية القديمة للسكنات القديمة)
+      and.push({ $or: [{ colleges: college }, { college }] });
+    }
+
+    // الجنس: ذكور/إناث بيشمل كمان السكنات اللي "للاتنين" والقديمة اللي مفيهاش الحقل
+    if (gender && GENDER_IDS.includes(gender) && gender !== "any") filter.gender = { $in: [gender, "any", null] };
+
     if (furnished === "yes") filter.furnished = true;
     else if (furnished === "no") filter.furnished = { $ne: true }; // يشمل السكنات القديمة اللي مفيهاش الحقل
+
+    if (utilities === "included") filter.utilitiesIncluded = true;
+    else if (utilities === "excluded") filter.utilitiesIncluded = { $ne: true };
+
+    if (bedrooms !== null) filter.bedrooms = bedrooms >= 4 ? { $gte: 4 } : bedrooms;
+    if (floor !== null) filter.floor = floor >= 6 ? { $gte: 6 } : floor;
+    if (beds !== null) filter.beds = beds >= 6 ? { $gte: 6 } : beds;
+
     if (minPrice !== null || maxPrice !== null) {
       filter.price = {};
       if (minPrice !== null) filter.price.$gte = minPrice;
@@ -61,8 +88,9 @@ export async function GET(request) {
     }
     if (q) {
       const rx = new RegExp(escapeRegex(q), "i");
-      filter.$or = [{ title: rx }, { address: rx }, { description: rx }];
+      and.push({ $or: [{ title: rx }, { address: rx }, { description: rx }] });
     }
+    if (and.length) filter.$and = and;
 
     let projection = "-owner -__v";
     if (sp.get("mine") === "1") {

@@ -8,17 +8,20 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import PropertyClassificationFields from '@/app/components/PropertyClassificationFields';
+import { propertyCollegeIds } from '@/lib/taxonomy';
 
 const emptyForm = {
   title: '',
   description: '',
   price: '',
-  type: 'apartment',
+  gender: 'any',
   bedrooms: 1,
+  beds: 1,
   capacity: 1,
+  floor: 0,
   furnished: false,
-  campus: '',
-  college: '',
+  utilitiesIncluded: false,
+  colleges: [],
   area: '',
   address: '',
   images: '', // كل صورة على سطر
@@ -88,12 +91,14 @@ export default function MyPropertiesPage() {
       title: p.title || '',
       description: p.description || '',
       price: String(p.price ?? ''),
-      type: p.type || 'apartment',
+      gender: p.gender || 'any',
       bedrooms: p.bedrooms ?? 1,
+      beds: p.beds ?? '',
       capacity: p.capacity ?? 1,
+      floor: p.floor ?? '',
       furnished: !!p.furnished,
-      campus: p.campus || '',
-      college: p.college || '',
+      utilitiesIncluded: !!p.utilitiesIncluded,
+      colleges: propertyCollegeIds(p),
       area: p.area || '',
       address: p.address || '',
       images: (p.images || []).join('\n'),
@@ -123,13 +128,15 @@ export default function MyPropertiesPage() {
           title: form.title.trim(),
           description: form.description.trim(),
           price: Number(form.price),
-          type: form.type,
+          gender: form.gender,
           bedrooms: Number(form.bedrooms) || 1,
+          beds: form.beds === '' ? null : Number(form.beds),
           capacity: Number(form.capacity) || 1,
+          floor: form.floor === '' ? null : Number(form.floor),
           furnished: !!form.furnished,
+          utilitiesIncluded: !!form.utilitiesIncluded,
           area: form.area,
-          college: form.college || null,
-          campus: form.campus || null,
+          colleges: form.colleges,
           address: form.address.trim(),
           images: form.images.split('\n').map((s) => s.trim()).filter(Boolean),
           amenities: form.amenities.split(',').map((s) => s.trim()).filter(Boolean),
@@ -241,7 +248,6 @@ export default function MyPropertiesPage() {
                 ar={ar}
                 inputCls="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
                 labelCls="block text-xs font-semibold text-gray-600 mb-1.5"
-                wideArea
               />
 
               <div className="sm:col-span-2">

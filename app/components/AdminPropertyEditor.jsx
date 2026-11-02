@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react';
 import PropertyClassificationFields from '@/app/components/PropertyClassificationFields';
 import ImageUploader from '@/app/components/ImageUploader';
+import { propertyCollegeIds } from '@/lib/taxonomy';
 
 const inputCls = 'w-full px-3 py-2 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand';
 const labelCls = 'block text-xs font-semibold text-gray-600 mb-1';
@@ -26,13 +27,15 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
           title: p.title || '',
           description: p.description || '',
           price: p.price ?? '',
-          type: p.type || 'apartment',
+          gender: p.gender || 'any',
           bedrooms: p.bedrooms ?? 1,
+          beds: p.beds ?? '',
           capacity: p.capacity ?? 1,
+          floor: p.floor ?? '',
           furnished: !!p.furnished,
+          utilitiesIncluded: !!p.utilitiesIncluded,
           area: p.area || '',
-          college: p.college || '',
-          campus: p.campus || '',
+          colleges: propertyCollegeIds(p),
           address: p.address || '',
           images: p.images || [],
           amenities: (p.amenities || []).join(', '),
@@ -63,13 +66,15 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
         title: form.title.trim(),
         description: form.description.trim(),
         price: Number(form.price),
-        type: form.type,
+        gender: form.gender,
         bedrooms: Number(form.bedrooms),
+        beds: form.beds === '' ? null : Number(form.beds),
         capacity: Number(form.capacity),
+        floor: form.floor === '' ? null : Number(form.floor),
         furnished: !!form.furnished,
+        utilitiesIncluded: !!form.utilitiesIncluded,
         area: form.area,
-        college: form.college || null,
-        campus: form.campus || null,
+        colleges: form.colleges,
         address: form.address.trim(),
         images: form.images,
         amenities: form.amenities.split(',').map((s) => s.trim()).filter(Boolean),
