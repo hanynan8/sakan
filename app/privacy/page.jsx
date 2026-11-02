@@ -22,8 +22,8 @@ const SECTIONS = [
     en: { h: 'Cookies', p: 'We only use essential cookies to keep you signed in, and we store your language preference in your browser.' },
   },
   {
-    ar: { h: 'حقوقك', p: 'يمكنك تعديل اسمك وتغيير كلمة المرور وحذف حسابك نهائيًا (مع كل سكناتك ومفضلتك وطلبات حجزك) من صفحة إعدادات الحساب في أي وقت.' },
-    en: { h: 'Your rights', p: 'You can edit your name, change your password, and permanently delete your account (with your listings and shortlist) from Account Settings at any time.' },
+    ar: { h: 'حقوقك', p: 'يمكنك تعديل اسمك وتغيير كلمة المرور من صفحة إعدادات الحساب في أي وقت.' },
+    en: { h: 'Your rights', p: 'You can edit your name and change your password from Account Settings at any time.' },
   },
   {
     ar: { h: 'التواصل', p: 'لأي استفسار بخصوص الخصوصية، تواصل معنا من صفحة المساعدة.' },

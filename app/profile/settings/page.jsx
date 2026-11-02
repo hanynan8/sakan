@@ -36,10 +36,6 @@ export default function SettingsPage() {
   const [pwNotice, setPwNotice] = useState(null);
   const [savingPw, setSavingPw] = useState(false);
 
-  const [delPw, setDelPw] = useState('');
-  const [delNotice, setDelNotice] = useState(null);
-  const [deleting, setDeleting] = useState(false);
-
   useEffect(() => {
     if (status !== 'authenticated') return;
     (async () => {
@@ -113,26 +109,6 @@ export default function SettingsPage() {
     }
   };
 
-  const deleteAccount = async (e) => {
-    e.preventDefault();
-    setDelNotice(null);
-    if (!confirm(ar ? 'متأكد؟ هيتحذف حسابك وكل سكناتك نهائيًا.' : 'Are you sure? Your account and all your listings will be permanently deleted.')) return;
-    setDeleting(true);
-    try {
-      const res = await fetch('/api/account', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: delPw }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      await signOut({ callbackUrl: '/' });
-    } catch (err) {
-      setDelNotice({ type: 'err', text: err.message || (ar ? 'حدث خطأ' : 'Something went wrong') });
-      setDeleting(false);
-    }
-  };
-
   const roleLabel = { student: ar ? 'طالب' : 'Student', owner: ar ? 'مالك سكن' : 'Property owner', admin: ar ? 'مسؤول' : 'Admin' };
 
   return (
@@ -194,19 +170,6 @@ export default function SettingsPage() {
           <Notice notice={pwNotice} />
           <button disabled={savingPw} className="px-6 py-2.5 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark disabled:opacity-60 transition-all">
             {savingPw ? (ar ? 'جارٍ الحفظ...' : 'Saving...') : (ar ? 'تغيير كلمة المرور' : 'Change password')}
-          </button>
-        </form>
-
-        {/* حذف الحساب */}
-        <form onSubmit={deleteAccount} className="bg-white rounded-xl border border-red-100 shadow-sm p-5 space-y-3">
-          <h2 className="font-bold text-red-600">{ar ? 'حذف الحساب' : 'Delete account'}</h2>
-          <p className="text-sm text-gray-500">
-            {ar ? 'هيتحذف حسابك وكل السكنات اللي ضفتها والمفضلة نهائيًا. اكتب كلمة المرور للتأكيد.' : 'This permanently deletes your account, your listings and your shortlist. Enter your password to confirm.'}
-          </p>
-          <input type="password" autoComplete="current-password" className={inputCls} value={delPw} onChange={(e) => setDelPw(e.target.value)} placeholder={ar ? 'كلمة المرور' : 'Password'} />
-          <Notice notice={delNotice} />
-          <button disabled={deleting || !delPw} className="px-6 py-2.5 bg-red-600 text-white text-sm font-semibold rounded hover:bg-red-700 disabled:opacity-60 transition-all">
-            {deleting ? (ar ? 'جارٍ الحذف...' : 'Deleting...') : (ar ? 'حذف حسابي نهائيًا' : 'Delete my account')}
           </button>
         </form>
       </div>
