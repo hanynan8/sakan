@@ -230,14 +230,16 @@ export default function Footer() {
   const t = (section) => language === 'ar' ? section?.ar : section?.en;
 
   return (
-    <footer className={`bg-navy text-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>
+    <footer className={`relative overflow-hidden bg-navy text-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>
 
-      {/* زخرفة نوبية */}
+      {/* زخرفة نوبية: خلفية باهتة جوا الفوتر فقط */}
       <div
         aria-hidden="true"
-        className="h-[42px] w-full"
-        style={{ backgroundImage: 'url(/nubian-pattern.svg)', backgroundRepeat: 'repeat-x', backgroundPosition: 'center' }}
+        className="absolute inset-0 pointer-events-none select-none opacity-[0.08]"
+        style={{ backgroundImage: 'url(/nubian-down.svg), url(/nubian-up.svg)', backgroundRepeat: 'repeat', backgroundPosition: '20px 0, 0 0' }}
       />
+
+      <div className="relative z-10">
 
       {/* Top Newsletter Strip */}
       <div className="border-b border-white/20">
@@ -407,7 +409,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/20 bg-navy-dark">
+      <div className="border-t border-white/20 bg-black/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className={`flex flex-col md:flex-row items-center justify-between gap-3 ${language === 'ar' ? 'md:flex-row-reverse' : ''}`}>
             <p className="text-gray-500 text-xs">
@@ -428,12 +430,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* زخرفة نوبية */}
-      <div
-        aria-hidden="true"
-        className="h-[42px] w-full"
-        style={{ backgroundImage: 'url(/nubian-pattern.svg)', backgroundRepeat: 'repeat-x', backgroundPosition: 'center' }}
-      />
+      </div>
     </footer>
   );
 }
