@@ -16,6 +16,10 @@ import { INITIAL_FILTERS, filtersToParams } from '@/lib/property-filters';
    لأشهر المناطق، وفلاتر متقدمة تتفتح لو محتاجها بس.
 ═══════════════════════════════════════════════ */
 
+// صورة خلفية الهيرو
+const HERO_IMAGE =
+  'https://res.cloudinary.com/di6ctjhjp/image/upload/v1793633683/ChatGPT_Image_Nov_2_2026_05_33_56_PM_xvkhc9.png';
+
 // أشهر مناطق أسوان للشيبس السريعة (subset مختصر عشان الصف يفضل مريح)
 const QUICK_AREAS = ['new-aswan', 'sail', 'wost-elbalad', 'abu-elrish', 'corniche', 'sadaqa'];
 
