@@ -6,14 +6,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import FavoriteButton from '@/app/components/FavoriteButton';
-import { CAMPUSES, COLLEGES, AREAS, collegesByCampus } from '@/lib/taxonomy';
-
-const TYPES = [
-  { id: 'apartment', ar: 'شقة', en: 'Apartment' },
-  { id: 'room', ar: 'غرفة', en: 'Room' },
-  { id: 'shared-room', ar: 'غرفة مشتركة', en: 'Shared room' },
-  { id: 'studio', ar: 'استوديو', en: 'Studio' },
-];
+import { CAMPUSES, COLLEGES, AREAS, PROPERTY_TYPE_OPTIONS, FURNISHED_OPTIONS, collegesByCampus } from '@/lib/taxonomy';
 
 function PropertiesContent() {
   const { language } = useLanguage();
@@ -27,9 +20,16 @@ function PropertiesContent() {
     campus: searchParams.get('campus') || '',
     college: searchParams.get('college') || '',
     type: searchParams.get('type') || '',
+    furnished: searchParams.get('furnished') || '',
     minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
   });
+
+  // لما التاب في النافبار يتغير (نفس الصفحة بس الـ query مختلف) نزامن الفلتر مع الرابط
+  const furnishedParam = searchParams.get('furnished') || '';
+  useEffect(() => {
+    setFilters((f) => (f.furnished === furnishedParam ? f : { ...f, furnished: furnishedParam }));
+  }, [furnishedParam]);
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +44,7 @@ function PropertiesContent() {
       if (filters.campus) params.set('campus', filters.campus);
       if (filters.college) params.set('college', filters.college);
       if (filters.type) params.set('type', filters.type);
+      if (filters.furnished) params.set('furnished', filters.furnished);
       if (filters.minPrice) params.set('minPrice', filters.minPrice);
       if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
 
@@ -81,7 +82,7 @@ function PropertiesContent() {
   };
 
   const resetFilters = () => {
-    setFilters({ q: '', area: '', campus: '', college: '', type: '', minPrice: '', maxPrice: '' });
+    setFilters({ q: '', area: '', campus: '', college: '', type: '', furnished: '', minPrice: '', maxPrice: '' });
     router.push('/properties');
   };
 
@@ -149,8 +150,19 @@ function PropertiesContent() {
             className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
           >
             <option value="">{ar ? 'كل الأنواع' : 'All types'}</option>
-            {TYPES.map((t) => (
+            {PROPERTY_TYPE_OPTIONS.map((t) => (
               <option key={t.id} value={t.id}>{ar ? t.ar : t.en}</option>
+            ))}
+          </select>
+
+          <select
+            value={filters.furnished}
+            onChange={(e) => setFilters({ ...filters, furnished: e.target.value })}
+            className="px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+          >
+            <option value="">{ar ? 'مفروشة وغير مفروشة' : 'Furnished & unfurnished'}</option>
+            {FURNISHED_OPTIONS.map((o) => (
+              <option key={o.id} value={o.id}>{ar ? o.ar : o.en}</option>
             ))}
           </select>
 
@@ -219,6 +231,7 @@ function PropertyCard({ property, ar }) {
   const area = AREAS.find((a) => a.id === property.area);
   const college = COLLEGES.find((c) => c.id === property.college);
   const cover = property.images?.[0];
+  const furnishedOpt = FURNISHED_OPTIONS.find((o) => o.value === !!property.furnished);
 
   return (
     <Link
@@ -251,6 +264,8 @@ function PropertyCard({ property, ar }) {
           <span>{property.bedrooms} {ar ? 'غرف' : 'beds'}</span>
           <span>·</span>
           <span>{property.capacity} {ar ? 'سعة' : 'capacity'}</span>
+          <span>·</span>
+          <span>{ar ? furnishedOpt.ar : furnishedOpt.en}</span>
         </div>
       </div>
     </Link>

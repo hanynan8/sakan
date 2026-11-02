@@ -27,7 +27,7 @@ const num = (v) => {
   return Number.isFinite(n) && n >= 0 ? n : null;
 };
 
-// GET /api/properties?area=&college=&campus=&type=&minPrice=&maxPrice=&q=&sort=&page=&limit=&mine=1
+// GET /api/properties?area=&college=&campus=&type=&furnished=yes|no&minPrice=&maxPrice=&q=&sort=&page=&limit=&mine=1
 // بيرجع Array (متوافق مع الواجهات الحالية) والعدد الكلي في الهيدر X-Total-Count
 export async function GET(request) {
   try {
@@ -39,6 +39,7 @@ export async function GET(request) {
     const college = sp.get("college");
     const campus = sp.get("campus");
     const type = sp.get("type");
+    const furnished = sp.get("furnished"); // "yes" | "no"
     const minPrice = num(sp.get("minPrice"));
     const maxPrice = num(sp.get("maxPrice"));
     const q = (sp.get("q") || "").trim().slice(0, 80);
@@ -51,6 +52,8 @@ export async function GET(request) {
     if (college && collegeIds.has(college)) filter.college = college;
     if (campus && campusIds.has(campus)) filter.campus = campus;
     if (type && PROPERTY_TYPES.includes(type)) filter.type = type;
+    if (furnished === "yes") filter.furnished = true;
+    else if (furnished === "no") filter.furnished = { $ne: true }; // يشمل السكنات القديمة اللي مفيهاش الحقل
     if (minPrice !== null || maxPrice !== null) {
       filter.price = {};
       if (minPrice !== null) filter.price.$gte = minPrice;

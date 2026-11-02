@@ -3,17 +3,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AREAS, CAMPUSES, COLLEGES } from '@/lib/taxonomy';
+import PropertyClassificationFields from '@/app/components/PropertyClassificationFields';
 import ImageUploader from '@/app/components/ImageUploader';
 
 const inputCls = 'w-full px-3 py-2 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand';
 const labelCls = 'block text-xs font-semibold text-gray-600 mb-1';
-const TYPES = [
-  ['apartment', 'شقة', 'Apartment'],
-  ['room', 'غرفة', 'Room'],
-  ['shared-room', 'غرفة مشتركة', 'Shared room'],
-  ['studio', 'استوديو', 'Studio'],
-];
 
 export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClose, onSaved }) {
   const [form, setForm] = useState(null);
@@ -35,8 +29,10 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
           type: p.type || 'apartment',
           bedrooms: p.bedrooms ?? 1,
           capacity: p.capacity ?? 1,
+          furnished: !!p.furnished,
           area: p.area || '',
           college: p.college || '',
+          campus: p.campus || '',
           address: p.address || '',
           images: p.images || [],
           amenities: (p.amenities || []).join(', '),
@@ -49,7 +45,6 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
   }, [propertyId]);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const campus = COLLEGES.find((c) => c.id === form?.college)?.campus;
 
   const addImageUrl = () => {
     const u = extraImg.trim();
@@ -71,14 +66,15 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
         type: form.type,
         bedrooms: Number(form.bedrooms),
         capacity: Number(form.capacity),
+        furnished: !!form.furnished,
         area: form.area,
         college: form.college || null,
+        campus: form.campus || null,
         address: form.address.trim(),
         images: form.images,
         amenities: form.amenities.split(',').map((s) => s.trim()).filter(Boolean),
         status: form.status,
       };
-      if (!form.college) body.campus = null;
       if (ownerContact.trim()) body.ownerContact = ownerContact.trim();
       const res = await fetch(`/api/properties/${propertyId}`, {
         method: 'PATCH',
@@ -120,12 +116,6 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
               <input className={inputCls} type="number" min={1} max={1000000} value={form.price} onChange={(e) => set('price', e.target.value)} required />
             </div>
             <div>
-              <label className={labelCls}>{ar ? 'النوع' : 'Type'}</label>
-              <select className={inputCls} value={form.type} onChange={(e) => set('type', e.target.value)}>
-                {TYPES.map(([v, a, e]) => <option key={v} value={v}>{ar ? a : e}</option>)}
-              </select>
-            </div>
-            <div>
               <label className={labelCls}>{ar ? 'عدد الغرف' : 'Bedrooms'}</label>
               <input className={inputCls} type="number" min={0} max={50} value={form.bedrooms} onChange={(e) => set('bedrooms', e.target.value)} />
             </div>
@@ -133,21 +123,13 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
               <label className={labelCls}>{ar ? 'السعة' : 'Capacity'}</label>
               <input className={inputCls} type="number" min={1} max={100} value={form.capacity} onChange={(e) => set('capacity', e.target.value)} />
             </div>
-            <div>
-              <label className={labelCls}>{ar ? 'المنطقة' : 'Area'}</label>
-              <select className={inputCls} value={form.area} onChange={(e) => set('area', e.target.value)} required>
-                <option value="">—</option>
-                {AREAS.map((a) => <option key={a.id} value={a.id}>{ar ? a.ar : a.en}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className={labelCls}>{ar ? 'أقرب كلية' : 'Nearest college'}</label>
-              <select className={inputCls} value={form.college} onChange={(e) => set('college', e.target.value)}>
-                <option value="">—</option>
-                {COLLEGES.map((c) => <option key={c.id} value={c.id}>{ar ? c.ar : c.en}</option>)}
-              </select>
-              {campus && <p className="text-xs text-gray-400 mt-1">{ar ? 'الحرم: ' : 'Campus: '}{(CAMPUSES.find((c) => c.id === campus) || {})[ar ? 'ar' : 'en']}</p>}
-            </div>
+            <PropertyClassificationFields
+              form={form}
+              onChange={(patch) => setForm((f) => ({ ...f, ...patch }))}
+              ar={ar}
+              inputCls={inputCls}
+              labelCls={labelCls}
+            />
             <div className="sm:col-span-2">
               <label className={labelCls}>{ar ? 'العنوان التفصيلي' : 'Address'}</label>
               <input className={inputCls} value={form.address} maxLength={200} onChange={(e) => set('address', e.target.value)} />

@@ -7,14 +7,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { CAMPUSES, COLLEGES, AREAS, collegesByCampus } from '@/lib/taxonomy';
-
-const TYPES = [
-  { id: 'apartment', ar: 'شقة', en: 'Apartment' },
-  { id: 'room', ar: 'غرفة', en: 'Room' },
-  { id: 'shared-room', ar: 'غرفة مشتركة', en: 'Shared room' },
-  { id: 'studio', ar: 'استوديو', en: 'Studio' },
-];
+import PropertyClassificationFields from '@/app/components/PropertyClassificationFields';
 
 const emptyForm = {
   title: '',
@@ -23,6 +16,7 @@ const emptyForm = {
   type: 'apartment',
   bedrooms: 1,
   capacity: 1,
+  furnished: false,
   campus: '',
   college: '',
   area: '',
@@ -81,7 +75,6 @@ export default function MyPropertiesPage() {
     );
   }
 
-  const availableColleges = form.campus ? collegesByCampus(form.campus) : COLLEGES;
 
   const closeForm = () => {
     setForm(emptyForm);
@@ -98,6 +91,7 @@ export default function MyPropertiesPage() {
       type: p.type || 'apartment',
       bedrooms: p.bedrooms ?? 1,
       capacity: p.capacity ?? 1,
+      furnished: !!p.furnished,
       campus: p.campus || '',
       college: p.college || '',
       area: p.area || '',
@@ -132,6 +126,7 @@ export default function MyPropertiesPage() {
           type: form.type,
           bedrooms: Number(form.bedrooms) || 1,
           capacity: Number(form.capacity) || 1,
+          furnished: !!form.furnished,
           area: form.area,
           college: form.college || null,
           campus: form.campus || null,
@@ -219,17 +214,6 @@ export default function MyPropertiesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'النوع' : 'Type'}</label>
-                <select
-                  value={form.type}
-                  onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
-                >
-                  {TYPES.map((t) => <option key={t.id} value={t.id}>{ar ? t.ar : t.en}</option>)}
-                </select>
-              </div>
-
-              <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'عدد الغرف' : 'Bedrooms'}</label>
                 <input
                   type="number"
@@ -251,41 +235,14 @@ export default function MyPropertiesPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'الحرم الجامعي القريب (اختياري)' : 'Nearby campus (optional)'}</label>
-                <select
-                  value={form.campus}
-                  onChange={(e) => setForm({ ...form, campus: e.target.value, college: '' })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
-                >
-                  <option value="">{ar ? '— بدون —' : '— None —'}</option>
-                  {CAMPUSES.map((c) => <option key={c.id} value={c.id}>{ar ? c.ar : c.en}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'أقرب كلية (اختياري)' : 'Nearest college (optional)'}</label>
-                <select
-                  value={form.college}
-                  onChange={(e) => setForm({ ...form, college: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
-                >
-                  <option value="">{ar ? '— بدون —' : '— None —'}</option>
-                  {availableColleges.map((c) => <option key={c.id} value={c.id}>{ar ? c.ar : c.en}</option>)}
-                </select>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'منطقة أسوان' : 'Aswan area'}</label>
-                <select
-                  value={form.area}
-                  onChange={(e) => setForm({ ...form, area: e.target.value })}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
-                >
-                  <option value="">{ar ? 'اختر منطقة' : 'Select an area'}</option>
-                  {AREAS.map((a) => <option key={a.id} value={a.id}>{ar ? a.ar : a.en}</option>)}
-                </select>
-              </div>
+              <PropertyClassificationFields
+                form={form}
+                onChange={(patch) => setForm((f) => ({ ...f, ...patch }))}
+                ar={ar}
+                inputCls="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                labelCls="block text-xs font-semibold text-gray-600 mb-1.5"
+                wideArea
+              />
 
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'العنوان التفصيلي (اختياري)' : 'Detailed address (optional)'}</label>

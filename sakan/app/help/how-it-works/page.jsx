@@ -1,0 +1,561 @@
+'use client';
+
+import { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+/* ═══════════════════════════════════════════════
+   STATIC DATA (كانت جايه من /api/data?collection=howItWorks)
+═══════════════════════════════════════════════ */
+const HOW_IT_WORKS_DATA = {
+  hero: {
+    primaryCtaUrl: '/properties',
+    secondaryCtaUrl: '/list-property',
+    ar: {
+      badge: 'دليلك الكامل',
+      title: 'كيف يعمل سكني؟',
+      subtitle: 'كل ما تحتاج معرفته للبدء في إيجاد سكنك أو تأجير عقارك',
+      primaryCta: 'ابحث عن سكن',
+      secondaryCta: 'أضف عقارك'
+    },
+    en: {
+      badge: 'Your Complete Guide',
+      title: 'How Does Sakani Work?',
+      subtitle: 'Everything you need to know to start finding accommodation or renting your property',
+      primaryCta: 'Find Accommodation',
+      secondaryCta: 'List Your Property'
+    }
+  },
+  tabs: {
+    studentCtaUrl: '/properties',
+    ownerCtaUrl: '/list-property',
+    ar: {
+      studentLabel: 'للطلاب',
+      ownerLabel: 'لأصحاب العقارات',
+      studentCta: 'ابدأ البحث الآن',
+      ownerCta: 'أضف عقارك الآن'
+    },
+    en: {
+      studentLabel: 'For Students',
+      ownerLabel: 'For Property Owners',
+      studentCta: 'Start Searching Now',
+      ownerCta: 'List Your Property Now'
+    }
+  },
+  studentSteps: [
+    {
+      id: 'ss1',
+      stepNumber: '1',
+      ar: {
+        title: 'سجّل حساب مجاني',
+        description: 'أنشئ حسابك في دقيقة واحدة باستخدام بريدك الإلكتروني أو رقم هاتفك'
+      },
+      en: {
+        title: 'Create a Free Account',
+        description: 'Create your account in one minute using your email or phone number'
+      }
+    },
+    {
+      id: 'ss2',
+      stepNumber: '2',
+      ar: {
+        title: 'ابحث وفلتر',
+        description: 'ابحث عن السكن حسب الجامعة، المنطقة، السعر، والمميزات التي تناسبك'
+      },
+      en: {
+        title: 'Search & Filter',
+        description: 'Search for accommodation by university, area, price, and features that suit you'
+      }
+    },
+    {
+      id: 'ss3',
+      stepNumber: '3',
+      ar: {
+        title: 'تواصل وانتقل',
+        description: 'تواصل معنا على واتساب وانتقل إلى سكنك الجديد'
+      },
+      en: {
+        title: 'Connect & Move In',
+        description: 'Contact us on WhatsApp and move into your new home'
+      }
+    }
+  ],
+  ownerSteps: [
+    {
+      id: 'os1',
+      stepNumber: '1',
+      ar: {
+        title: 'سجّل كمالك عقار',
+        description: 'أنشئ حسابك وأضف معلومات عقارك بسهولة'
+      },
+      en: {
+        title: 'Register as Property Owner',
+        description: 'Create your account and add your property information easily'
+      }
+    },
+    {
+      id: 'os2',
+      stepNumber: '2',
+      ar: {
+        title: 'أضف عقارك',
+        description: 'أضف صور وتفاصيل عقارك وحدد السعر والمميزات المتاحة'
+      },
+      en: {
+        title: 'List Your Property',
+        description: 'Add photos and details of your property and set the price and available features'
+      }
+    },
+    {
+      id: 'os3',
+      stepNumber: '3',
+      ar: {
+        title: 'استقبل الطلاب',
+        description: 'استقبل استفسارات الطلاب وأدر عقارك بسهولة'
+      },
+      en: {
+        title: 'Receive Students',
+        description: 'Receive inquiries from students and manage your property easily'
+      }
+    }
+  ],
+  features: {
+    ar: {
+      sectionTitle: 'لماذا تختار سكني؟',
+      sectionSubtitle: 'مميزات تجعلنا الخيار الأول للطلاب وأصحاب العقارات'
+    },
+    en: {
+      sectionTitle: 'Why Choose Sakani?',
+      sectionSubtitle: 'Features that make us the first choice for students and property owners'
+    },
+    items: [
+      {
+        id: 'f1',
+        icon: 'shield',
+        ar: {
+          title: 'عقارات موثقة',
+          description: 'كل عقار على منصتنا يمر بعملية تحقق صارمة لضمان جودته وأمانه'
+        },
+        en: {
+          title: 'Verified Properties',
+          description: 'Every property on our platform goes through a strict verification process to ensure quality and safety'
+        }
+      },
+      {
+        id: 'f2',
+        icon: 'search',
+        ar: {
+          title: 'بحث متقدم',
+          description: 'ابحث بدقة باستخدام فلاتر متعددة للعثور على السكن المثالي'
+        },
+        en: {
+          title: 'Advanced Search',
+          description: 'Search precisely using multiple filters to find the perfect accommodation'
+        }
+      },
+      {
+        id: 'f3',
+        icon: 'chat',
+        ar: {
+          title: 'دعم 24/7',
+          description: 'فريق دعمنا متاح على مدار الساعة للإجابة على استفساراتك'
+        },
+        en: {
+          title: '24/7 Support',
+          description: 'Our support team is available around the clock to answer your queries'
+        }
+      },
+      {
+        id: 'f4',
+        icon: 'map',
+        ar: {
+          title: 'خريطة تفاعلية',
+          description: 'استكشف العقارات على الخريطة وشاهد المسافة من جامعتك'
+        },
+        en: {
+          title: 'Interactive Map',
+          description: 'Explore properties on the map and see the distance from your university'
+        }
+      },
+      {
+        id: 'f5',
+        icon: 'star',
+        ar: {
+          title: 'تقييمات حقيقية',
+          description: 'آراء وتقييمات حقيقية من طلاب سكنوا في هذه الوحدات مسبقاً'
+        },
+        en: {
+          title: 'Real Reviews',
+          description: 'Genuine opinions and ratings from students who previously lived in these units'
+        }
+      },
+      {
+        id: 'f6',
+        icon: 'money',
+        ar: {
+          title: 'أفضل الأسعار',
+          description: 'نضمن لك أفضل الأسعار مع إمكانية المقارنة بين الوحدات المختلفة'
+        },
+        en: {
+          title: 'Best Prices',
+          description: 'We guarantee the best prices with the ability to compare between different units'
+        }
+      }
+    ]
+  },
+  stats: [
+    {
+      number: '5,000+',
+      ar: {
+        label: 'وحدة سكنية'
+      },
+      en: {
+        label: 'Properties'
+      }
+    },
+    {
+      number: '50+',
+      ar: {
+        label: 'جامعة شريكة'
+      },
+      en: {
+        label: 'Partner Universities'
+      }
+    },
+    {
+      number: '10,000+',
+      ar: {
+        label: 'طالب مسجل'
+      },
+      en: {
+        label: 'Registered Students'
+      }
+    },
+    {
+      number: '98%',
+      ar: {
+        label: 'نسبة الرضا'
+      },
+      en: {
+        label: 'Satisfaction Rate'
+      }
+    }
+  ],
+  faq: {
+    ar: {
+      sectionTitle: 'الأسئلة الشائعة',
+      sectionSubtitle: 'إجابات على أكثر الأسئلة شيوعاً'
+    },
+    en: {
+      sectionTitle: 'Frequently Asked Questions',
+      sectionSubtitle: 'Answers to the most common questions'
+    },
+    items: [
+      {
+        ar: {
+          question: 'كيف أبدأ البحث عن سكن؟',
+          answer: 'يمكنك البدء بإنشاء حساب مجاني ثم استخدام محرك البحث للعثور على السكن المناسب حسب جامعتك أو منطقتك المفضلة.'
+        },
+        en: {
+          question: 'How do I start searching for accommodation?',
+          answer: 'You can start by creating a free account then use the search engine to find suitable accommodation by your university or preferred area.'
+        }
+      },
+      {
+        ar: {
+          question: 'هل العقارات على المنصة موثوقة؟',
+          answer: 'نحرص على مراجعة السكنات المعروضة، ننصحك دائماً بمعاينة السكن بنفسك قبل الاتفاق النهائي.'
+        },
+        en: {
+          question: 'Are the properties on the platform reliable?',
+          answer: 'We review the listings on the platform, but we always recommend visiting the property yourself before finalizing any agreement.'
+        }
+      },
+      {
+        ar: {
+          question: 'كيف يمكنني إضافة عقاري؟',
+          answer: 'يمكنك إضافة عقارك عبر التسجيل كمالك عقار ثم إتباع خطوات إضافة العقار البسيطة.'
+        },
+        en: {
+          question: 'How can I add my property?',
+          answer: 'You can add your property by registering as a property owner then following the simple property addition steps.'
+        }
+      },
+      {
+        ar: {
+          question: 'كيف أتواصل بخصوص سكن معين؟',
+          answer: 'من صفحة السكن اضغط على زر واتساب وهيتم التواصل معاك مباشرة بخصوص السكن.'
+        },
+        en: {
+          question: 'How do I inquire about a specific property?',
+          answer: 'Open the property page and tap the WhatsApp button — our team will get back to you directly.'
+        }
+      }
+    ]
+  },
+  cta: {
+    studentUrl: '/properties',
+    ownerUrl: '/signup',
+    ar: {
+      title: 'هل أنت مستعد للبدء؟',
+      subtitle: 'انضم إلى آلاف الطلاب وأصحاب العقارات على منصة سكني',
+      studentBtn: 'ابدأ كطالب',
+      ownerBtn: 'ابدأ كمالك'
+    },
+    en: {
+      title: 'Ready to Get Started?',
+      subtitle: 'Join thousands of students and property owners on the Sakani platform',
+      studentBtn: 'Start as Student',
+      ownerBtn: 'Start as Owner'
+    }
+  }
+};
+
+export default function HowItWorksPage() {
+  const data = HOW_IT_WORKS_DATA;
+  const { language } = useLanguage();
+  const [activeTab, setActiveTab] = useState('student');
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const t = (section) => language === 'ar' ? section?.ar : section?.en;
+
+  return (
+    <div className={`min-h-screen bg-white font-sans ${language === 'ar' ? 'rtl' : 'ltr'}`}>
+
+      {/* ── HERO ── */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
+        <span
+          className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 mb-5"
+          style={{ color: '#2C4AB8', backgroundColor: '#EEF2FD' }}
+        >
+          {t(data.hero)?.badge}
+        </span>
+        <h1 className="text-3xl md:text-4xl font-black text-navy mb-4 leading-tight">
+          {t(data.hero)?.title}
+        </h1>
+        <p className="text-base text-gray-500 font-medium max-w-xl mx-auto mb-8">
+          {t(data.hero)?.subtitle}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <a
+            href={data.hero?.primaryCtaUrl || '/properties'}
+            className="px-8 py-3 text-sm text-white font-bold hover:opacity-90 transition-all"
+            style={{ backgroundColor: '#2C4AB8' }}
+          >
+            {t(data.hero)?.primaryCta}
+          </a>
+          <a
+            href={data.hero?.secondaryCtaUrl || '/list-property'}
+            className="px-8 py-3 text-sm border-2 border-brand text-brand font-bold hover:bg-brand hover:text-white transition-all"
+          >
+            {t(data.hero)?.secondaryCta}
+          </a>
+        </div>
+      </section>
+
+      <div className="border-t border-gray-100" />
+
+      {/* ── TABS + STEPS ── */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        {/* Tab switcher */}
+        <div className="flex justify-center mb-10">
+          <div className="flex border border-gray-200 p-0.5 gap-0.5">
+            {['student', 'owner'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="px-6 py-2 text-sm font-bold transition-all"
+                style={activeTab === tab
+                  ? { backgroundColor: '#2C4AB8', color: 'white' }
+                  : { backgroundColor: 'transparent', color: '#9ca3af' }
+                }
+              >
+                {tab === 'student' ? t(data.tabs)?.studentLabel : t(data.tabs)?.ownerLabel}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Steps */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          {/* connector line */}
+          <div className="hidden md:block absolute top-8 left-0 right-0 h-px bg-gray-200 -z-0 mx-24" />
+
+          {(activeTab === 'student' ? data.studentSteps : data.ownerSteps)?.map((step, index) => (
+            <div key={step.id} className="text-center relative z-10">
+              <div
+                className="w-16 h-16 mx-auto mb-4 flex items-center justify-center text-2xl font-black text-white"
+                style={{ backgroundColor: '#2C4AB8' }}
+              >
+                {step.stepNumber}
+              </div>
+              <h4 className="text-sm font-bold text-navy mb-2">{t(step)?.title}</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">{t(step)?.description}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Tab CTA */}
+        <div className="text-center mt-10">
+          <a
+            href={activeTab === 'student' ? (data.tabs?.studentCtaUrl || '/properties') : (data.tabs?.ownerCtaUrl || '/list-property')}
+            className="inline-block px-8 py-2.5 text-sm border-2 font-bold transition-all"
+            style={{ borderColor: '#2C4AB8', color: '#2C4AB8' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#2C4AB8'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#2C4AB8'; }}
+          >
+            {activeTab === 'student' ? t(data.tabs)?.studentCta : t(data.tabs)?.ownerCta}
+          </a>
+        </div>
+      </section>
+
+      <div className="border-t border-gray-100" />
+
+      {/* ── FEATURES ── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-black text-navy mb-2">{t(data.features)?.sectionTitle}</h2>
+          <p className="text-sm text-gray-500 font-medium">{t(data.features)?.sectionSubtitle}</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {data.features?.items?.map((feature) => (
+            <div
+              key={feature.id}
+              className="p-5 border-2 border-gray-200 hover:border-brand transition-all duration-200"
+            >
+              <div
+                className="w-8 h-8 mb-4 flex items-center justify-center text-white flex-shrink-0"
+                style={{ backgroundColor: '#2C4AB8' }}
+              >
+                {feature.icon === 'shield' && (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 10c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286z" />
+                  </svg>
+                )}
+                {feature.icon === 'search' && (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                )}
+                {feature.icon === 'chat' && (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                  </svg>
+                )}
+                {feature.icon === 'map' && (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+                  </svg>
+                )}
+                {feature.icon === 'star' && (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                  </svg>
+                )}
+                {feature.icon === 'money' && (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                  </svg>
+                )}
+              </div>
+              <h4 className="text-sm font-bold text-navy mb-1">{t(feature)?.title}</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">{t(feature)?.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="border-t border-gray-100" />
+
+      {/* ── STATS ── */}
+      <section className="py-10" style={{ backgroundColor: '#4169E1' }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {data.stats?.map((stat, index) => (
+              <div
+                key={index}
+                className={`text-center ${
+                  language === 'ar'
+                    ? index !== 0 ? 'border-r border-white/30' : ''
+                    : index !== data.stats.length - 1 ? 'border-r border-white/30' : ''
+                }`}
+              >
+                <div className="text-3xl md:text-4xl font-black text-white mb-1">{stat.number}</div>
+                <div className="text-xs text-white/90 font-medium">{t(stat)?.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="border-t border-gray-100" />
+
+      {/* ── FAQ ── */}
+      <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-black text-navy mb-2">{t(data.faq)?.sectionTitle}</h2>
+          <p className="text-sm text-gray-500 font-medium">{t(data.faq)?.sectionSubtitle}</p>
+        </div>
+
+        <div className="space-y-2">
+          {data.faq?.items?.map((item, index) => (
+            <div key={index} className="border border-gray-200 hover:border-gray-400 transition-all">
+              <button
+                className="w-full flex items-center justify-between px-5 py-3.5 text-left"
+                onClick={() => setOpenFaq(openFaq === index ? null : index)}
+              >
+                <span className="font-bold text-navy text-sm">{t(item)?.question}</span>
+                <span
+                  className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-white ml-3 transition-transform duration-200"
+                  style={{
+                    backgroundColor: '#2C4AB8',
+                    transform: openFaq === index ? 'rotate(45deg)' : 'rotate(0deg)'
+                  }}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                </span>
+              </button>
+              {openFaq === index && (
+                <div className="px-5 pb-4 border-t border-gray-100 pt-3">
+                  <p className="text-xs text-gray-600 leading-relaxed">{t(item)?.answer}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="border-t border-gray-100" />
+
+      {/* ── CTA ── */}
+      <section className="bg-brand py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl md:text-3xl font-black text-white mb-3">
+            {t(data.cta)?.title}
+          </h2>
+          <p className="text-sm text-gray-400 mb-8 font-medium">
+            {t(data.cta)?.subtitle}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href={data.cta?.studentUrl || '/properties'}
+              className="px-8 py-3 text-sm text-white font-bold hover:opacity-90 transition-all"
+              style={{ backgroundColor: '#2C4AB8' }}
+            >
+              {t(data.cta)?.studentBtn}
+            </a>
+            <a
+              href={data.cta?.ownerUrl || '/list-property'}
+              className="px-8 py-3 text-sm border-2 border-white text-white font-bold hover:bg-white hover:text-brand-dark transition-all"
+            >
+              {t(data.cta)?.ownerBtn}
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
+}

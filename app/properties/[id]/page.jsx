@@ -137,6 +137,7 @@ export default function PropertyDetailsPage({ params }) {
               <Stat label={ar ? 'السعر شهريًا' : 'Monthly price'} value={`${property.price} ${ar ? 'ج.م' : 'EGP'}`} />
               <Stat label={ar ? 'الغرف' : 'Bedrooms'} value={property.bedrooms} />
               <Stat label={ar ? 'السعة' : 'Capacity'} value={property.capacity} />
+              <Stat label={ar ? 'التأثيث' : 'Furnishing'} value={property.furnished ? (ar ? 'مفروشة' : 'Furnished') : (ar ? 'غير مفروشة' : 'Unfurnished')} />
               {college && <Stat label={ar ? 'أقرب كلية' : 'Nearest college'} value={ar ? college.ar : college.en} />}
               {campus && <Stat label={ar ? 'الحرم الجامعي' : 'Campus'} value={ar ? campus.ar : campus.en} />}
             </div>

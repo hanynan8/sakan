@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -56,6 +57,16 @@ function NavbarContent() {
   const userMenuRef = useRef(null);
 
   const { data: session, status } = useSession();
+
+  // التاب النشط: نفس صفحة /properties بس الفلتر (furnished) هو اللي بيفرّق
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const furnishedParam = searchParams.get('furnished');
+  const onProperties = pathname === '/properties';
+  const navTabs = [
+    { key: 'yes', href: '/properties?furnished=yes', ar: 'شقق مفروشة', en: 'Furnished apartments' },
+    { key: 'no', href: '/properties?furnished=no', ar: 'شقق غير مفروشة', en: 'Unfurnished apartments' },
+  ];
 
   const ar = language === 'ar';
   const t = (section) => (ar ? section?.ar : section?.en);
@@ -132,10 +143,21 @@ function NavbarContent() {
               )}
             </Link>
 
-            {/* Properties link */}
-            <Link href="/properties" className="hidden md:inline text-lg font-medium text-gray-600 hover:text-brand-dark transition-colors">
-              {ar ? 'السكنات' : 'Properties'}
-            </Link>
+            {/* Furnished / Unfurnished tabs — نفس صفحة /properties والفلتر بيتحدد مسبقًا */}
+            <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+              {navTabs.map((tab) => {
+                const active = onProperties && furnishedParam === tab.key;
+                return (
+                  <Link
+                    key={tab.key}
+                    href={tab.href}
+                    className={`px-3 py-2 text-lg font-medium whitespace-nowrap border-b-2 transition-colors ${active ? 'text-brand-dark border-brand' : 'text-gray-600 border-transparent hover:text-brand-dark'}`}
+                  >
+                    {ar ? tab.ar : tab.en}
+                  </Link>
+                );
+              })}
+            </div>
 
             {/* Search */}
             <div className="flex-1 max-w-lg mx-3 hidden md:block">
@@ -319,7 +341,16 @@ function NavbarContent() {
               </div>
             </div>
             <div className="px-4 py-2 border-b border-gray-100">
-              <Link href="/properties" className="block py-2 text-sm font-semibold text-navy">{ar ? 'السكنات' : 'Properties'}</Link>
+              {navTabs.map((tab) => (
+                <Link
+                  key={tab.key}
+                  href={tab.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block py-2 text-sm font-semibold ${onProperties && furnishedParam === tab.key ? 'text-brand-dark' : 'text-navy'}`}
+                >
+                  {ar ? tab.ar : tab.en}
+                </Link>
+              ))}
               {data.support?.supportNow?.map((item, i) => (
                 <a key={i} href={item.url} className="flex items-center gap-2 py-2 text-sm text-gray-700">{t(item)?.label}</a>
               ))}

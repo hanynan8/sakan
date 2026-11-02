@@ -1,5 +1,6 @@
 // path: models/property.js
 import mongoose, { Schema, models } from "mongoose";
+import { PROPERTY_TYPE_IDS } from "@/lib/taxonomy";
 
 const propertySchema = new Schema(
   {
@@ -12,9 +13,12 @@ const propertySchema = new Schema(
     // نوع السكن
     type: {
       type: String,
-      enum: ["apartment", "room", "shared-room", "studio"],
+      enum: PROPERTY_TYPE_IDS,
       default: "apartment",
     },
+
+    // مفروشة (true) أو غير مفروشة (false) — القديم بدون قيمة بيتعامل كغير مفروش
+    furnished: { type: Boolean, default: false, index: true },
 
     // عدد الأسرّة/الغرف المتاحة
     bedrooms: { type: Number, default: 1, min: 0, max: 50 },

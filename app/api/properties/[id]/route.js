@@ -9,7 +9,7 @@ import { readJson, isString, looksLikeEmail, normalizeEmail, normalizePhone } fr
 import { UserModel } from "@/lib/auth";
 import { validateProperty } from "@/lib/property-validation";
 
-const EDITABLE = ["title", "description", "price", "type", "bedrooms", "capacity", "area", "college", "campus", "address", "images", "amenities", "status"];
+const EDITABLE = ["title", "description", "price", "type", "bedrooms", "capacity", "furnished", "area", "college", "campus", "address", "images", "amenities", "status"];
 
 // GET /api/properties/:id — تفاصيل سكن واحد
 // السكنات المخفية بتظهر لصاحبها والأدمن بس، وبيانات المالك (owner) مش بتتعرض للعامة.

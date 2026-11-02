@@ -1,0 +1,361 @@
+// path: app/profile/properties/page.jsx
+'use client';
+
+import ImageUploader from '@/app/components/ImageUploader';
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
+import PropertyClassificationFields from '@/app/components/PropertyClassificationFields';
+
+const emptyForm = {
+  title: '',
+  description: '',
+  price: '',
+  type: 'apartment',
+  bedrooms: 1,
+  capacity: 1,
+  furnished: false,
+  campus: '',
+  college: '',
+  area: '',
+  address: '',
+  images: '', // كل صورة على سطر
+  amenities: '', // مفصولة بفاصلة
+};
+
+export default function MyPropertiesPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { language } = useLanguage();
+  const ar = language === 'ar';
+
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState(emptyForm);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null); // null = إضافة جديدة
+
+  const canManage = session?.user?.role === 'owner' || session?.user?.role === 'admin';
+
+  const fetchMine = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/properties?mine=1');
+      const data = await res.json();
+      if (res.ok) setProperties(Array.isArray(data) ? data : []);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated' && canManage) fetchMine();
+    if (status === 'authenticated' && !canManage) setLoading(false);
+  }, [status, canManage, fetchMine]);
+
+  if (status === 'loading') {
+    return <div className="max-w-4xl mx-auto px-4 py-16 text-center text-gray-400">{ar ? 'جارٍ التحميل...' : 'Loading...'}</div>;
+  }
+
+  if (status === 'authenticated' && !canManage) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center" dir={ar ? 'rtl' : 'ltr'}>
+        <p className="text-lg font-semibold text-gray-700 mb-2">
+          {ar ? 'الصفحة دي لأصحاب السكنات بس' : 'This page is for property owners only'}
+        </p>
+        <p className="text-sm text-gray-500 mb-4">
+          {ar ? 'لو عندك سكن عايز تعرضه، تواصل مع الدعم عشان يتحول حسابك لمالك.' : 'If you have a property to list, contact support to upgrade your account.'}
+        </p>
+        <Link href="/profile" className="text-navy underline text-sm">{ar ? 'رجوع للملف الشخصي' : 'Back to profile'}</Link>
+      </div>
+    );
+  }
+
+
+  const closeForm = () => {
+    setForm(emptyForm);
+    setEditingId(null);
+    setFormError('');
+    setFormOpen(false);
+  };
+
+  const startEdit = (p) => {
+    setForm({
+      title: p.title || '',
+      description: p.description || '',
+      price: String(p.price ?? ''),
+      type: p.type || 'apartment',
+      bedrooms: p.bedrooms ?? 1,
+      capacity: p.capacity ?? 1,
+      furnished: !!p.furnished,
+      campus: p.campus || '',
+      college: p.college || '',
+      area: p.area || '',
+      address: p.address || '',
+      images: (p.images || []).join('\n'),
+      amenities: (p.amenities || []).join(', '),
+    });
+    setEditingId(p._id);
+    setFormError('');
+    setFormOpen(true);
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError('');
+
+    if (!form.title.trim() || !form.price || !form.area) {
+      setFormError(ar ? 'العنوان والسعر والمنطقة مطلوبين' : 'Title, price and area are required');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch(editingId ? `/api/properties/${editingId}` : '/api/properties', {
+        method: editingId ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title.trim(),
+          description: form.description.trim(),
+          price: Number(form.price),
+          type: form.type,
+          bedrooms: Number(form.bedrooms) || 1,
+          capacity: Number(form.capacity) || 1,
+          furnished: !!form.furnished,
+          area: form.area,
+          college: form.college || null,
+          campus: form.campus || null,
+          address: form.address.trim(),
+          images: form.images.split('\n').map((s) => s.trim()).filter(Boolean),
+          amenities: form.amenities.split(',').map((s) => s.trim()).filter(Boolean),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setFormError(data.message || (ar ? 'حدث خطأ' : 'Something went wrong'));
+        return;
+      }
+      closeForm();
+      fetchMine();
+    } catch {
+      setFormError(ar ? 'حدث خطأ، حاول مرة أخرى' : 'An error occurred, try again');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const changeStatus = async (property, newStatus) => {
+    if (newStatus === property.status) return;
+    const res = await fetch(`/api/properties/${property._id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (res.ok) fetchMine();
+  };
+
+  const deleteProperty = async (id) => {
+    if (!confirm(ar ? 'متأكد إنك عايز تحذف السكن ده؟' : 'Are you sure you want to delete this property?')) return;
+    const res = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
+    if (res.ok) fetchMine();
+  };
+
+  return (
+    <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>
+      <div className="max-w-4xl mx-auto px-4 pt-6">
+        <nav className="flex items-center gap-1.5 text-sm mb-3">
+          <Link href="/profile" className="text-gray-500 hover:text-brand-dark">{ar ? 'الملف الشخصي' : 'Profile'}</Link>
+          <span className="text-gray-300">/</span>
+          <span className="text-gray-700 font-medium">{ar ? 'سكناتي' : 'My Properties'}</span>
+        </nav>
+
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-navy">{ar ? 'سكناتي' : 'My Properties'}</h1>
+          <button
+            onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
+            className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white transition-all"
+          >
+            {formOpen ? (ar ? 'إغلاق النموذج' : 'Close form') : (ar ? '+ إضافة سكن' : '+ Add Property')}
+          </button>
+        </div>
+
+        {/* فورم إضافة سكن */}
+        {formOpen && (
+          <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6 space-y-4">
+            <h2 className="text-base font-bold text-navy">
+              {editingId ? (ar ? 'تعديل السكن' : 'Edit property') : (ar ? 'إضافة سكن جديد' : 'Add a new property')}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'عنوان السكن' : 'Title'}</label>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  placeholder={ar ? 'مثال: شقة مفروشة 3 غرف قريبة من الهندسة' : 'e.g. Furnished 3-bedroom apartment near Engineering'}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'السعر شهريًا (ج.م)' : 'Monthly price (EGP)'}</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.price}
+                  onChange={(e) => setForm({ ...form, price: e.target.value })}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'عدد الغرف' : 'Bedrooms'}</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.bedrooms}
+                  onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'السعة (عدد الأفراد)' : 'Capacity'}</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={form.capacity}
+                  onChange={(e) => setForm({ ...form, capacity: e.target.value })}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                />
+              </div>
+
+              <PropertyClassificationFields
+                form={form}
+                onChange={(patch) => setForm((f) => ({ ...f, ...patch }))}
+                ar={ar}
+                inputCls="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                labelCls="block text-xs font-semibold text-gray-600 mb-1.5"
+                wideArea
+              />
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'العنوان التفصيلي (اختياري)' : 'Detailed address (optional)'}</label>
+                <input
+                  type="text"
+                  value={form.address}
+                  onChange={(e) => setForm({ ...form, address: e.target.value })}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'الوصف' : 'Description'}</label>
+                <textarea
+                  rows={3}
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'صور السكن' : 'Photos'}</label>
+                <ImageUploader
+                  ar={ar}
+                  value={form.images.split('\n').map((x) => x.trim()).filter(Boolean)}
+                  onChange={(arr) => setForm({ ...form, images: arr.join('\n') })}
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">{ar ? 'المميزات (مفصولة بفاصلة)' : 'Amenities (comma separated)'}</label>
+                <input
+                  type="text"
+                  value={form.amenities}
+                  onChange={(e) => setForm({ ...form, amenities: e.target.value })}
+                  placeholder={ar ? 'واي فاي، تكييف، مصعد' : 'WiFi, AC, Elevator'}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand"
+                />
+              </div>
+            </div>
+
+            {formError && (
+              <div className="px-3 py-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">{formError}</div>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full sm:w-auto px-6 py-2.5 bg-brand text-white text-sm font-semibold rounded hover:bg-brand-dark hover:text-white disabled:opacity-60 transition-all"
+            >
+              {submitting ? (ar ? 'جارٍ الحفظ...' : 'Saving...') : editingId ? (ar ? 'حفظ التعديلات' : 'Save changes') : (ar ? 'حفظ السكن' : 'Save Property')}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={closeForm}
+                className="w-full sm:w-auto sm:ms-2 px-6 py-2.5 border border-gray-300 text-gray-600 text-sm font-semibold rounded hover:border-gray-500 transition-all"
+              >
+                {ar ? 'إلغاء' : 'Cancel'}
+              </button>
+            )}
+          </form>
+        )}
+
+        {/* قائمة سكناتي */}
+        {loading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-24 bg-white rounded-xl border border-gray-100 animate-pulse" />)}
+          </div>
+        ) : properties.length === 0 ? (
+          <div className="text-center py-16 text-gray-500 bg-white rounded-xl border border-gray-100">
+            <p className="font-semibold mb-1">{ar ? 'لسه مفيش سكنات مضافة' : 'No properties added yet'}</p>
+            <p className="text-sm">{ar ? 'دوس على "إضافة سكن" عشان تبدأ' : 'Click "Add Property" to get started'}</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {properties.map((p) => (
+              <div key={p._id} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Link href={`/properties/${p._id}`} className="font-semibold text-navy hover:underline">{p.title}</Link>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-700' : p.status === 'hidden' ? 'bg-gray-100 text-gray-500' : p.status === 'pending' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {p.status === 'active' ? (ar ? 'متاح' : 'Active') : p.status === 'pending' ? (ar ? 'تحت المراجعة' : 'Under review') : p.status === 'hidden' ? (ar ? 'مخفي' : 'Hidden') : (ar ? 'مؤجر' : 'Rented')}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-1">{p.price} {ar ? 'ج.م/شهر' : 'EGP/mo'}</p>
+                </div>
+                <div className="flex gap-2">
+                  <select
+                    value={p.status}
+                    onChange={(e) => changeStatus(p, e.target.value)}
+                    disabled={p.status === 'pending'}
+                    aria-label={ar ? 'حالة السكن' : 'Property status'}
+                    className="px-2 py-1.5 text-xs font-semibold border border-gray-300 rounded bg-white hover:border-gray-500 transition-all"
+                  >
+                    {p.status === 'pending' && <option value="pending">{ar ? 'تحت المراجعة' : 'Under review'}</option>}
+                    <option value="active">{ar ? 'متاح' : 'Active'}</option>
+                    <option value="rented">{ar ? 'مؤجر' : 'Rented'}</option>
+                    <option value="hidden">{ar ? 'مخفي' : 'Hidden'}</option>
+                  </select>
+                  <button onClick={() => startEdit(p)} className="px-3 py-1.5 text-xs font-semibold border border-gray-300 rounded hover:border-gray-500 transition-all">
+                    {ar ? 'تعديل' : 'Edit'}
+                  </button>
+                  <button onClick={() => deleteProperty(p._id)} className="px-3 py-1.5 text-xs font-semibold border border-red-200 text-red-600 rounded hover:bg-red-50 transition-all">
+                    {ar ? 'حذف' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
