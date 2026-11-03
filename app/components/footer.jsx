@@ -45,7 +45,7 @@ const FOOTER_DATA = {
       },
       {
         platform: 'whatsapp',
-        url: 'https://wa.me/201000000000'
+        url: 'https://wa.me/201213819102'
       },
       {
         platform: 'youtube',
@@ -163,11 +163,11 @@ const FOOTER_DATA = {
       type: 'phone',
       ar: {
         label: 'الهاتف',
-        value: '+20 100 000 0000'
+        value: '+20 121 381 9102'
       },
       en: {
         label: 'Phone',
-        value: '+20 100 000 0000'
+        value: '+20 121 381 9102'
       }
     },
     {

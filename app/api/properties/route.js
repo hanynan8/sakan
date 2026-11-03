@@ -1,7 +1,7 @@
 // path: app/api/properties/route.js
 import { auth, connectToMongo } from "@/lib/auth";
 import Property from "@/models/property";
-import { AREAS, COLLEGES, GENDER_IDS } from "@/lib/taxonomy";
+import { AREAS, COLLEGES, GENDER_IDS, areaRankForCollege } from "@/lib/taxonomy";
 import { json, requireRole, sameOriginOk, forbiddenOrigin } from "@/lib/api";
 import { rateLimit } from "@/lib/rate-limit";
 import { escapeRegex, readJson } from "@/lib/validators";
@@ -36,6 +36,7 @@ const intParam = (v, min, max) => {
 // GET /api/properties?area=&college=&gender=&furnished=yes|no&bedrooms=&floor=&beds=&utilities=included|excluded
 //                    &minPrice=&maxPrice=&q=&sort=&page=&limit=&mine=1
 // - لو فيه area بيتم تجاهل college خالص (الفلتر بالمنطقة بس)
+// - لو فيه college من غير area: السكنات كلها بتظهر مرتبة من المنطقة الأقرب للكلية للأبعد (nearby=0 يلغي ده)
 // - bedrooms: 1-3 بالظبط و4 = 4 فأكتر | floor: 0-5 بالظبط و6 = 6 فأعلى | beds: 1-5 بالظبط و6 = 6 فأكتر
 // بيرجع Array (متوافق مع الواجهات الحالية) والعدد الكلي في الهيدر X-Total-Count
 export async function GET(request) {
@@ -62,8 +63,14 @@ export async function GET(request) {
     const filter = {};
     const and = [];
 
+    // كلية بدون منطقة + أولوية المنطقة مفعّلة (الافتراضي): بنعرض كل السكنات مرتبة من الأقرب للأبعد
+    // بغض النظر عن الكلية اللي اختارها المالك. nearby=0 بيرجّع الفلترة العادية بالكلية.
+    const byProximity = !!(!area && college && collegeIds.has(college) && sp.get("nearby") !== "0");
+
     if (area && areaIds.has(area)) filter.area = area;
-    else if (college && collegeIds.has(college)) {
+    else if (byProximity) {
+      // مفيش فلترة بالكلية هنا؛ الترتيب بيتعمل بعد الاستعلام
+    } else if (college && collegeIds.has(college)) {
       // السكن يظهر لو الكلية دي من ضمن كلياته القريبة (أو الكلية القديمة للسكنات القديمة)
       and.push({ $or: [{ colleges: college }, { college }] });
     }
@@ -103,15 +110,27 @@ export async function GET(request) {
       filter.status = "active"; // الزوار يشوفوا المتاح بس
     }
 
-    const [properties, total] = await Promise.all([
-      Property.find(filter)
-        .select(projection)
-        .sort(sort)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean(),
-      Property.countDocuments(filter),
-    ]);
+    let properties;
+    let total;
+    if (byProximity) {
+      // الترتيب بالقرب بيتعمل في الذاكرة ثم الترقيم (مجموعة السكنات صغيرة)
+      const all = await Property.find(filter).select(projection).sort(sort).limit(2000).lean();
+      const rank = (p) => areaRankForCollege(college, p.area);
+      // sort ثابت: الترتيب الأصلي (حسب sort/الأحدث) بيتحفظ جوه نفس المنطقة
+      all.sort((a, b) => rank(a) - rank(b));
+      total = all.length;
+      properties = all.slice((page - 1) * limit, page * limit);
+    } else {
+      [properties, total] = await Promise.all([
+        Property.find(filter)
+          .select(projection)
+          .sort(sort)
+          .skip((page - 1) * limit)
+          .limit(limit)
+          .lean(),
+        Property.countDocuments(filter),
+      ]);
+    }
 
     return json(properties, 200, {
       "X-Total-Count": String(total),

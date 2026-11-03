@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AREAS, COLLEGES, GENDER_OPTIONS, propertyCollegeIds } from '@/lib/taxonomy';
 import FavoriteButton from '@/app/components/FavoriteButton';
-import BookingRequest from '@/app/components/BookingRequest';
 
 // رقم واتساب سكني الموحّد لكل الاستفسارات (مفيش أي بيانات عن المالك بتتعرض)
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201213819102';
@@ -62,12 +61,15 @@ export default function PropertyDetailsPage({ params }) {
     .map((id) => COLLEGES.find((c) => c.id === id))
     .filter(Boolean);
   const gender = GENDER_OPTIONS.find((g) => g.id === (property.gender || 'any'));
-  const images = property.images?.length ? property.images : [];
+  const images = property.images?.length ? property.images : ['/default-property.svg'];
 
+  const isActive = property.status === 'active';
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const areaName = ar ? area?.ar : area?.en;
   const waMessage = encodeURIComponent(
     ar
-      ? `أهلاً، أنا مهتم بالسكن "${property.title}" (${typeof window !== 'undefined' ? window.location.href : ''})`
-      : `Hi, I'm interested in the property "${property.title}" (${typeof window !== 'undefined' ? window.location.href : ''})`
+      ? `أهلاً، عايز أحجز السكن "${property.title}"${areaName ? ` في ${areaName}` : ''} بسعر ${property.price} ج.م شهريًا.\n${pageUrl}`
+      : `Hi, I'd like to book "${property.title}"${areaName ? ` in ${areaName}` : ''} at ${property.price} EGP/month.\n${pageUrl}`
   );
   const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
 
@@ -88,7 +90,14 @@ export default function PropertyDetailsPage({ params }) {
           <FavoriteButton propertyId={property._id} size="lg" className="absolute top-3 left-3 z-10" />
           {images.length ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={images[activeImage]} alt={property.title} className="w-full h-full object-cover" />
+            <img
+              src={images[activeImage]}
+              alt={property.title}
+              onError={(e) => {
+                if (!e.currentTarget.src.endsWith('/default-property.svg')) e.currentTarget.src = '/default-property.svg';
+              }}
+              className="w-full h-full object-cover"
+            />
           ) : (
             <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -176,19 +185,18 @@ export default function PropertyDetailsPage({ params }) {
                 {property.price} <span className="text-sm font-medium text-gray-500">{ar ? 'ج.م / شهر' : 'EGP / month'}</span>
               </p>
               <p className="text-sm text-gray-500 mt-1 mb-4">
-                {ar ? 'اطلب الحجز من هنا، أو للاستفسار تواصل معنا مباشرة على واتساب.' : 'Request a booking here, or contact us directly on WhatsApp for inquiries.'}
+                {ar ? 'اضغط احجز الان وهتتحوّل على واتساب علطول لإتمام الحجز.' : 'Tap Book now to go straight to WhatsApp and complete your booking.'}
               </p>
-              {property.status === 'active' && <BookingRequest propertyId={property._id} ar={ar} />}
               <a
                 href={waLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3.5 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-lg transition-colors"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 22h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26C2.167 6.658 6.601 2.223 12.053 2.223c2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994C21.93 17.566 17.497 22 12.05 22" />
                 </svg>
-                {ar ? 'تواصل عبر واتساب' : 'Contact via WhatsApp'}
+                {isActive ? (ar ? 'احجز الان' : 'Book now') : (ar ? 'استفسر عبر واتساب' : 'Ask on WhatsApp')}
               </a>
               <p className="text-xs text-gray-400 mt-3 text-center">
                 {ar ? 'بياناتك آمنة، مفيش أي بيانات عن المالك بتتعرض هنا.' : "Your data is safe — no owner information is shown here."}

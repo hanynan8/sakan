@@ -53,6 +53,9 @@ const TEXT = {
     areaColleges: 'الكليات في المنطقة دي:',
     areaNoColleges: 'مفيش كليات جامعية في المنطقة دي.',
     collegeCancelled: 'فلتر الكلية بيتلغي لما تختار منطقة.',
+    nearbyLabel: 'أولوية للمنطقة الأقرب للكلية',
+    nearbyHint: 'السكنات بتظهر من الأقرب للأبعد عن الكلية، حتى لو صاحب الشقة اختار كلية تانية.',
+    nearbyOffHint: 'السكنات بتظهر حسب الكلية اللي صاحب الشقة اختارها.',
   },
   en: {
     lblCollege: 'Choose a nearby college',
@@ -83,6 +86,9 @@ const TEXT = {
     areaColleges: 'Colleges in this area:',
     areaNoColleges: 'No university colleges in this area.',
     collegeCancelled: 'The college filter is cancelled when an area is selected.',
+    nearbyLabel: 'Prioritize areas nearest to the college',
+    nearbyHint: 'Listings are shown from nearest to farthest from the college, even if the owner picked another college.',
+    nearbyOffHint: "Listings are shown by the college the owner picked.",
   },
 };
 
@@ -189,6 +195,24 @@ export default function PropertyFilters({ filters, setFilters, ar, actions = nul
           )}
         </button>
       </div>
+
+      {/* كلية من غير منطقة: أولوية المنطقة الأقرب (مفعّلة تلقائيًا) */}
+      {filters.college && !filters.area && (
+        <label className="mt-2.5 flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={filters.nearby !== '0'}
+            onChange={(e) => set({ nearby: e.target.checked ? '' : '0' })}
+            className="mt-1 accent-[var(--brand,#0f766e)]"
+          />
+          <span>
+            <span className="font-semibold">{t.nearbyLabel}</span>
+            <span className="block text-xs text-gray-500">
+              {filters.nearby !== '0' ? t.nearbyHint : t.nearbyOffHint}
+            </span>
+          </span>
+        </label>
+      )}
 
       {/* لو فيه منطقة: الكلية اتلغت ونعرض كليات المنطقة */}
       {filters.area && (

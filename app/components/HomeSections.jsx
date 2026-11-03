@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { AREAS, isNearCollege } from '@/lib/taxonomy';
 
 /* ═══════════════════════════════════════════════
    نفس بيانات سكاشن الهوم (الكليات، المناطق، آراء الطلاب،
@@ -26,72 +27,48 @@ const SECTIONS_DATA = {
       {
         id: 'medicine',
         image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=900',
-        availableProperties: 180,
-        averagePrice: { min: 2200, currency: 'EGP' },
-        popularAreas: ['أسوان الجديدة', 'كسر الحجر', 'الكرور'],
         ar: { name: 'كلية الطب البشري', location: 'أسوان الجديدة، جامعة أسوان', description: 'من أكثر الكليات إقبالاً، وسط أسوان الجديدة' },
         en: { name: 'Faculty of Medicine', location: 'New Aswan, Aswan University', description: 'One of the most in-demand colleges, in New Aswan' }
       },
       {
         id: 'engineering',
         image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=900',
-        availableProperties: 240,
-        averagePrice: { min: 1800, currency: 'EGP' },
-        popularAreas: ['أبو الريش', 'أبو الريش قبلي', 'أبو الريش بحري'],
         ar: { name: 'كلية الهندسة', location: 'أبو الريش، جامعة أسوان', description: 'كلية كبيرة بحرم مستقل في منطقة أبو الريش' },
         en: { name: 'Faculty of Engineering', location: 'Abu El-Rish, Aswan University', description: 'A large college with its own campus in Abu El-Rish' }
       },
       {
         id: 'commerce',
         image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=900',
-        availableProperties: 260,
-        averagePrice: { min: 1600, currency: 'EGP' },
-        popularAreas: ['أسوان الجديدة', 'الشيخ هارون', 'الناصرية'],
         ar: { name: 'كلية التجارة', location: 'أسوان الجديدة، جامعة أسوان', description: 'من أكبر الكليات من حيث عدد الطلاب' },
         en: { name: 'Faculty of Commerce', location: 'New Aswan, Aswan University', description: 'One of the largest colleges by student numbers' }
       },
       {
         id: 'dentistry',
         image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=900',
-        availableProperties: 110,
-        averagePrice: { min: 2400, currency: 'EGP' },
-        popularAreas: ['أسوان الجديدة', 'كسر الحجر', 'السد العالي'],
         ar: { name: 'كلية طب الفم والأسنان', location: 'أسوان الجديدة، جامعة أسوان', description: 'كلية طبية حديثة ضمن تجمع أسوان الجديدة' },
         en: { name: 'Faculty of Dentistry', location: 'New Aswan, Aswan University', description: 'A modern medical college within the New Aswan complex' }
       },
       {
         id: 'science',
         image: 'https://images.unsplash.com/photo-1567168539593-59673ba2a740?q=80&w=900',
-        availableProperties: 300,
-        averagePrice: { min: 1500, currency: 'EGP' },
-        popularAreas: ['صحاري', 'طريق المطار', 'السيل'],
         ar: { name: 'كلية العلوم', location: 'صحاري - طريق المطار، جامعة أسوان', description: 'كلية رئيسية في تجمع صحاري بطريق المطار' },
         en: { name: 'Faculty of Science', location: 'Sahari - Airport Road, Aswan University', description: 'A key college in the Sahari - Airport Road campus' }
       },
       {
         id: 'arts',
         image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=900',
-        availableProperties: 190,
-        averagePrice: { min: 1400, currency: 'EGP' },
-        popularAreas: ['أسوان الجديدة', 'الشيخ هارون', 'خور عواضة'],
         ar: { name: 'كلية الآداب', location: 'أسوان الجديدة، جامعة أسوان', description: 'من الكليات الكبيرة بأعداد طلاب كثيفة' },
         en: { name: 'Faculty of Arts', location: 'New Aswan, Aswan University', description: 'One of the larger colleges with high student numbers' }
       },
       {
         id: 'law',
         image: 'https://images.unsplash.com/photo-1589578527966-fdac0f44566c?q=80&w=900',
-        availableProperties: 150,
-        averagePrice: { min: 1500, currency: 'EGP' },
-        popularAreas: ['أسوان الجديدة', 'الناصرية', 'الكرور'],
         ar: { name: 'كلية الحقوق', location: 'أسوان الجديدة، جامعة أسوان', description: 'مقرها ضمن تجمع أسوان الجديدة' },
         en: { name: 'Faculty of Law', location: 'New Aswan, Aswan University', description: 'Located within the New Aswan complex' }
       },
       {
         id: 'education',
         image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=900',
-        availableProperties: 210,
-        averagePrice: { min: 1300, currency: 'EGP' },
-        popularAreas: ['النفق', 'السيل غرب', 'الناصرية'],
         ar: { name: 'كلية التربية', location: 'النفق، جامعة أسوان', description: 'كلية رئيسية في تجمع النفق' },
         en: { name: 'Faculty of Education', location: 'El-Naga (Tunnel), Aswan University', description: 'A key college in the El-Naga campus' }
       }
@@ -341,6 +318,46 @@ export default function HomeSections() {
   // وبعد الـ mount بنحسب القيمة الحقيقية حسب عرض الشاشة
   const [slidesPerView, setSlidesPerView] = useState(3);
 
+  // ── بيانات حقيقية للكليات: بنجيب السكنات المعروضة حاليًا ونحسب لكل كلية عدد السكنات القريبة وأقل سعر
+  // ونختار شقة عشوائية من القريبة منها (بتتغير مع كل زيارة). ──
+  const [collegeCards, setCollegeCards] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/properties?limit=100');
+        const list = res.ok ? await res.json() : [];
+        const props = Array.isArray(list) ? list : [];
+        const cards = data.trendingColleges.colleges
+          .map((college) => {
+            const near = props.filter((p) => isNearCollege(p, college.id));
+            if (!near.length) return null;
+            const areaCount = {};
+            near.forEach((p) => { areaCount[p.area] = (areaCount[p.area] || 0) + 1; });
+            const topAreas = Object.entries(areaCount)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 3)
+              .map(([id]) => AREAS.find((a) => a.id === id))
+              .filter(Boolean);
+            return {
+              college,
+              count: near.length,
+              minPrice: Math.min(...near.map((p) => p.price)),
+              topAreas,
+              pick: near[Math.floor(Math.random() * near.length)],
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b.count - a.count);
+        if (!cancelled) setCollegeCards(cards);
+      } catch {
+        if (!cancelled) setCollegeCards([]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [data]);
+
   useEffect(() => {
     const handleResize = () => {
       setSlidesPerView(getSlidesPerView());
@@ -375,9 +392,9 @@ export default function HomeSections() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', measure);
     };
-  }, [slidesPerView, language]);
+  }, [slidesPerView, language, collegeCards.length]);
 
-  const collegesCount = data?.trendingColleges?.colleges?.length || 0;
+  const collegesCount = collegeCards.length;
   const collegeCardStep = collegesCount > 0 ? collegeMetrics.trackWidth / collegesCount : 0;
   const collegeMaxScrollPx = Math.max(0, collegeMetrics.trackWidth - collegeMetrics.containerWidth);
   const collegeMaxIndex = collegeCardStep > 0 ? Math.ceil(collegeMaxScrollPx / collegeCardStep) : 0;
@@ -466,7 +483,8 @@ export default function HomeSections() {
 
   return (
     <>
-      {/* Trending Colleges Section - Responsive Slider */}
+      {/* Trending Colleges Section - Responsive Slider (بيانات حقيقية من السكنات المعروضة؛ بيتخفي لو مفيش سكنات) */}
+      {collegeCards.length > 0 && (
       <section className="relative overflow-hidden bg-white py-16">
         <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
           <div className="text-center mb-12">
@@ -495,7 +513,7 @@ export default function HomeSections() {
                     : -collegeTranslatePx}px)`
                 }}
               >
-                {data.trendingColleges?.colleges?.map((college) => (
+                {collegeCards.map(({ college, count, minPrice, topAreas, pick }) => (
                   <div
                     key={college.id}
                     className="flex-shrink-0"
@@ -507,51 +525,61 @@ export default function HomeSections() {
                       })`
                     }}
                   >
-                    <Link
-                      href={`/properties?college=${college.id}`}
-                      className="group cursor-pointer border-2 border-gray-300 hover:border-brand transition-all duration-300 h-full rounded-xl overflow-hidden block"
-                    >
-                      <div className="relative h-48 md:h-56 lg:h-64 bg-gray-100">
-                        <img
-                          src={college.image}
-                          alt={t(college)?.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                      </div>
-                      <div className="p-4 md:p-6 bg-white">
-                        <h4 className="text-lg md:text-xl font-bold text-navy mb-2 line-clamp-1">
-                          {t(college)?.name}
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-2 font-medium line-clamp-1">{t(college)?.location}</p>
-                        <p className="text-xs md:text-sm text-gray-500 mb-4 line-clamp-2">{t(college)?.description}</p>
-                        
-                        <div className="flex justify-between items-center pt-3 md:pt-4 border-t-2 border-gray-200">
-                          <div>
-                            <span className="text-xl md:text-2xl font-black text-navy">
-                              {college.availableProperties}
-                            </span>
-                            <span className="text-xs md:text-sm text-gray-600 mr-1 md:mr-2 font-medium">سكن متاح</span>
-                          </div>
-                          <div className="text-left">
-                            <div className="text-xs text-gray-600 font-medium">من</div>
-                            <div className="text-sm md:text-lg font-bold text-navy">
-                              {college.averagePrice.min} {college.averagePrice.currency}
+                    <div className="group border-2 border-gray-300 hover:border-brand transition-all duration-300 h-full rounded-xl overflow-hidden flex flex-col bg-white">
+                      <Link href={`/properties?college=${college.id}`} className="block">
+                        <div className="relative h-48 md:h-56 lg:h-64 bg-gray-100 overflow-hidden">
+                          {/* صورة شقة حقيقية عشوائية من القريبة من الكلية، وبديلها صورة الكلية */}
+                          <img
+                            src={pick?.images?.[0] || college.image}
+                            alt={pick?.title || t(college)?.name}
+                            onError={(e) => { if (e.currentTarget.src !== college.image) e.currentTarget.src = college.image; }}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        </div>
+                        <div className="p-4 md:p-6 pb-3">
+                          <h4 className="text-lg md:text-xl font-bold text-navy mb-2 line-clamp-1">
+                            {t(college)?.name}
+                          </h4>
+                          <p className="text-sm text-gray-600 mb-2 font-medium line-clamp-1">{t(college)?.location}</p>
+                          <p className="text-xs md:text-sm text-gray-500 mb-4 line-clamp-2">{t(college)?.description}</p>
+
+                          <div className="flex justify-between items-center pt-3 md:pt-4 border-t-2 border-gray-200">
+                            <div>
+                              <span className="text-xl md:text-2xl font-black text-navy">{count}</span>
+                              <span className="text-xs md:text-sm text-gray-600 mx-1 md:mx-2 font-medium">{language === 'ar' ? 'سكن قريب' : 'nearby listings'}</span>
+                            </div>
+                            <div className="text-start">
+                              <div className="text-xs text-gray-600 font-medium">{language === 'ar' ? 'من' : 'From'}</div>
+                              <div className="text-sm md:text-lg font-bold text-navy">{minPrice} {language === 'ar' ? 'ج.م' : 'EGP'}</div>
                             </div>
                           </div>
-                        </div>
 
-                        <div className="mt-3 md:mt-4 flex flex-wrap gap-1.5 md:gap-2">
-                          {college.popularAreas?.slice(0, 3).map((area, idx) => (
-                            <span
-                              key={idx}
-                              className="text-xs px-2 md:px-3 py-1 bg-gray-100 text-gray-700 font-medium rounded-md"
-                            >
-                              {area}
-                            </span>
-                          ))}
+                          {topAreas.length > 0 && (
+                            <div className="mt-3 md:mt-4 flex flex-wrap gap-1.5 md:gap-2">
+                              {topAreas.map((area) => (
+                                <span key={area.id} className="text-xs px-2 md:px-3 py-1 bg-gray-100 text-gray-700 font-medium rounded-md">
+                                  {language === 'ar' ? area.ar : area.en}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    </Link>
+                      </Link>
+
+                      {/* الشقة العشوائية المقترحة (حقيقية من المعروض حاليًا) */}
+                      {pick && (
+                        <Link
+                          href={`/properties/${pick._id}`}
+                          className="mt-auto mx-4 md:mx-6 mb-4 md:mb-6 px-3 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm flex items-center justify-between gap-2 transition-colors"
+                        >
+                          <span className="truncate text-gray-700">
+                            <span className="text-xs text-gray-400 block">{language === 'ar' ? 'شقة مقترحة' : 'Suggested'}</span>
+                            {pick.title}
+                          </span>
+                          <span className="font-bold text-navy whitespace-nowrap">{pick.price} {language === 'ar' ? 'ج.م' : 'EGP'}</span>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -581,7 +609,7 @@ export default function HomeSections() {
 
             {/* Slide Indicators - Mobile Only */}
             <div className="flex md:hidden justify-center gap-2 mt-6">
-              {data.trendingColleges?.colleges?.map((_, index) => (
+              {collegeCards.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCollegeSlideIndex(index)}
@@ -606,6 +634,7 @@ export default function HomeSections() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Top Aswan Areas Section - Responsive Slider (كانت "عقارات مميزة") */}
       <section className="bg-gray-50 py-16">

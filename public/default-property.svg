@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fde7c8"/><stop offset="1" stop-color="#fbf3e4"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#sky)"/>
+  <circle cx="650" cy="110" r="46" fill="#f4b860" opacity=".85"/>
+  <rect y="400" width="800" height="100" fill="#e9d3a8"/>
+  <!-- building -->
+  <rect x="250" y="130" width="300" height="270" rx="6" fill="#d98c5f"/>
+  <rect x="250" y="130" width="300" height="26" rx="6" fill="#b8643a"/>
+  <g fill="#fff6e6">
+    <rect x="285" y="180" width="52" height="48" rx="4"/><rect x="374" y="180" width="52" height="48" rx="4"/><rect x="463" y="180" width="52" height="48" rx="4"/>
+    <rect x="285" y="252" width="52" height="48" rx="4"/><rect x="374" y="252" width="52" height="48" rx="4"/><rect x="463" y="252" width="52" height="48" rx="4"/>
+  </g>
+  <g fill="#2f7f86" opacity=".85">
+    <rect x="291" y="186" width="40" height="36" rx="2"/><rect x="380" y="186" width="40" height="36" rx="2"/><rect x="469" y="186" width="40" height="36" rx="2"/>
+    <rect x="291" y="258" width="40" height="36" rx="2"/><rect x="469" y="258" width="40" height="36" rx="2"/>
+  </g>
+  <rect x="374" y="258" width="52" height="48" rx="4" fill="#2f7f86" opacity=".4"/>
+  <rect x="368" y="330" width="64" height="70" rx="4" fill="#7a3f22"/>
+  <circle cx="422" cy="368" r="3.5" fill="#f4b860"/>
+  <!-- nubian triangles band -->
+  <g>
+    <path d="M250 156l25-26 25 26z" fill="#f4b860"/><path d="M300 156l25-26 25 26z" fill="#2f7f86"/>
+    <path d="M350 156l25-26 25 26z" fill="#c4452d"/><path d="M400 156l25-26 25 26z" fill="#f4b860"/>
+    <path d="M450 156l25-26 25 26z" fill="#2f7f86"/><path d="M500 156l25-26 25 26z" fill="#c4452d"/>
+  </g>
+  <!-- palms -->
+  <g stroke="#6b4a2b" stroke-width="6" stroke-linecap="round"><path d="M180 400v-90"/><path d="M630 400v-80"/></g>
+  <g fill="#3f8f5a">
+    <path d="M180 312c-40-6-62 8-72 24 30-8 52-8 72-24z"/><path d="M180 312c40-6 62 8 72 24-30-8-52-8-72-24z"/><path d="M180 312c-8-30 2-52 16-64-2 26-6 46-16 64z"/>
+    <path d="M630 322c-40-6-62 8-72 24 30-8 52-8 72-24z"/><path d="M630 322c40-6 62 8 72 24-30-8-52-8-72-24z"/><path d="M630 322c-8-30 2-52 16-64-2 26-6 46-16 64z"/>
+  </g>
+</svg>

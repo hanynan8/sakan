@@ -67,7 +67,7 @@ function EmptyIllustration() {
 function PropertyCard({ item, onRemove, ar }) {
   const area = AREAS.find((a) => a.id === item.area);
   const college = COLLEGES.find((c) => c.id === item.college);
-  const cover = item.images?.[0];
+  const cover = item.images?.[0] || '/default-property.svg';
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
       {/* Image */}
