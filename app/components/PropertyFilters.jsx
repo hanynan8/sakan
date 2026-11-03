@@ -2,7 +2,7 @@
 // حقول الفلاتر المشتركة بين /properties وسكشن الهوم.
 // الأساسي: الكلية، المنطقة، الجنس، عدد الغرف، التأثيث، السعر.
 // زرار "فلاتر أخرى" بيفتح: الدور، عدد السراير، شامل مياه/كهربا/غاز، وترتيب النتايج بالسعر.
-// لو اتحددت منطقة: فلتر الكلية بيتلغي وبنعرض كليات المنطقة بدله.
+// لو اتحددت منطقة: الكلية بتفضل ظاهرة في الواجهة، والباك اند بيتجاهلها، وبنعرض كليات المنطقة كمعلومة.
 'use client';
 
 import { useState } from 'react';
@@ -99,8 +99,8 @@ export default function PropertyFilters({ filters, setFilters, ar, actions = nul
   const [open, setOpen] = useState(activeExtra > 0);
 
   const set = (patch) => setFilters((f) => ({ ...f, ...patch }));
-  // اختيار منطقة بيلغي الكلية
-  const changeArea = (area) => set(area ? { area, college: '' } : { area: '' });
+  // اختيار المنطقة مابيمسحش الكلية في الواجهة (الباك اند هو اللي بيتجاهلها)
+  const changeArea = (area) => set({ area });
 
   const areaColleges = filters.area ? collegesInArea(filters.area) : [];
 
@@ -109,10 +109,8 @@ export default function PropertyFilters({ filters, setFilters, ar, actions = nul
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 items-end">
         <Field label={t.lblCollege}>
           <select
-            value={filters.area ? '' : filters.college}
+            value={filters.college}
             onChange={(e) => set({ college: e.target.value })}
-            disabled={!!filters.area}
-            title={filters.area ? t.collegeDisabled : undefined}
             className={selectCls}
           >
             <option value="">{t.allColleges}</option>
@@ -202,8 +200,7 @@ export default function PropertyFilters({ filters, setFilters, ar, actions = nul
             </>
           ) : (
             t.areaNoColleges
-          )}{' '}
-          <span className="text-gray-400">{t.collegeCancelled}</span>
+          )}
         </p>
       )}
 

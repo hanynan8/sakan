@@ -105,9 +105,9 @@ export default function HeroPropertiesSection() {
     setFilters(INITIAL_FILTERS);
   };
 
-  // اختيار منطقة بيلغي الكلية
+  // اختيار منطقة مابيمسحش الكلية في الواجهة (الباك اند بيتجاهلها)
   const toggleQuickArea = (areaId) => {
-    setFilters((f) => (f.area === areaId ? { ...f, area: '' } : { ...f, area: areaId, college: '' }));
+    setFilters((f) => ({ ...f, area: f.area === areaId ? '' : areaId }));
   };
 
   const toggleQuickCollege = (collegeId) => {
@@ -163,12 +163,11 @@ export default function HeroPropertiesSection() {
             {QUICK_COLLEGES.map((collegeId) => {
               const college = COLLEGES.find((c) => c.id === collegeId);
               if (!college) return null;
-              const active = !filters.area && filters.college === collegeId;
+              const active = filters.college === collegeId;
               return (
                 <button
                   key={collegeId}
                   type="button"
-                  disabled={!!filters.area}
                   onClick={() => toggleQuickCollege(collegeId)}
                   className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-full border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                     active
