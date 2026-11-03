@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AREAS, isNearCollege } from '@/lib/taxonomy';
 
@@ -297,6 +298,7 @@ const SECTIONS_DATA = {
 
 export default function HomeSections() {
   const data = SECTIONS_DATA;
+  const { data: session } = useSession();
   const { language } = useLanguage();
   const [collegeSlideIndex, setCollegeSlideIndex] = useState(0);
   const [areaSlideIndex, setAreaSlideIndex] = useState(0);
@@ -813,9 +815,9 @@ export default function HomeSections() {
       </section>
 
       {/* How It Works Section */}
-      <section className="relative overflow-hidden bg-gray-50 py-16">
+      <section className="relative overflow-hidden bg-gray-50 py-16 sm:py-20">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-14">
             <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
               {t(data.howItWorks)?.sectionTitle}
             </h3>
@@ -824,21 +826,27 @@ export default function HomeSections() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 max-w-5xl mx-auto">
             {data.howItWorks?.steps?.map((step, index) => (
-              <div key={step.id} className="text-center relative">
+              <div key={step.id} className="relative text-center">
+                {/* خط يوصل الخطوة بالخطوة اللي بعدها (من مركز الدايرة لمركز اللي بعدها) */}
                 {index < data.howItWorks.steps.length - 1 && (
-                  <div className="hidden md:block absolute top-10 right-0 w-full h-0.5 bg-gray-300 -z-10"></div>
+                  <div
+                    className="hidden md:block absolute top-10 start-1/2 w-[calc(100%+3rem)] border-t-2 border-dashed border-brand/30"
+                    aria-hidden="true"
+                  />
                 )}
-                <div className="w-20 h-20 mx-auto mb-6 bg-brand text-white flex items-center justify-center text-4xl font-black shadow-lg rounded-xl">
+                <div className="relative z-10 w-20 h-20 mx-auto mb-6 bg-brand text-white flex items-center justify-center text-4xl font-black shadow-lg rounded-2xl ring-8 ring-gray-50">
                   {step.stepNumber}
                 </div>
-                <h4 className="text-xl font-bold text-navy mb-3">
-                  {t(step)?.title}
-                </h4>
-                <p className="text-gray-600 leading-relaxed font-medium">
-                  {t(step)?.description}
-                </p>
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-6 hover:shadow-md hover:border-brand/40 transition-all">
+                  <h4 className="text-xl font-bold text-navy mb-2">
+                    {t(step)?.title}
+                  </h4>
+                  <p className="text-gray-600 leading-relaxed font-medium">
+                    {t(step)?.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -879,25 +887,38 @@ export default function HomeSections() {
       </section> */}
 
       {/* Call to Action Section */}
-      <section className="bg-white py-20 border-t-2 border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-3xl md:text-4xl font-black text-navy mb-4">
-            {t(data.callToAction)?.title}
-          </h3>
-          <p className="text-lg text-gray-600 mb-6 font-medium">
-            {t(data.callToAction)?.subtitle}
-          </p>
-          <p className="text-gray-700 mb-10 font-medium">
-            {t(data.callToAction)?.description}
-          </p>
+      <section className="bg-gray-50 py-16 sm:py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark text-white text-center px-6 sm:px-12 py-14 sm:py-16 shadow-xl">
+            <div className="absolute -top-16 -start-16 w-56 h-56 rounded-full bg-white/10" aria-hidden="true" />
+            <div className="absolute -bottom-20 -end-12 w-64 h-64 rounded-full bg-white/10" aria-hidden="true" />
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-10 py-4 bg-brand text-white text-lg font-bold hover:bg-brand-dark hover:text-white transition-all rounded-lg">
-              {t(data.callToAction)?.studentCTA}
-            </button>
-            <button className="px-10 py-4 border-2 border-brand text-brand text-lg font-bold hover:bg-brand hover:text-white transition-all rounded-lg">
-              {t(data.callToAction)?.ownerCTA}
-            </button>
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h3 className="text-3xl md:text-4xl font-black mb-4 leading-snug">
+                {t(data.callToAction)?.title}
+              </h3>
+              <p className="text-lg md:text-xl text-white font-semibold mb-3">
+                {t(data.callToAction)?.subtitle}
+              </p>
+              <p className="text-white/85 mb-10 leading-relaxed">
+                {t(data.callToAction)?.description}
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/properties"
+                  className="px-10 py-4 bg-white text-brand-dark text-lg font-bold rounded-lg hover:bg-gray-100 hover:text-brand-dark transition-all"
+                >
+                  {t(data.callToAction)?.studentCTA}
+                </Link>
+                <Link
+                  href={session ? '/profile/properties' : `/signin?callbackUrl=${encodeURIComponent('/profile/properties')}`}
+                  className="px-10 py-4 border-2 border-white text-white text-lg font-bold rounded-lg hover:bg-white hover:text-brand-dark transition-all"
+                >
+                  {t(data.callToAction)?.ownerCTA}
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>

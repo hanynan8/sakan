@@ -25,12 +25,8 @@
   --brand: #4169E1;
   --brand-dark: #2C4AB8;
   --navy: #00008B;
-  /* العربي هو الافتراضي: الخط العربي الأول، والإنجليزي بيتبدل لما اللغة تبقى en */
-  --font-body: 'Cairo', var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-}
-
-html[lang="en"] {
-  --font-body: var(--font-inter), 'Cairo', ui-sans-serif, system-ui, sans-serif;
+  /* Cairo لكل اللغات (عربي وإنجليزي) */
+  --font-body: 'Cairo', ui-sans-serif, system-ui, sans-serif;
 }
 
 html,

@@ -7,7 +7,7 @@ import PropertyClassificationFields from '@/app/components/PropertyClassificatio
 import ImageUploader from '@/app/components/ImageUploader';
 import { propertyCollegeIds } from '@/lib/taxonomy';
 
-const inputCls = 'w-full px-3 py-2 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand';
+const inputCls = 'w-full px-3 py-2 text-sm border-2 border-gray-200 rounded-xl bg-white focus:outline-none focus:border-blue-500 transition-colors';
 const labelCls = 'block text-xs font-semibold text-gray-600 mb-1';
 
 export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClose, onSaved }) {
@@ -98,11 +98,12 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center overflow-y-auto p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-2xl my-6 p-5" onClick={(e) => e.stopPropagation()} dir={ar ? 'rtl' : 'ltr'}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-navy">{ar ? 'تعديل السكن' : 'Edit property'}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-700 text-xl leading-none" aria-label="close">×</button>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-6" onClick={(e) => e.stopPropagation()} dir={ar ? 'rtl' : 'ltr'}>
+        <div className="p-6 border-b-2 border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-2xl flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-blue-900">{ar ? 'تعديل السكن' : 'Edit property'}</h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:bg-white/70 hover:text-gray-700 transition-colors text-xl leading-none" aria-label="close">×</button>
         </div>
+        <div className="p-6">
 
         {!form ? (
           <p className="text-sm text-gray-400 py-10 text-center">{error || (ar ? 'جارٍ التحميل...' : 'Loading...')}</p>
@@ -148,7 +149,7 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
               <ImageUploader ar={ar} value={form.images} onChange={(arr) => set('images', arr)} />
               <div className="flex gap-2 mt-2">
                 <input className={inputCls} dir="ltr" placeholder={ar ? 'أو ضيف رابط صورة https://...' : 'Or add an image URL https://...'} value={extraImg} onChange={(e) => setExtraImg(e.target.value)} />
-                <button type="button" onClick={addImageUrl} className="px-3 text-sm font-semibold border border-gray-300 rounded hover:border-gray-500">{ar ? 'إضافة' : 'Add'}</button>
+                <button type="button" onClick={addImageUrl} className="px-4 text-sm font-semibold border-2 border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors">{ar ? 'إضافة' : 'Add'}</button>
               </div>
             </div>
             <div>
@@ -166,15 +167,16 @@ export default function AdminPropertyEditor({ propertyId, ownerLabel, ar, onClos
               <p className="text-xs text-gray-400 mt-1">{ar ? 'سيبه فاضي لو مش عايز تغيّر المالك' : 'Leave empty to keep the current owner'}</p>
             </div>
 
-            {error && <p className="sm:col-span-2 text-sm text-red-600">{error}</p>}
+            {error && <p className="sm:col-span-2 px-4 py-3 rounded-xl bg-red-500 text-white text-sm font-semibold">{error}</p>}
             <div className="sm:col-span-2 flex gap-2 mt-1">
-              <button disabled={saving} className="px-6 py-2.5 bg-brand hover:bg-brand-dark text-white text-sm font-semibold rounded disabled:opacity-60">
+              <button disabled={saving} className="px-6 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-60">
                 {saving ? (ar ? 'جارٍ الحفظ...' : 'Saving...') : (ar ? 'حفظ التعديلات' : 'Save changes')}
               </button>
-              <button type="button" onClick={onClose} className="px-6 py-2.5 border border-gray-300 text-gray-600 text-sm font-semibold rounded">{ar ? 'إلغاء' : 'Cancel'}</button>
+              <button type="button" onClick={onClose} className="px-6 py-2.5 border-2 border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors">{ar ? 'إلغاء' : 'Cancel'}</button>
             </div>
           </form>
         )}
+        </div>
       </div>
     </div>
   );

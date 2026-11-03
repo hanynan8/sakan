@@ -7,6 +7,10 @@ import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { safeCallbackUrl } from '@/lib/safe-redirect';
+import AuthBrandPanel from '@/app/components/AuthBrandPanel';
+
+// ملحوظة: globals.css فيه قاعدة عامة على كل input (عرض 400px وpadding كبير)، فبنستخدم ! عشان نتغلب عليها
+const inputCls = 'block !w-full !max-w-full !px-3 !py-2.5 text-sm border !border-gray-300 !bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:!border-brand focus:!bg-white transition-all rounded';
 
 function SignInForm() {
   const { language } = useLanguage();
@@ -45,33 +49,12 @@ function SignInForm() {
 
   return (
     <div className="min-h-screen flex" dir={ar ? 'rtl' : 'ltr'}>
-      {/* ── لوحة البراندنج ── */}
-      <div className="hidden lg:flex lg:w-1/2 bg-brand text-white flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark" />
-        <div className="relative z-10">
-          <Link href="/" className="text-2xl font-black tracking-tight">
-            {ar ? 'سكني' : 'Sakani'}
-          </Link>
-        </div>
-        <div className="relative z-10 space-y-4">
-          <h2 className="text-4xl font-black leading-tight">
-            {ar ? 'سكنك الجامعي في أسوان، بضغطة واحدة.' : 'Your student housing in Aswan, one click away.'}
-          </h2>
-          <p className="text-white/90 text-lg">
-            {ar
-              ? 'ابحث عن سكن قريب من كليتك أو منطقتك في ثواني.'
-              : 'Find housing close to your college or area in seconds.'}
-          </p>
-        </div>
-        <div className="relative z-10 text-sm text-white/80">
-          {ar ? '© سكني — منصة السكن الطلابي في أسوان' : '© Sakani — Student housing platform in Aswan'}
-        </div>
-      </div>
+      <AuthBrandPanel ar={ar} />
 
       {/* ── الفورم ── */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white">
-        <div className="w-full max-w-sm">
-          <Link href="/" className="lg:hidden block text-center text-2xl font-black text-brand mb-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white overflow-y-auto">
+        <div className="w-full max-w-sm py-8">
+          <Link href="/" className="lg:hidden block text-center text-2xl font-black text-brand mb-6">
             {ar ? 'سكني' : 'Sakani'}
           </Link>
 
@@ -94,7 +77,7 @@ function SignInForm() {
                 value={form.identifier}
                 onChange={(e) => setForm({ ...form, identifier: e.target.value })}
                 placeholder={ar ? 'example@mail.com أو 010xxxxxxxx' : 'example@mail.com or 010xxxxxxxx'}
-                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                className={inputCls}
               />
             </div>
 
@@ -110,12 +93,12 @@ function SignInForm() {
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   placeholder={ar ? 'أدخل كلمة المرور' : 'Enter your password'}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                  className={`${inputCls} !pe-14`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute inset-y-0 right-2.5 flex items-center text-gray-400 hover:text-gray-700"
+                  className="absolute inset-y-0 end-2.5 flex items-center text-gray-400 hover:text-gray-700"
                 >
                   {showPw ? (ar ? 'إخفاء' : 'Hide') : (ar ? 'عرض' : 'Show')}
                 </button>

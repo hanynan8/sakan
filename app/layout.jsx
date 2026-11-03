@@ -1,5 +1,4 @@
 // app/layout.js
-import localFont from 'next/font/local';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import ClientLayout from './clientLayout';
@@ -9,14 +8,7 @@ import Navbar from './components/navbar';
 import Footer from './components/footer';
 import ConditionalShell from './components/ConditionalShell';
 
-// الخطوط متخزنة جوه المشروع (app/fonts) فمش بتعتمد على اتصال بـ Google وقت التشغيل أو البيلد
-// Inter للإنجليزي هنا، وCairo (العربي الافتراضي) متعرّف في globals.css بـ @font-face
-const inter = localFont({
-  src: './fonts/inter-latin-wght-normal.woff2',
-  variable: '--font-inter',
-  weight: '100 900',
-  display: 'swap',
-});
+// الخط الوحيد في الموقع: Cairo (متخزن في app/fonts ومتعرّف في globals.css بـ @font-face)
 
 export const metadata = {
   title: 'سكن - منصة السكن الطلابي',
@@ -25,7 +17,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ar" dir="rtl" className={`${inter.variable}`} suppressHydrationWarning={true}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning={true}>
       <body className="font-sans antialiased">
         <LanguageProvider>
           <SessionProvider>
@@ -34,6 +26,7 @@ export default function RootLayout({ children }) {
                 navbar={<Navbar />}
                 footer={<Footer />}
                 hiddenOn={['/help']}
+                hideNavbarOn={['/profile/admin']}
               >
                 <ClientLayout>{children}</ClientLayout>
               </ConditionalShell>

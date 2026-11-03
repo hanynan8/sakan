@@ -83,11 +83,8 @@ export default function SettingsPage() {
       setPwNotice({ type: 'err', text: ar ? 'كلمتا المرور غير متطابقتين' : 'Passwords do not match' });
       return;
     }
-    if (pw.newPassword.length < 8 || !/[A-Z]/.test(pw.newPassword) || !/[0-9]/.test(pw.newPassword)) {
-      setPwNotice({
-        type: 'err',
-        text: ar ? 'كلمة المرور لازم تكون 8 حروف على الأقل، وتحتوي على حرف كبير ورقم' : 'Password must be 8+ characters with an uppercase letter and a number',
-      });
+    if (!pw.newPassword) {
+      setPwNotice({ type: 'err', text: ar ? 'اكتب كلمة المرور الجديدة' : 'Enter a new password' });
       return;
     }
     setSavingPw(true);
@@ -109,7 +106,7 @@ export default function SettingsPage() {
     }
   };
 
-  const roleLabel = { student: ar ? 'طالب' : 'Student', owner: ar ? 'مالك سكن' : 'Property owner', admin: ar ? 'مسؤول' : 'Admin' };
+  const roleLabel = { user: ar ? 'عضو' : 'Member', student: ar ? 'طالب' : 'Student', owner: ar ? 'مالك سكن' : 'Property owner', admin: ar ? 'مسؤول' : 'Admin' };
 
   return (
     <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>

@@ -7,6 +7,10 @@ import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { safeCallbackUrl } from '@/lib/safe-redirect';
+import AuthBrandPanel from '@/app/components/AuthBrandPanel';
+
+// ملحوظة: globals.css فيه قاعدة عامة على كل input (عرض 400px وpadding كبير)، فبنستخدم ! عشان نتغلب عليها
+const inputCls = 'block !w-full !max-w-full !px-3 !py-2.5 text-sm border !border-gray-300 !bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:!border-brand focus:!bg-white transition-all rounded';
 
 function SignUpForm() {
   const { language } = useLanguage();
@@ -23,7 +27,6 @@ function SignUpForm() {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'student', // 'student' | 'owner'
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -48,14 +51,6 @@ function SignUpForm() {
       setError(ar ? 'كلمتا المرور غير متطابقتين' : 'Passwords do not match');
       return;
     }
-    if (form.password.length < 8 || !/[A-Z]/.test(form.password) || !/[0-9]/.test(form.password)) {
-      setError(
-        ar
-          ? 'كلمة المرور لازم تكون 8 حروف على الأقل، وتحتوي على حرف كبير ورقم'
-          : 'Password must be 8+ characters with an uppercase letter and a number'
-      );
-      return;
-    }
 
     setLoading(true);
     try {
@@ -67,7 +62,6 @@ function SignUpForm() {
           lastName: form.lastName.trim(),
           password: form.password,
           ...(form.contactType === 'email' ? { email: contactValue.toLowerCase() } : { phone: contactValue }),
-          role: form.role,
         }),
       });
       const data = await res.json();
@@ -99,28 +93,7 @@ function SignUpForm() {
 
   return (
     <div className="min-h-screen flex" dir={ar ? 'rtl' : 'ltr'}>
-      {/* ── لوحة البراندنج ── */}
-      <div className="hidden lg:flex lg:w-1/2 bg-brand text-white flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark" />
-        <div className="relative z-10">
-          <Link href="/" className="text-2xl font-black tracking-tight">
-            {ar ? 'سكني' : 'Sakani'}
-          </Link>
-        </div>
-        <div className="relative z-10 space-y-4">
-          <h2 className="text-4xl font-black leading-tight">
-            {ar ? 'اختر سكنك في أسوان بكل سهولة.' : 'Choose your home in Aswan with ease.'}
-          </h2>
-          <p className="text-white/90 text-lg">
-            {ar
-              ? 'طالب بتدور على سكن، ولا مالك عندك عقار؟ سكني ليك.'
-              : 'A student looking for housing, or an owner listing a place? Sakani is for you.'}
-          </p>
-        </div>
-        <div className="relative z-10 text-sm text-white/80">
-          {ar ? '© سكني — منصة السكن الطلابي في أسوان' : '© Sakani — Student housing platform in Aswan'}
-        </div>
-      </div>
+      <AuthBrandPanel ar={ar} />
 
       {/* ── الفورم ── */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white overflow-y-auto">
@@ -148,7 +121,7 @@ function SignUpForm() {
                   required
                   value={form.firstName}
                   onChange={update('firstName')}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                  className={inputCls}
                 />
               </div>
               <div>
@@ -160,7 +133,7 @@ function SignUpForm() {
                   required
                   value={form.lastName}
                   onChange={update('lastName')}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                  className={inputCls}
                 />
               </div>
             </div>
@@ -196,7 +169,7 @@ function SignUpForm() {
                   value={form.email}
                   onChange={update('email')}
                   placeholder="example@mail.com"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                  className={inputCls}
                 />
               ) : (
                 <input
@@ -206,7 +179,7 @@ function SignUpForm() {
                   value={form.phone}
                   onChange={update('phone')}
                   placeholder="010xxxxxxxx"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                  className={inputCls}
                 />
               )}
             </div>
@@ -223,13 +196,13 @@ function SignUpForm() {
                   autoComplete="new-password"
                   value={form.password}
                   onChange={update('password')}
-                  placeholder={ar ? '8 أحرف على الأقل، حرف كبير ورقم' : 'At least 8 chars, 1 uppercase, 1 number'}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                  placeholder={ar ? 'اكتب أي كلمة مرور' : 'Choose a password'}
+                  className={`${inputCls} !pe-14`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute inset-y-0 right-2.5 flex items-center text-gray-400 hover:text-gray-700"
+                  className="absolute inset-y-0 end-2.5 flex items-center text-gray-400 hover:text-gray-700"
                 >
                   {showPw ? (ar ? 'إخفاء' : 'Hide') : (ar ? 'عرض' : 'Show')}
                 </button>
@@ -246,31 +219,8 @@ function SignUpForm() {
                 autoComplete="new-password"
                 value={form.confirmPassword}
                 onChange={update('confirmPassword')}
-                className="w-full px-3 py-2.5 text-sm border border-gray-300 bg-gray-50 text-navy focus:outline-none focus:border-brand focus:bg-white transition-all rounded"
+                className={inputCls}
               />
-            </div>
-
-            {/* طالب ولا مالك */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                {ar ? 'أنت طالب ولا مالك سكن؟' : 'Are you a student or an owner?'}
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setForm({ ...form, role: 'student' })}
-                  className={`px-3 py-2.5 text-sm rounded border font-medium transition-all ${form.role === 'student' ? 'bg-brand text-white border-brand' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
-                >
-                  {ar ? '🎓 طالب بدور على سكن' : '🎓 Student looking for housing'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setForm({ ...form, role: 'owner' })}
-                  className={`px-3 py-2.5 text-sm rounded border font-medium transition-all ${form.role === 'owner' ? 'bg-brand text-white border-brand' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
-                >
-                  {ar ? '🏠 مالك عندي سكن أعرضه' : '🏠 Owner listing a property'}
-                </button>
-              </div>
             </div>
 
             {error && (

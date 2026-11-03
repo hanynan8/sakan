@@ -16,10 +16,6 @@ const NAVBAR_DATA = {
     ar: { name: 'سكني' },
     en: { name: 'Sakani' },
   },
-  search: {
-    ar: { placeholder: 'ابحث عن سكن، جامعة، منطقة...' },
-    en: { placeholder: 'Search for housing, university, area...' },
-  },
   support: {
     ar: { label: 'الدعم', supportNowLabel: 'تواصل معنا الآن', quickLinksLabel: 'روابط سريعة' },
     en: { label: 'Support', supportNowLabel: 'Contact us now', quickLinksLabel: 'Quick Links' },
@@ -46,7 +42,6 @@ function NavbarContent() {
 
   const [supportOpen, setSupportOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -157,27 +152,6 @@ function NavbarContent() {
                   </Link>
                 );
               })}
-            </div>
-
-            {/* Search */}
-            <div className="flex-1 max-w-lg mx-3 hidden md:block">
-              <div className="relative flex">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t(data.search)?.placeholder}
-                  className={`w-full px-4 py-3 text-lg border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand focus:bg-white transition-all ${ar ? 'rounded-r text-right' : 'rounded-l'}`}
-                />
-                <Link
-                  href={`/properties${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`}
-                  className={`px-5 flex items-center bg-brand text-white hover:bg-brand-dark hover:text-white transition-all flex-shrink-0 ${ar ? 'rounded-l' : 'rounded-r'}`}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </Link>
-              </div>
             </div>
 
             {/* Right actions */}
@@ -330,14 +304,6 @@ function NavbarContent() {
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white" dir={ar ? 'rtl' : 'ltr'}>
-            <div className="px-4 py-3 border-b border-gray-100">
-              <div className="relative flex">
-                <input type="text" placeholder={t(data.search)?.placeholder} className={`w-full px-3 py-2 text-sm border border-gray-300 bg-gray-50 text-navy placeholder-gray-400 focus:outline-none focus:border-brand ${ar ? 'rounded-r' : 'rounded-l'}`} />
-                <Link href="/properties" className={`px-3 flex items-center bg-brand text-white flex-shrink-0 ${ar ? 'rounded-l' : 'rounded-r'}`}>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                </Link>
-              </div>
-            </div>
             <div className="px-4 py-2 border-b border-gray-100">
               {navTabs.map((tab) => (
                 <Link

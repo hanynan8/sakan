@@ -4,12 +4,48 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { AREAS } from '@/lib/taxonomy';
 import AdminPropertyEditor from '@/app/components/AdminPropertyEditor';
+import {
+  LuLayoutDashboard, LuCalendarCheck, LuLifeBuoy, LuUsers, LuBuilding2,
+  LuArrowLeft, LuSettings, LuLoader, LuClock, LuCircleCheck,
+} from 'react-icons/lu';
 
-const inputCls = 'px-3 py-2 text-sm border border-gray-300 rounded bg-gray-50 focus:bg-white focus:outline-none focus:border-brand';
-const btnCls = 'px-3 py-1.5 text-xs font-semibold border border-gray-300 rounded hover:border-gray-500 transition-all';
+/* ── تصميم لوحة الإدارة: مطابق لأدمن Edumaster (كروت بيضاء rounded-2xl + هيدر متدرج أزرق/بنفسجي) ── */
+const inputCls = 'px-3 py-2 text-sm border-2 border-gray-200 rounded-xl bg-white focus:outline-none focus:border-blue-500 transition-colors';
+const btnCls = 'px-3 py-1.5 text-xs font-semibold border-2 border-gray-200 rounded-xl text-gray-600 bg-white hover:bg-gray-50 transition-colors';
+const dangerCls = '!border-red-200 !text-red-600 hover:!bg-red-50';
+const successCls = '!border-green-300 !text-green-700 hover:!bg-green-50';
+const rowCls = 'bg-white rounded-xl border-2 border-gray-100 hover:border-blue-100 transition-colors';
+
+function PanelCard({ icon: Icon, title, count, children }) {
+  return (
+    <div className="bg-white rounded-2xl shadow-2xl border-2 border-blue-100">
+      <div className="p-6 border-b-2 border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 flex items-center justify-between flex-wrap gap-3">
+        <h2 className="text-2xl font-semibold flex items-center gap-3 text-blue-900">
+          <Icon size={26} />
+          {title}
+          {count !== undefined && <span className="text-sm bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{count}</span>}
+        </h2>
+      </div>
+      <div className="p-6">{children}</div>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, accent }) {
+  return (
+    <div className="bg-white rounded-2xl border-2 border-gray-100 p-5 flex items-center gap-4">
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${accent}`}>
+        <Icon size={22} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-gray-400 mb-0.5">{label}</p>
+        <p className="text-xl font-bold text-gray-800 truncate">{value}</p>
+      </div>
+    </div>
+  );
+}
 const fmt = (d) => (d ? new Date(d).toLocaleDateString() : '—');
 
 async function api(url, options) {
@@ -53,17 +89,17 @@ function RequestsTab({ ar }) {
     try { await api(`/api/data?collection=request&id=${id}`, { method: 'DELETE' }); load(); } catch (e) { alert(e.message); }
   };
 
-  if (loading) return <p className="text-sm text-gray-400 py-8 text-center">{ar ? 'جارٍ التحميل...' : 'Loading...'}</p>;
-  if (err) return <p className="text-sm text-red-600 py-8 text-center">{err}</p>;
-  if (!items.length) return <p className="text-sm text-gray-500 py-8 text-center">{ar ? 'مفيش طلبات دعم' : 'No support requests'}</p>;
+  if (loading) return <div className="py-10 flex justify-center"><LuLoader className="animate-spin text-blue-600" size={36} /></div>;
+  if (err) return <div className="px-6 py-4 rounded-xl bg-red-500 text-white text-sm font-semibold">{err}</div>;
+  if (!items.length) return <p className="text-sm text-gray-400 py-10 text-center">{ar ? 'مفيش طلبات دعم' : 'No support requests'}</p>;
 
   return (
     <div className="space-y-3">
       {items.map((r) => (
-        <div key={r._id} className="bg-white rounded-xl border border-gray-100 p-4">
+        <div key={r._id} className={`${rowCls} p-4`}>
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div className="min-w-0">
-              <p className="font-semibold text-navy break-words">{r.subject}</p>
+              <p className="font-semibold text-gray-800 break-words">{r.subject}</p>
               <p className="text-xs text-gray-500 mt-0.5" dir="ltr">{r.email} · {r.query} · {fmt(r.submittedAt)}</p>
             </div>
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${r.status === 'done' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
@@ -76,7 +112,7 @@ function RequestsTab({ ar }) {
             <button onClick={() => setStatus(r._id, r.status === 'done' ? 'new' : 'done')} className={btnCls}>
               {r.status === 'done' ? (ar ? 'إعادة فتح' : 'Reopen') : (ar ? 'تم الحل' : 'Mark done')}
             </button>
-            <button onClick={() => remove(r._id)} className={`${btnCls} !border-red-200 text-red-600`}>{ar ? 'حذف' : 'Delete'}</button>
+            <button onClick={() => remove(r._id)} className={`${btnCls} ${dangerCls}`}>{ar ? 'حذف' : 'Delete'}</button>
           </div>
         </div>
       ))}
@@ -126,12 +162,12 @@ function UsersTab({ ar, selfId }) {
           <option value="admin">{ar ? 'أدمن' : 'Admin'}</option>
         </select>
       </div>
-      <p className="text-xs text-gray-500 mb-2">{data.total} {ar ? 'مستخدم' : 'users'}</p>
+      <p className="text-xs font-semibold text-gray-400 mb-3">{data.total} {ar ? 'مستخدم' : 'users'}</p>
       <div className={`space-y-2 ${loading ? 'opacity-60' : ''}`}>
         {data.users.map((u) => (
-          <div key={u.id} className="bg-white rounded-xl border border-gray-100 p-3 flex items-center justify-between gap-3 flex-wrap">
+          <div key={u.id} className={`${rowCls} p-3 flex items-center justify-between gap-3 flex-wrap`}>
             <div className="min-w-0">
-              <p className="font-semibold text-navy text-sm truncate">{u.name}</p>
+              <p className="font-semibold text-gray-800 text-sm truncate">{u.name}</p>
               <p className="text-xs text-gray-500" dir="ltr">{u.email || u.phone} · {fmt(u.createdAt)}</p>
             </div>
             {u.id === selfId ? (
@@ -143,7 +179,7 @@ function UsersTab({ ar, selfId }) {
                   <option value="owner">{ar ? 'مالك' : 'Owner'}</option>
                   <option value="admin">{ar ? 'أدمن' : 'Admin'}</option>
                 </select>
-                <button onClick={() => remove(u)} className={`${btnCls} !border-red-200 text-red-600`}>{ar ? 'حذف' : 'Delete'}</button>
+                <button onClick={() => remove(u)} className={`${btnCls} ${dangerCls}`}>{ar ? 'حذف' : 'Delete'}</button>
               </div>
             )}
           </div>
@@ -198,21 +234,21 @@ function PropertiesTab({ ar }) {
           <option value="hidden">{ar ? 'مخفي' : 'Hidden'}</option>
         </select>
       </div>
-      <p className="text-xs text-gray-500 mb-2">{data.total} {ar ? 'سكن' : 'properties'}</p>
+      <p className="text-xs font-semibold text-gray-400 mb-3">{data.total} {ar ? 'سكن' : 'properties'}</p>
       <div className={`space-y-2 ${loading ? 'opacity-60' : ''}`}>
         {data.properties.map((p) => {
           const area = AREAS.find((a) => a.id === p.area);
           return (
-            <div key={p.id} className="bg-white rounded-xl border border-gray-100 p-3 flex items-center justify-between gap-3 flex-wrap">
+            <div key={p.id} className={`${rowCls} p-3 flex items-center justify-between gap-3 flex-wrap`}>
               <div className="min-w-0">
-                <Link href={`/properties/${p.id}`} className="font-semibold text-navy text-sm hover:underline">{p.title}</Link>
+                <Link href={`/properties/${p.id}`} className="font-semibold text-gray-800 text-sm hover:underline">{p.title}</Link>
                 <p className="text-xs text-gray-500">
                   {p.price} {ar ? 'ج.م' : 'EGP'} · {ar ? area?.ar : area?.en} · {p.owner ? `${p.owner.name} (${p.owner.contact})` : '—'}
                 </p>
               </div>
               <div className="flex gap-2">
                 {p.status === 'pending' && (
-                  <button onClick={() => changeStatus(p.id, 'active')} className={`${btnCls} !border-green-300 text-green-700`}>{ar ? 'موافقة ونشر' : 'Approve'}</button>
+                  <button onClick={() => changeStatus(p.id, 'active')} className={`${btnCls} ${successCls}`}>{ar ? 'موافقة ونشر' : 'Approve'}</button>
                 )}
                 <select value={p.status} onChange={(e) => changeStatus(p.id, e.target.value)} className={`${btnCls} bg-white`}>
                   <option value="pending">{ar ? 'مستني موافقة' : 'Pending'}</option>
@@ -221,7 +257,7 @@ function PropertiesTab({ ar }) {
                   <option value="hidden">{ar ? 'مخفي' : 'Hidden'}</option>
                 </select>
                 <button onClick={() => setEditing(p)} className={btnCls}>{ar ? 'تعديل' : 'Edit'}</button>
-                <button onClick={() => remove(p)} className={`${btnCls} !border-red-200 text-red-600`}>{ar ? 'حذف' : 'Delete'}</button>
+                <button onClick={() => remove(p)} className={`${btnCls} ${dangerCls}`}>{ar ? 'حذف' : 'Delete'}</button>
               </div>
             </div>
           );
@@ -278,14 +314,14 @@ function BookingsTab({ ar }) {
           <option value="cancelled">{label.cancelled}</option>
         </select>
       </div>
-      <p className="text-xs text-gray-500 mb-2">{data.total} {ar ? 'طلب' : 'requests'}</p>
-      {!loading && data.bookings.length === 0 && <p className="text-sm text-gray-500 py-8 text-center">{ar ? 'مفيش طلبات حجز' : 'No booking requests'}</p>}
+      <p className="text-xs font-semibold text-gray-400 mb-3">{data.total} {ar ? 'طلب' : 'requests'}</p>
+      {!loading && data.bookings.length === 0 && <p className="text-sm text-gray-400 py-10 text-center">{ar ? 'مفيش طلبات حجز' : 'No booking requests'}</p>}
       <div className={`space-y-2 ${loading ? 'opacity-60' : ''}`}>
         {data.bookings.map((b) => (
-          <div key={b.id} className="bg-white rounded-xl border border-gray-100 p-4">
+          <div key={b.id} className={`${rowCls} p-4`}>
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div className="min-w-0">
-                {b.property ? <Link href={`/properties/${b.property.id}`} className="font-semibold text-navy text-sm hover:underline">{b.property.title}</Link> : <span className="text-sm text-gray-400">{ar ? 'سكن محذوف' : 'Deleted listing'}</span>}
+                {b.property ? <Link href={`/properties/${b.property.id}`} className="font-semibold text-gray-800 text-sm hover:underline">{b.property.title}</Link> : <span className="text-sm text-gray-400">{ar ? 'سكن محذوف' : 'Deleted listing'}</span>}
                 <p className="text-xs text-gray-500 mt-0.5">{b.user ? `${b.user.name} (${b.user.contact})` : '—'} · {fmt(b.createdAt)}</p>
                 <p className="text-xs text-gray-500" dir="ltr">
                   <a href={`https://wa.me/${b.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-700 underline">{b.phone}</a>
@@ -297,7 +333,7 @@ function BookingsTab({ ar }) {
             {b.message && <p className="text-sm text-gray-600 mt-2 whitespace-pre-line break-words">{b.message}</p>}
             <div className="flex gap-2 mt-3">
               {b.status !== 'confirmed' && <button onClick={() => setBookingStatus(b.id, 'confirmed')} className={btnCls}>{ar ? 'تأكيد' : 'Confirm'}</button>}
-              {b.status !== 'cancelled' && <button onClick={() => setBookingStatus(b.id, 'cancelled')} className={`${btnCls} !border-red-200 text-red-600`}>{ar ? 'إلغاء' : 'Cancel'}</button>}
+              {b.status !== 'cancelled' && <button onClick={() => setBookingStatus(b.id, 'cancelled')} className={`${btnCls} ${dangerCls}`}>{ar ? 'إلغاء' : 'Cancel'}</button>}
               {b.status !== 'pending' && <button onClick={() => setBookingStatus(b.id, 'pending')} className={btnCls}>{ar ? 'إعادة فتح' : 'Reopen'}</button>}
             </div>
           </div>
@@ -322,8 +358,8 @@ function Pager({ page, pages, setPage, ar }) {
 /* ───────── الصفحة ───────── */
 export default function AdminPage() {
   const { data: session, status } = useSession();
-  const { language } = useLanguage();
-  const ar = language === 'ar';
+  // لوحة الإدارة إنجليزي دايمًا (زي أدمن Edumaster) بغض النظر عن لغة الموقع
+  const ar = false;
   const [tab, setTab] = useState('bookings');
   const [stats, setStats] = useState(null);
 
@@ -334,67 +370,97 @@ export default function AdminPage() {
     api('/api/admin/stats', { cache: 'no-store' }).then(setStats).catch(() => {});
   }, [isAdmin]);
 
-  if (status === 'loading') return <div className="max-w-4xl mx-auto px-4 py-16 text-center text-gray-400">{ar ? 'جارٍ التحميل...' : 'Loading...'}</div>;
+  if (status === 'loading') return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><LuLoader className="animate-spin text-blue-600" size={44} /></div>;
 
   if (!isAdmin) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center" dir={ar ? 'rtl' : 'ltr'}>
-        <p className="text-lg font-semibold text-gray-700 mb-2">{ar ? 'الصفحة دي للمسؤولين بس' : 'This page is for admins only'}</p>
-        <Link href="/profile" className="text-navy underline text-sm">{ar ? 'رجوع للملف الشخصي' : 'Back to profile'}</Link>
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center text-center px-5" dir={ar ? 'rtl' : 'ltr'}>
+        <h1 className="text-[120px] leading-none font-black text-gray-200">404</h1>
+        <p className="text-lg font-semibold text-gray-600 mt-3 mb-2">{ar ? 'الصفحة دي للمسؤولين بس' : 'This page is for admins only'}</p>
+        <Link href="/profile" className="text-blue-700 underline text-sm">{ar ? 'رجوع للملف الشخصي' : 'Back to profile'}</Link>
       </div>
     );
   }
 
   const sum = (o) => Object.values(o || {}).reduce((a, b) => a + b, 0);
   const cards = [
-    { label: ar ? 'المستخدمين' : 'Users', value: sum(stats?.users) },
-    { label: ar ? 'السكنات' : 'Properties', value: sum(stats?.properties) },
-    { label: ar ? 'المتاحة' : 'Active', value: stats?.properties?.active || 0 },
-    { label: ar ? 'مستنية موافقة' : 'Awaiting approval', value: stats?.properties?.pending || 0 },
-    { label: ar ? 'حجوزات جديدة' : 'New bookings', value: stats?.bookings?.pending || 0 },
+    { icon: LuUsers, accent: 'bg-blue-100 text-blue-700', label: ar ? 'المستخدمين' : 'Users', value: sum(stats?.users) },
+    { icon: LuBuilding2, accent: 'bg-purple-100 text-purple-700', label: ar ? 'السكنات' : 'Properties', value: sum(stats?.properties) },
+    { icon: LuCircleCheck, accent: 'bg-green-100 text-green-700', label: ar ? 'المتاحة' : 'Active', value: stats?.properties?.active || 0 },
+    { icon: LuClock, accent: 'bg-amber-100 text-amber-700', label: ar ? 'مستنية موافقة' : 'Awaiting approval', value: stats?.properties?.pending || 0 },
+    { icon: LuCalendarCheck, accent: 'bg-rose-100 text-rose-700', label: ar ? 'حجوزات جديدة' : 'New bookings', value: stats?.bookings?.pending || 0 },
   ];
   const tabs = [
-    { id: 'bookings', label: ar ? 'طلبات الحجز' : 'Bookings' },
-    { id: 'requests', label: ar ? 'طلبات الدعم' : 'Support requests' },
-    { id: 'users', label: ar ? 'المستخدمين' : 'Users' },
-    { id: 'properties', label: ar ? 'السكنات' : 'Properties' },
+    { id: 'bookings', icon: LuCalendarCheck, label: ar ? 'طلبات الحجز' : 'Bookings' },
+    { id: 'requests', icon: LuLifeBuoy, label: ar ? 'طلبات الدعم' : 'Support requests' },
+    { id: 'users', icon: LuUsers, label: ar ? 'المستخدمين' : 'Users' },
+    { id: 'properties', icon: LuBuilding2, label: ar ? 'السكنات' : 'Properties' },
   ];
+  const active = tabs.find((t) => t.id === tab) || tabs[0];
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-16" dir={ar ? 'rtl' : 'ltr'}>
-      <div className="max-w-4xl mx-auto px-4 pt-6">
-        <nav className="flex items-center gap-1.5 text-sm mb-3">
-          <Link href="/profile" className="text-gray-500 hover:text-brand-dark">{ar ? 'الملف الشخصي' : 'Profile'}</Link>
-          <span className="text-gray-300">/</span>
-          <span className="text-gray-700 font-medium">{ar ? 'لوحة الإدارة' : 'Admin Panel'}</span>
-        </nav>
-        <h1 className="text-2xl font-bold text-navy mb-4">{ar ? 'لوحة الإدارة' : 'Admin Panel'}</h1>
+    <div className="min-h-screen bg-gray-50 pb-16" dir={ar ? 'rtl' : 'ltr'}>
+      {/* هيدر متدرج زي Edumaster */}
+      <div className="shadow-lg bg-gradient-to-r from-blue-700 to-purple-700 border-b-4 border-blue-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-1.5 py-5">
+            <Link href="/profile" title={ar ? 'الرجوع للملف الشخصي' : 'Back to profile'} className="text-white/70 hover:text-white transition-colors w-fit">
+              <LuArrowLeft size={32} strokeWidth={1.25} className={ar ? 'rotate-180' : ''} />
+            </Link>
+            <h1 className="text-2xl font-semibold text-white flex items-center gap-3">
+              <LuLayoutDashboard size={30} className="animate-pulse" />
+              {ar ? 'لوحة الإدارة' : 'Admin Panel'}
+            </h1>
+          </div>
+        </div>
+      </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5">
-          {cards.map((c) => (
-            <div key={c.label} className="bg-white rounded-xl border border-gray-100 p-4">
-              <p className="text-xs text-gray-400">{c.label}</p>
-              <p className="text-2xl font-black text-navy">{c.value}</p>
+      <div className="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* سايدبار الأقسام */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-xl p-5 sticky top-4 border border-gray-200">
+              <h2 className="text-lg font-semibold mb-5 pb-3 border-b flex items-center gap-2 text-gray-700">
+                <LuSettings size={20} className="text-blue-500" />
+                {ar ? 'الأقسام' : 'Sections'}
+              </h2>
+              <div className="space-y-2">
+                {tabs.map((t) => {
+                  const Icon = t.icon;
+                  const isActive = tab === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setTab(t.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${ar ? 'text-right' : 'text-left'} ${
+                        isActive
+                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md scale-[1.02]'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      <span>{t.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div className="flex gap-2 mb-4 border-b border-gray-200">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`px-4 py-2 text-sm font-semibold -mb-px border-b-2 transition-colors ${tab === t.id ? 'border-brand text-navy' : 'border-transparent text-gray-500 hover:text-navy'}`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+          {/* المحتوى */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
+              {cards.map((c) => <StatCard key={c.label} {...c} />)}
+            </div>
 
-        {tab === 'bookings' && <BookingsTab ar={ar} />}
-        {tab === 'requests' && <RequestsTab ar={ar} />}
-        {tab === 'users' && <UsersTab ar={ar} selfId={session.user.id} />}
-        {tab === 'properties' && <PropertiesTab ar={ar} />}
+            <PanelCard icon={active.icon} title={active.label}>
+              {tab === 'bookings' && <BookingsTab ar={ar} />}
+              {tab === 'requests' && <RequestsTab ar={ar} />}
+              {tab === 'users' && <UsersTab ar={ar} selfId={session.user.id} />}
+              {tab === 'properties' && <PropertiesTab ar={ar} />}
+            </PanelCard>
+          </div>
+        </div>
       </div>
     </div>
   );
