@@ -73,8 +73,7 @@ const FOOTER_DATA = {
           },
           en: {
             label: 'How It Works'
-          },
-          badge: 'NEW'
+          }
         },
         {
           url: '/help/blog',

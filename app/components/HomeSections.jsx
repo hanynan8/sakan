@@ -299,7 +299,7 @@ const SECTIONS_DATA = {
 export default function HomeSections() {
   const data = SECTIONS_DATA;
   const { data: session } = useSession();
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
   const [collegeSlideIndex, setCollegeSlideIndex] = useState(0);
   const [areaSlideIndex, setAreaSlideIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
@@ -441,7 +441,8 @@ export default function HomeSections() {
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
 
-    if (language === 'ar') {
+    // عربي (RTL): السحب لليمين = التالي، السحب للشمال = السابق. إنجليزي (LTR): العكس.
+    if (isRTL) {
       if (isLeftSwipe) prevCollegeSlide();
       if (isRightSwipe) nextCollegeSlide();
     } else {
@@ -469,7 +470,8 @@ export default function HomeSections() {
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
 
-    if (language === 'ar') {
+    // عربي (RTL): السحب لليمين = التالي، السحب للشمال = السابق. إنجليزي (LTR): العكس.
+    if (isRTL) {
       if (isLeftSwipe) prevAreaSlide();
       if (isRightSwipe) nextAreaSlide();
     } else {
@@ -510,7 +512,8 @@ export default function HomeSections() {
                 ref={collegeTrackRef}
                 className="flex transition-transform duration-500 ease-out gap-4 md:gap-5 lg:gap-6 xl:gap-8 px-1 md:px-2"
                 style={{
-                  transform: `translateX(${language === 'ar'
+                  // في RTL الكروت بتبدأ من اليمين وبتكمل ناحية الشمال، فالتنقل للأمام = إزاحة موجبة
+                  transform: `translateX(${isRTL
                     ? collegeTranslatePx
                     : -collegeTranslatePx}px)`
                 }}
@@ -591,21 +594,21 @@ export default function HomeSections() {
             <button
               onClick={prevCollegeSlide}
               disabled={collegeSlideIndex <= 0}
-              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -start-6 xl:-start-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Previous colleges"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={isRTL ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
               </svg>
             </button>
             <button
               onClick={nextCollegeSlide}
               disabled={collegeSlideIndex >= collegeMaxIndex}
-              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -end-6 xl:-end-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Next colleges"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
               </svg>
             </button>
 
@@ -662,7 +665,8 @@ export default function HomeSections() {
                 ref={areaTrackRef}
                 className="flex transition-transform duration-500 ease-out gap-4 md:gap-5 lg:gap-6 xl:gap-8 px-1 md:px-2"
                 style={{
-                  transform: `translateX(${language === 'ar'
+                  // في RTL الكروت بتبدأ من اليمين وبتكمل ناحية الشمال، فالتنقل للأمام = إزاحة موجبة
+                  transform: `translateX(${isRTL
                     ? areaTranslatePx
                     : -areaTranslatePx}px)`
                 }}
@@ -723,21 +727,21 @@ export default function HomeSections() {
             <button
               onClick={prevAreaSlide}
               disabled={areaSlideIndex <= 0}
-              className="hidden md:flex absolute -left-6 xl:-left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -start-6 xl:-start-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Previous areas"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={isRTL ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
               </svg>
             </button>
             <button
               onClick={nextAreaSlide}
               disabled={areaSlideIndex >= areaMaxIndex}
-              className="hidden md:flex absolute -right-6 xl:-right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
+              className="hidden md:flex absolute -end-6 xl:-end-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-brand text-white hover:bg-brand-dark hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-brand transition-all items-center justify-center shadow-xl z-10 rounded-xl"
               aria-label="Next areas"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={language === 'en' ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
               </svg>
             </button>
 
