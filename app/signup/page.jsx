@@ -99,14 +99,14 @@ function SignUpForm() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white overflow-y-auto">
         <div className="w-full max-w-sm py-8">
           <Link href="/" className="lg:hidden block text-center text-2xl font-black text-brand mb-6">
-            {ar ? 'سكني' : 'Sakani'}
+            {ar ? 'بيتك' : 'betak'}
           </Link>
 
           <h1 className="text-2xl font-bold text-navy mb-1">
             {ar ? 'إنشاء حساب جديد' : 'Create an account'}
           </h1>
           <p className="text-sm text-gray-500 mb-6">
-            {ar ? 'اعمل حساب وابدأ رحلتك مع سكني.' : 'Sign up and start your journey with Sakani.'}
+            {ar ? 'اعمل حساب وابدأ رحلتك مع بيتك.' : 'Sign up and start your journey with betak.'}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">

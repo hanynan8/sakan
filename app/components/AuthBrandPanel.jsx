@@ -2,6 +2,7 @@
 // لوحة البراندنج اللي جنب فورم تسجيل الدخول / إنشاء الحساب (مشتركة بين الصفحتين).
 // نفس خلفية الهيرو في الهوم: صورة + طبقة غامقة، والكلام في نص الصورة.
 import Link from 'next/link';
+import { LOGO_URL } from '@/lib/brand';
 
 // نفس صورة الهيرو في الهوم (HeroPropertiesSection)
 const HERO_IMAGE =
@@ -15,8 +16,9 @@ export default function AuthBrandPanel({ ar }) {
       <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
 
       <div className="relative z-10">
-        <Link href="/" className="text-3xl font-black tracking-tight text-white hover:text-white">
-          {ar ? 'سكني' : 'Sakani'}
+        <Link href="/" aria-label={ar ? 'بيتك' : 'betak'} className="inline-block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={LOGO_URL} alt={ar ? 'بيتك' : 'betak'} className="h-32 w-32 rounded-full object-cover" />
         </Link>
       </div>
 
@@ -28,13 +30,13 @@ export default function AuthBrandPanel({ ar }) {
         </h2>
         <p className="text-lg leading-relaxed text-white/90 font-medium drop-shadow">
           {ar
-            ? 'طالب بتدور على سكن، ولا مالك عندك عقار؟ سكني ليك.'
-            : 'A student looking for housing, or an owner listing a place? Sakani is for you.'}
+            ? 'طالب بتدور على سكن، ولا مالك عندك عقار؟ بيتك ليك.'
+            : 'A student looking for housing, or an owner listing a place? betak is for you.'}
         </p>
       </div>
 
       <div className="relative z-10 text-sm text-white/80 text-center">
-        {ar ? '© سكني — منصة السكن الطلابي في أسوان' : '© Sakani — Student housing platform in Aswan'}
+        {ar ? '© بيتك — منصة السكن الطلابي في أسوان' : '© betak — Student housing platform in Aswan'}
       </div>
     </div>
   );

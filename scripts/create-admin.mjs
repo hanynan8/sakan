@@ -4,11 +4,11 @@
 //   node --env-file=.env.local scripts/create-admin.mjs <email-or-phone> <password> [firstName] [lastName]
 //
 // مثال:
-//   node --env-file=.env.local scripts/create-admin.mjs admin@sakan.com "StrongPass1" Admin Sakan
+//   node --env-file=.env.local scripts/create-admin.mjs admin@betak.com "StrongPass1" Admin betak
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const [identifier, password, firstName = "Admin", lastName = "Sakan"] = process.argv.slice(2);
+const [identifier, password, firstName = "Admin", lastName = "betak"] = process.argv.slice(2);
 if (!identifier || !password) {
   console.error('Usage: node --env-file=.env.local scripts/create-admin.mjs <email-or-phone> <password> [firstName] [lastName]');
   process.exit(1);

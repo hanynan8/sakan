@@ -6,15 +6,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSession, signOut } from 'next-auth/react';
+import { LOGO_URL } from '@/lib/brand';
 
 /* ═══════════════════════════════════════════════
    STATIC NAVBAR DATA (كانت جايه من /api/data?collection=Navbar)
 ═══════════════════════════════════════════════ */
 const NAVBAR_DATA = {
   brand: {
-    logo: '',
-    ar: { name: 'سكني' },
-    en: { name: 'Sakani' },
+    logo: LOGO_URL,
+    ar: { name: 'بيتك' },
+    en: { name: 'betak' },
   },
   support: {
     ar: { label: 'الدعم', supportNowLabel: 'تواصل معنا الآن', quickLinksLabel: 'روابط سريعة' },
@@ -22,7 +23,7 @@ const NAVBAR_DATA = {
     phone: '+20 121 381 9102',
     supportNow: [
       { type: 'whatsapp', url: 'https://wa.me/201213819102', badge: 'online', ar: { label: 'واتساب' }, en: { label: 'WhatsApp' } },
-      { type: 'messenger', url: 'https://m.me/sakanipage', badge: '', ar: { label: 'ماسنجر' }, en: { label: 'Messenger' } },
+      { type: 'messenger', url: 'https://m.me/betakpage', badge: '', ar: { label: 'ماسنجر' }, en: { label: 'Messenger' } },
     ],
     quickLinks: [
       { url: '/help/how-it-works', ar: { label: 'كيف يعمل الموقع؟' }, en: { label: 'How it works?' } },
@@ -118,12 +119,13 @@ function NavbarContent() {
         dir={ar ? 'rtl' : 'ltr'}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-20 gap-5">
+          <div className="flex items-center h-24 gap-5">
 
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center gap-2">
               {data.brand?.logo ? (
-                <img src={data.brand.logo} alt={t(data.brand)?.name} className="h-10 w-auto" />
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={data.brand.logo} alt={t(data.brand)?.name} className="h-20 w-20 rounded-full object-cover" />
               ) : (
                 <>
                   <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-brand text-white">
@@ -207,7 +209,7 @@ function NavbarContent() {
                         {data.support?.phone && (
                           <div className="mx-4 mt-2 pt-2 border-t border-gray-200 flex items-center gap-2">
                             <svg className="w-4 h-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                            <span className="text-sm font-semibold text-navy">{data.support.phone}</span>
+                            <span dir="ltr" className="text-sm font-semibold text-navy [unicode-bidi:isolate]">{data.support.phone}</span>
                           </div>
                         )}
                       </div>

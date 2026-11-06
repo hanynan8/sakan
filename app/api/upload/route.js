@@ -10,7 +10,7 @@ import { rateLimit } from "@/lib/rate-limit";
 export const runtime = "nodejs";
 
 const MAX_BYTES = 3 * 1024 * 1024; // 3MB (الواجهة بتضغط الصورة قبل الرفع)
-const FOLDER = "sakan/properties";
+const FOLDER = "betak/properties";
 
 // نوع الصورة من أول بايتات الملف
 function sniffImage(buf) {

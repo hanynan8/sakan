@@ -12,14 +12,14 @@ const HOW_IT_WORKS_DATA = {
     secondaryCtaUrl: '/list-property',
     ar: {
       badge: 'دليلك الكامل',
-      title: 'كيف يعمل سكني؟',
+      title: 'كيف يعمل بيتك؟',
       subtitle: 'كل ما تحتاج معرفته للبدء في إيجاد سكنك أو تأجير عقارك',
       primaryCta: 'ابحث عن سكن',
       secondaryCta: 'أضف عقارك'
     },
     en: {
       badge: 'Your Complete Guide',
-      title: 'How Does Sakani Work?',
+      title: 'How Does betak Work?',
       subtitle: 'Everything you need to know to start finding accommodation or renting your property',
       primaryCta: 'Find Accommodation',
       secondaryCta: 'List Your Property'
@@ -119,11 +119,11 @@ const HOW_IT_WORKS_DATA = {
   ],
   features: {
     ar: {
-      sectionTitle: 'لماذا تختار سكني؟',
+      sectionTitle: 'لماذا تختار بيتك؟',
       sectionSubtitle: 'مميزات تجعلنا الخيار الأول للطلاب وأصحاب العقارات'
     },
     en: {
-      sectionTitle: 'Why Choose Sakani?',
+      sectionTitle: 'Why Choose betak?',
       sectionSubtitle: 'Features that make us the first choice for students and property owners'
     },
     items: [
@@ -205,7 +205,7 @@ const HOW_IT_WORKS_DATA = {
     {
       number: '5,000+',
       ar: {
-        label: 'وحدة سكنية'
+        label: 'وحدة بيتكة'
       },
       en: {
         label: 'Properties'
@@ -296,13 +296,13 @@ const HOW_IT_WORKS_DATA = {
     ownerUrl: '/signup',
     ar: {
       title: 'هل أنت مستعد للبدء؟',
-      subtitle: 'انضم إلى آلاف الطلاب وأصحاب العقارات على منصة سكني',
+      subtitle: 'انضم إلى آلاف الطلاب وأصحاب العقارات على منصة بيتك',
       studentBtn: 'ابدأ كطالب',
       ownerBtn: 'ابدأ كمالك'
     },
     en: {
       title: 'Ready to Get Started?',
-      subtitle: 'Join thousands of students and property owners on the Sakani platform',
+      subtitle: 'Join thousands of students and property owners on the betak platform',
       studentBtn: 'Start as Student',
       ownerBtn: 'Start as Owner'
     }

@@ -64,7 +64,7 @@ async function uploadToCloudinary(file) {
   if (cache[hash]) return cache[hash];
 
   const timestamp = String(Math.floor(Date.now() / 1000));
-  const params = { allowed_formats: "jpg,png,webp", folder: "sakan/properties", timestamp };
+  const params = { allowed_formats: "jpg,png,webp", folder: "betak/properties", timestamp };
   const toSign = Object.keys(params).sort().map((k) => `${k}=${params[k]}`).join("&");
   const signature = crypto.createHash("sha1").update(toSign + secret).digest("hex");
 

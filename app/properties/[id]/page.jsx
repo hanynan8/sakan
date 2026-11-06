@@ -7,7 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { AREAS, COLLEGES, GENDER_OPTIONS, propertyCollegeIds } from '@/lib/taxonomy';
 import FavoriteButton from '@/app/components/FavoriteButton';
 
-// رقم واتساب سكني الموحّد لكل الاستفسارات (مفيش أي بيانات عن المالك بتتعرض)
+// رقم واتساب بيتك الموحّد لكل الاستفسارات (مفيش أي بيانات عن المالك بتتعرض)
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201213819102';
 
 export default function PropertyDetailsPage({ params }) {
@@ -180,7 +180,7 @@ export default function PropertyDetailsPage({ params }) {
 
           {/* بوكس التواصل — واتساب فقط، بدون أي بيانات عن المالك */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 sticky top-20">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 sticky top-28">
               <p className="text-2xl font-black text-navy">
                 {property.price} <span className="text-sm font-medium text-gray-500">{ar ? 'ج.م / شهر' : 'EGP / month'}</span>
               </p>

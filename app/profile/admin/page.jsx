@@ -243,7 +243,7 @@ function PropertiesTab({ ar }) {
               <div className="min-w-0">
                 <Link href={`/properties/${p.id}`} className="font-semibold text-gray-800 text-sm hover:underline">{p.title}</Link>
                 <p className="text-xs text-gray-500">
-                  {p.price} {ar ? 'ج.م' : 'EGP'} · {ar ? area?.ar : area?.en} · {p.owner ? `${p.owner.name} (${p.owner.contact})` : '—'}
+                  {p.price} {ar ? 'ج.م' : 'EGP'} · {ar ? area?.ar : area?.en} · {p.owner ? <>{p.owner.name} (<bdi dir="ltr">{p.owner.contact}</bdi>)</> : '—'}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -322,9 +322,9 @@ function BookingsTab({ ar }) {
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div className="min-w-0">
                 {b.property ? <Link href={`/properties/${b.property.id}`} className="font-semibold text-gray-800 text-sm hover:underline">{b.property.title}</Link> : <span className="text-sm text-gray-400">{ar ? 'سكن محذوف' : 'Deleted listing'}</span>}
-                <p className="text-xs text-gray-500 mt-0.5">{b.user ? `${b.user.name} (${b.user.contact})` : '—'} · {fmt(b.createdAt)}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{b.user ? <>{b.user.name} (<bdi dir="ltr">{b.user.contact}</bdi>)</> : '—'} · {fmt(b.createdAt)}</p>
                 <p className="text-xs text-gray-500" dir="ltr">
-                  <a href={`https://wa.me/${b.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-700 underline">{b.phone}</a>
+                  <a href={`https://wa.me/${b.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" dir="ltr" className="text-green-700 underline [unicode-bidi:isolate]">{b.phone}</a>
                   {b.moveInDate ? ` · ${ar ? 'سكن من' : 'move-in'} ${fmt(b.moveInDate)}` : ''}
                 </p>
               </div>

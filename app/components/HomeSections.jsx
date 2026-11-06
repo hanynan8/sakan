@@ -109,7 +109,7 @@ const SECTIONS_DATA = {
         image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=900',
         propertiesCount: 320,
         averagePrice: 1400,
-        ar: { name: 'السيل', description: 'من أكبر المناطق السكنية وأكثرها إقبالاً من الطلاب' },
+        ar: { name: 'السيل', description: 'من أكبر المناطق البيتكة وأكثرها إقبالاً من الطلاب' },
         en: { name: 'El-Sail', description: 'One of the largest residential areas, popular with students' }
       },
       {
@@ -117,7 +117,7 @@ const SECTIONS_DATA = {
         image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=900',
         propertiesCount: 260,
         averagePrice: 1500,
-        ar: { name: 'الصداقة', description: 'منطقة سكنية هادئة بأسعار مناسبة لميزانية الطلاب' },
+        ar: { name: 'الصداقة', description: 'منطقة بيتكة هادئة بأسعار مناسبة لميزانية الطلاب' },
         en: { name: 'El-Sadaka', description: 'A quiet residential area with student-friendly prices' }
       },
       {
@@ -218,13 +218,13 @@ const SECTIONS_DATA = {
         ar: {
           name: 'نور إبراهيم',
           university: 'جامعة المنصورة',
-          review: 'سكن نظيف وآمن بسعر مناسب. شكراً لفريق سكني على المساعدة!',
+          review: 'سكن نظيف وآمن بسعر مناسب. شكراً لفريق بيتك على المساعدة!',
           rating: 5
         },
         en: {
           name: 'Nour Ibrahim',
           university: 'Mansoura University',
-          review: 'Clean and safe accommodation at a reasonable price. Thank you Sakani team for your help!',
+          review: 'Clean and safe accommodation at a reasonable price. Thank you betak team for your help!',
           rating: 5
         }
       }
@@ -232,11 +232,11 @@ const SECTIONS_DATA = {
   },
   howItWorks: {
     ar: {
-      sectionTitle: 'كيف يعمل سكني؟',
+      sectionTitle: 'كيف يعمل بيتك؟',
       sectionSubtitle: '3 خطوات بسيطة للعثور على سكنك المثالي'
     },
     en: {
-      sectionTitle: 'How Sakani Works',
+      sectionTitle: 'How betak Works',
       sectionSubtitle: '3 simple steps to find your perfect home'
     },
     steps: [
@@ -282,14 +282,14 @@ const SECTIONS_DATA = {
     ar: {
       title: 'هل أنت مستعد للانطلاق؟',
       subtitle: 'انضم إلى آلاف الطلاب الذين وجدوا سكنهم المثالي معنا',
-      description: 'سواء كنت طالباً تبحث عن سكن أو مالك عقار تريد تأجيره، سكني هنا لمساعدتك.',
+      description: 'سواء كنت طالباً تبحث عن سكن أو مالك عقار تريد تأجيره، بيتك هنا لمساعدتك.',
       studentCTA: 'ابحث عن سكن',
       ownerCTA: 'أضف عقارك'
     },
     en: {
       title: 'Ready to Get Started?',
       subtitle: 'Join thousands of students who found their perfect home with us',
-      description: "Whether you're a student looking for accommodation or a property owner wanting to rent, Sakani is here to help.",
+      description: "Whether you're a student looking for accommodation or a property owner wanting to rent, betak is here to help.",
       studentCTA: 'Find Accommodation',
       ownerCTA: 'List Your Property'
     }

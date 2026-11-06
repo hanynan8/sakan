@@ -1,4 +1,4 @@
-# سكن (Sakan) — منصة سكن طلاب جامعة أسوان
+# سكن (betak) — منصة سكن طلاب جامعة أسوان
 
 Next.js 15 + MongoDB + NextAuth. الطالب بيدوّر على سكن ويطلب حجز، المالك بيضيف إعلانه، والأدمن بيراجع ويتابع.
 
@@ -6,7 +6,7 @@ Next.js 15 + MongoDB + NextAuth. الطالب بيدوّر على سكن ويط�
 ```bash
 npm install
 cp .env.example .env.local     # عبّي القيم
-node --env-file=.env.local scripts/create-admin.mjs admin@example.com "StrongPass1" Admin Sakan
+node --env-file=.env.local scripts/create-admin.mjs admin@example.com "StrongPass1" Admin betak
 npm run dev
 ```
 (لازم Node 20+). بعد الدخول بحساب الأدمن افتح **/profile/admin**.

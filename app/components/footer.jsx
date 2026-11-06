@@ -1,33 +1,34 @@
 'use client';
 
 import { useLanguage } from '@/contexts/LanguageContext';
+import { LOGO_URL } from '@/lib/brand';
 
 /* ═══════════════════════════════════════════════
    STATIC FOOTER DATA (كانت جايه من /api/data?collection=footer)
 ═══════════════════════════════════════════════ */
 const FOOTER_DATA = {
   brand: {
-    logo: '',
+    logo: LOGO_URL,
     ar: {
-      name: 'سكني',
+      name: 'بيتك',
       description: 'المنصة الأولى لإيجاد السكن الطلابي المثالي بالقرب من جامعتك بأفضل الأسعار.'
     },
     en: {
-      name: 'Sakani',
+      name: 'betak',
       description: 'The leading platform for finding the perfect student accommodation near your university at the best prices.'
     },
     socialLinks: [
       {
         platform: 'facebook',
-        url: 'https://facebook.com/sakani'
+        url: 'https://facebook.com/betak'
       },
       {
         platform: 'instagram',
-        url: 'https://instagram.com/sakani'
+        url: 'https://instagram.com/betak'
       },
       {
         platform: 'twitter',
-        url: 'https://twitter.com/sakani'
+        url: 'https://twitter.com/betak'
       },
       {
         platform: 'whatsapp',
@@ -35,7 +36,7 @@ const FOOTER_DATA = {
       },
       {
         platform: 'youtube',
-        url: 'https://youtube.com/@sakani'
+        url: 'https://youtube.com/@betak'
       }
     ]
   },
@@ -159,31 +160,31 @@ const FOOTER_DATA = {
       type: 'email',
       ar: {
         label: 'البريد الإلكتروني',
-        value: 'support@sakani.com'
+        value: 'support@betak.site'
       },
       en: {
         label: 'Email',
-        value: 'support@sakani.com'
+        value: 'support@betak.site'
       }
     },
     {
       type: 'location',
       ar: {
         label: 'الموقع',
-        value: 'القاهرة، مصر'
+        value: 'اسوان، مصر'
       },
       en: {
         label: 'Location',
-        value: 'Cairo, Egypt'
+        value: 'Aswan, Egypt'
       }
     }
   ],
   bottomBar: {
     ar: {
-      copyright: '© {year} سكني. جميع الحقوق محفوظة.'
+      copyright: '© {year} بيتك. جميع الحقوق محفوظة.'
     },
     en: {
-      copyright: '© {year} Sakani. All rights reserved.'
+      copyright: '© {year} betak. All rights reserved.'
     },
     legalLinks: [
       {
@@ -247,12 +248,14 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <div className={`flex items-center gap-2 mb-3 ${language === 'ar' ? 'flex-row-reverse justify-end' : ''}`}>
-              {/* {data.brand?.logo && (
-                <img src={data.brand.logo} alt="Logo" className="h-7 w-auto" />
-              )} */}
-              <span className="text-lg font-black text-brand tracking-tight">
-                {t(data.brand)?.name}
-              </span>
+              {data.brand?.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={data.brand.logo} alt={t(data.brand)?.name} className="h-28 w-28 rounded-full bg-white p-2 object-contain" />
+              ) : (
+                <span className="text-lg font-black text-brand tracking-tight">
+                  {t(data.brand)?.name}
+                </span>
+              )}
             </div>
             <p className="text-gray-400 text-xs leading-relaxed mb-4 max-w-xs">
               {t(data.brand)?.description}
@@ -371,7 +374,10 @@ export default function Footer() {
                   <div className="text-xs text-gray-500 uppercase tracking-wide">
                     {t(item)?.label}
                   </div>
-                  <div className="text-gray-200 text-xs font-bold">
+                  <div
+                    className="text-gray-200 text-xs font-bold"
+                    {...(item.type === 'phone' || item.type === 'email' ? { dir: 'ltr', style: { unicodeBidi: 'isolate' } } : {})}
+                  >
                     {t(item)?.value}
                   </div>
                 </div>
