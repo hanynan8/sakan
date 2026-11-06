@@ -119,13 +119,13 @@ function NavbarContent() {
         dir={ar ? 'rtl' : 'ltr'}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-24 gap-5">
+          <div className="flex items-center h-28 gap-5">
 
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center gap-2">
               {data.brand?.logo ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={data.brand.logo} alt={t(data.brand)?.name} className="h-20 w-20 rounded-full object-cover" />
+                <img src={data.brand.logo} alt={t(data.brand)?.name} className="h-24 w-24 rounded-full object-cover" />
               ) : (
                 <>
                   <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-brand text-white">
